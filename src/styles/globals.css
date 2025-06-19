@@ -1,0 +1,78 @@
+@import "tailwindcss";
+* {
+  transition: all 0.3s ease-in-out;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --cream: #f6f6f6;
+  --brown: #8b4513;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-cream: var(--cream);
+  --color-brown: var(--brown);
+  --font-sans: var(--dm-sans);
+  --font-mono: var(--dm-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #ffffff;
+    --foreground: #171717;
+    --cream: #f6f6f6;
+    --brown: #8b4513;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Category Carousel Nav Buttons */
+.splide__track {
+  padding-top: 50px;
+}
+.splide__arrow {
+  background-color: var(--background) !important;
+  outline: solid 1px #D9D9D9 !important;
+  color: var(--foreground);
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  z-index: 10;
+}
+.splide__arrow:hover {
+  background-color: #D9D9D9 !important;
+  color: #FFF !important;
+}
+
+.splide__arrow--prev {
+  left: -1.2rem !important;
+}
+.splide__arrow--next {
+  right: -1.2rem !important;
+}
+
+/* Cart Scroll */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 15px !important;
+}
+::-webkit-scrollbar-thumb {
+  cursor: pointer;
+  background: var(--color-blue-500);
+}
+
+/* * {
+  outline: red solid 1px;
+} */
