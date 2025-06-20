@@ -1,16 +1,18 @@
 "use client";
 
+import NoProduct from "./NoProduct";
+import ProductGallery from "./ProductGallery";
+
 export default function ProductDetailsSection({ product }) {
-  if (!product) return <div>Product not found or failed to load.</div>;
+    console.log("product data", product)
+    if (!product) return (
+        <NoProduct />  
+    )
 
-  const { name, price, description, caption } = product;
-
-  return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{name}</h1>
-      <p className="text-lg font-semibold text-green-700">₦{price}</p>
-      {caption && <p className="text-gray-500 italic">{caption}</p>}
-      <p className="text-base text-gray-700">{description}</p>
-    </div>
-  );
+    return (
+        <section className="w-full grid grid-cols-1 xl:grid-cols-2 items-start gap-30">
+            <ProductGallery product={product} />
+            <div>text</div>
+        </section>
+    );
 }

@@ -54,7 +54,7 @@ const NewProductsSection = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="w-full flex justify-center mt-10">
+                    <div className="w-full flex justify-center mt-20">
                         <Link href="/shop" className='py-5 px-10 bg-blue-500 text-white text-xl hover:bg-brown cursor-pointer'>
                             View More Products
                         </Link>

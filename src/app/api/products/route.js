@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const apiToken = process.env.AIRTABLE_API_TOKEN;
+  const apiToken = process.env.AIRTABLE_API_KEY;
   const baseId = process.env.AIRTABLE_BASE_ID;
   const tableName = process.env.AIRTABLE_PRODUCTS_NAME || "Products";
 

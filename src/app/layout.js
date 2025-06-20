@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/contexts/cartContext";
 import { WishlistProvider } from "@/contexts/wishlistContext";
-import { ToastContainer } from "react-toastify";
+// import { ToastContainer } from "react-toastify";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,14 +30,14 @@ export default function RootLayout({ children }) {
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
             <Header />
-            <ToastContainer
+            {/* <ToastContainer
               position="top-right"
               autoClose={2000}
               hideProgressBar={false}
               closeOnClick
               pauseOnHover
               draggable
-            />
+            /> */}
             <div className="mt-26">
               {children}
             </div>

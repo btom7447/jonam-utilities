@@ -65,8 +65,8 @@ body {
 
 /* Cart Scroll */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 15px !important;
+  width: 5px !important;
+  height: 5px !important;
 }
 ::-webkit-scrollbar-thumb {
   cursor: pointer;

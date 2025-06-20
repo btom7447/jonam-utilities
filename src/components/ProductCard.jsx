@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/cartContext';
 import { useWishlist } from '@/contexts/wishlistContext';
@@ -7,7 +9,7 @@ import Link from 'next/link';
 import React from 'react';
 
 const ProductCard = ({ data }) => {
-  const router = useRouter();  // Correct: hook inside component
+  const router = useRouter();  
     const { addToCart } = useCart();
     const { saveProduct } = useWishlist();
 
@@ -19,8 +21,6 @@ const ProductCard = ({ data }) => {
         finalPrice = Math.round(data.price * (1 - data.discount));
     }
 
-    console.log("Product Id", data.recordId);
-    console.log("Product Data", data)
     if (!data.recordId) {
         console.warn("Missing Airtable recordId for product:", data);
         return null;
