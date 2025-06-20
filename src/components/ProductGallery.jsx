@@ -8,17 +8,18 @@ const ProductGallery = ({ product }) => {
 
     const handleThumbnailClick = (index) => setActiveIndex(index);
     const handleMouseMove = (e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            setZoomOrigin(`${x}% ${y}%`);
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        setZoomOrigin(`${x}% ${y}%`);
     };
 
     return (
-        <div className="flex flex-col-reverse md:flex-row gap-6 h-[400px]">
+        <div className="flex flex-col-reverse md:flex-row gap-6 h-[400px] md:h-[500px]">
             {/* Thumbnails */}
             <div
                 className="
+                    thumbnail
                     flex 
                     flex-row md:flex-col 
                     gap-10 

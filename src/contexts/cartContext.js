@@ -20,21 +20,30 @@ export const CartProvider = ({ children }) => {
         localStorage.setItem("cartItems", JSON.stringify(cartItems));
     }, [cartItems]);
 
-    const addToCart = (item) => {
+    const addToCart = (item, quantity = 1) => {
         let found = false;
 
         setCartItems((prev) => {
-            const existing = prev.find((i) => i.id === item.id);
+            const existing = prev.find((i) =>
+                i.id === item.id &&
+                i.selectedColor === item.selectedColor &&
+                i.selectedVariant === item.selectedVariant
+            );
+
             if (existing) {
                 found = true;
                 return prev.map((i) =>
-                    i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+                    i.id === item.id &&
+                    i.selectedColor === item.selectedColor &&
+                    i.selectedVariant === item.selectedVariant
+                    ? { ...i, quantity: i.quantity + quantity }
+                    : i
                 );
             }
-            return [...prev, { ...item, quantity: 1 }];
+
+            return [...prev, { ...item, quantity }];
         });
 
-        // Only show toast after state is queued
         if (!found) {
             toast.success(`${item.name} added to cart`);
         } else {
@@ -42,14 +51,28 @@ export const CartProvider = ({ children }) => {
         }
     };
 
+    const removeFromCart = (id, selectedColor, selectedVariant) => {
+        const removedItem = cartItems.find((item) =>
+            item.id === id &&
+            item.selectedColor === selectedColor &&
+            item.selectedVariant === selectedVariant
+        );
 
-    const removeFromCart = (id) => {
-        const removedItem = cartItems.find((item) => item.id === id);
-        setCartItems((prev) => prev.filter((item) => item.id !== id));
+        setCartItems((prev) =>
+            prev.filter((item) =>
+                !(
+                    item.id === id &&
+                    item.selectedColor === selectedColor &&
+                    item.selectedVariant === selectedVariant
+                )
+            )
+        );
+
         if (removedItem) {
             toast.info(`${removedItem.name} removed from cart`);
         }
     };
+
 
     const clearCart = () => {
         setCartItems([]);

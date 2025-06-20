@@ -19,9 +19,9 @@ const CartModal = () => {
             <div className="cartItems flex flex-col gap-5 max-h-60 lg:max-h-70 overflow-y-scroll my-5">
                 {cartItems.length === 0 && <p className="text-center text-2xl font-light text-gray-500">Your cart is empty.</p>}
 
-                {/* {cartItems.map((item) => (
+                {cartItems.map((item) => (
                     <CartModalItem key={item.id} item={item} removeFromCart={removeFromCart} />
-                ))} */}
+                ))}
             </div>
 
             {/* Subtotal */}

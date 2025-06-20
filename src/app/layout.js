@@ -1,20 +1,17 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "../styles/globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/contexts/cartContext";
 import { WishlistProvider } from "@/contexts/wishlistContext";
-// import { ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const dmSans = DM_Sans({
   subsets: ["latin"],
+  weights: ["400", "500", "700"],
+  variable: "--font-sans", 
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata = {
   title: "Jonam Utilities Website",
@@ -27,17 +24,17 @@ export default function RootLayout({ children }) {
       <WishlistProvider>
         <html lang="en">
           <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            className={`${dmSans.variable} antialiased`}
           >
             <Header />
-            {/* <ToastContainer
+            <ToastContainer
               position="top-right"
               autoClose={2000}
               hideProgressBar={false}
               closeOnClick
               pauseOnHover
               draggable
-            /> */}
+            />
             <div className="mt-26">
               {children}
             </div>

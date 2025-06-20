@@ -1,4 +1,5 @@
 @import "tailwindcss";
+
 * {
   transition: all 0.3s ease-in-out;
 }
@@ -33,6 +34,9 @@ body {
   color: var(--foreground);
   font-family: 'DM Sans', sans-serif;
 }
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'DM Sans', sans-serif;
+}
 
 /* Category Carousel Nav Buttons */
 .splide__track {
@@ -63,7 +67,7 @@ body {
   right: -1.2rem !important;
 }
 
-/* Cart Scroll */
+/* Main Scroll */
 ::-webkit-scrollbar {
   width: 5px !important;
   height: 5px !important;
@@ -71,6 +75,18 @@ body {
 ::-webkit-scrollbar-thumb {
   cursor: pointer;
   background: var(--color-blue-500);
+}
+
+/* Cart Scroll */
+.cartItems::-webkit-scrollbar-thumb {
+  cursor: pointer;
+  background: var(--color-gray-900);
+}
+
+/* Thumbnail Scroll */
+.thumbnail::-webkit-scrollbar-thumb {
+  cursor: pointer;
+  background: var(--color-blue-50);
 }
 
 /* * {

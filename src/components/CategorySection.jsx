@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
-import "@splidejs/react-splide/css"; // basic CSS
+import "@splidejs/react-splide/css";
 import { DotLoader } from "react-spinners";
 import CategoryCard from "./CategoryCard";
 import NoCategories from "./NoCategories";

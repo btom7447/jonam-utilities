@@ -11,7 +11,7 @@ import React from 'react';
 const ProductCard = ({ data }) => {
   const router = useRouter();  
     const { addToCart } = useCart();
-    const { saveProduct } = useWishlist();
+    const { saveProduct, isSaved } = useWishlist();
 
     let discountPercent = null;
     let finalPrice = data.price;
@@ -20,12 +20,6 @@ const ProductCard = ({ data }) => {
         discountPercent = Math.round(data.discount * 100); // e.g. 0.03 -> 3%
         finalPrice = Math.round(data.price * (1 - data.discount));
     }
-
-    if (!data.recordId) {
-        console.warn("Missing Airtable recordId for product:", data);
-        return null;
-    }
-
 
     return (
         <div className='flex flex-col'>
@@ -56,14 +50,24 @@ const ProductCard = ({ data }) => {
                         z-50 transition-all duration-300'
                     >
                     <button type='button' onClick={() => saveProduct(data)} className='p-3 rounded-full bg-white text-gray-700 cursor-pointer hover:text-blue-500 hover:-translate-y-3'>
-                        <HeartIcon size={20} />
+                        <HeartIcon size={20} className={isSaved(data.id) ? "text-blue-500" : ""} fill={isSaved(data.id) ? "currentColor" : "none"} />
                     </button>
-                    <button type='button' onClick={() => addToCart(data)} className='p-3 rounded-full bg-white text-gray-700 cursor-pointer hover:text-blue-500 hover:-translate-y-3'>
+                    <button type='button'  
+                        onClick={() => {
+                            const enrichedProduct = {
+                                ...data,
+                                selectedColor: data.product_colors?.[0] || null,
+                                selectedVariant: data.variants?.[0] || null,
+                            };
+                            addToCart(enrichedProduct);
+                        }} 
+                        className='p-3 rounded-full bg-white text-gray-700 cursor-pointer hover:text-blue-500 hover:-translate-y-3'
+                    >
                         <ShoppingCart size={20} />
                     </button>
                     <button
                         type='button'
-                        onClick={() => router.push(`/product/${data.recordId}`)} // Navigate programmatically
+                        onClick={() => router.push(`/product/${data.recordId}`)} 
                         className='p-3 rounded-full bg-white text-gray-700 cursor-pointer hover:text-blue-500 hover:-translate-y-3'
                     >
                         <ChevronRight size={20} />

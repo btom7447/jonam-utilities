@@ -22,6 +22,14 @@ const NewProductsSection = () => {
         loadProducts();
     }, []);
     
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setLoading(false);
+        }, 10000); // 10 seconds timeout
+
+        return () => clearTimeout(timeout);
+    }, []);
+
     if (loading) {
         return (
             <div className="flex justify-center items-center w-full py-20">
@@ -43,7 +51,7 @@ const NewProductsSection = () => {
             ) : (
                 <>
                     <div className="w-full grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-20 justify-center mt-10">
-                        {products.slice(0, 4).map((product, idx) => (
+                        {products.slice(0, 8).map((product, idx) => (
                             <div
                                 key={product.id}
                                 data-aos="fade-up"

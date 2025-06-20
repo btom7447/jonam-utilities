@@ -5,6 +5,7 @@ import Image from "next/image";
 import { XIcon } from "lucide-react";
 
 const CartModalItem = ({ item, removeFromCart }) => {
+    console.log("cart item", item)
     // Calculate discount percentage if discount and price exist
     let discountPercent = null;
     let finalPrice = item.price;
@@ -25,7 +26,11 @@ const CartModalItem = ({ item, removeFromCart }) => {
                 unoptimized
             />
             <div className="flex-grow">
-                <h5 className="text-2xl font-semibold text-white">{item.name} - {item.product_colors[0]}</h5>
+                <h5 className="text-2xl font-semibold text-white capitalize">
+                    {item.name}
+                    {item.selectedColor && ` - ${item.selectedColor}`}
+                    {item.selectedVariant && ` - ${item.selectedVariant}`}
+                </h5>
                 <div className="flex flex-row items-center gap-1">
                     <h6 className="text-xl font-light text-gray-300">{item.quantity} </h6>
                     <XIcon size={12} className="text-xl font-light text-gray-300" /> 
@@ -34,7 +39,7 @@ const CartModalItem = ({ item, removeFromCart }) => {
             </div>
             <button 
                 type="button" 
-                onClick={() => removeFromCart(item.id)}
+                onClick={() => removeFromCart(item.id, item.selectedColor, item.selectedVariant)}
                 aria-label="Remove item from cart"
                 className="cursor-pointer text-gray-400 hover:text-white"
             >
