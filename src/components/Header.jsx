@@ -24,7 +24,7 @@ const Header = () => {
     }, []);
 
     return (
-        <div className={`bg-white w-full flex items-center justify-between py-5 px-5 md:px-20 fixed top-0 left-0 z-50 transition-all duration-300 ${isScrolled ? "shadow-md" : "bg-transparent"}`}>
+        <div className={`bg-white w-full flex items-center justify-between py-3 px-5 md:px-20 fixed top-0 left-0 z-50 transition-all duration-300 ${isScrolled ? "shadow-md" : "bg-transparent"}`}>
             <Link href="/" className='flex items-center' >
                 <Image src={logo} alt="Jonam Utilties logo" width={80} height={30} className='w-30 h-auto xl:w-40 xl:h-auto object-cover' unoptimized />
             </Link>

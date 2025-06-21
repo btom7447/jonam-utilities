@@ -78,7 +78,7 @@ const BrandsSection = () => {
                     ))}
                 </Splide>
             )}
-            <h4 className="text-3xl lg:text-5xl font-semibold">We Work with the best brands</h4>
+            <h4 className="text-3xl lg:text-5xl font-semibold text-center lg:text-left">We Work with the best brands</h4>
         </section>
     );
 };
