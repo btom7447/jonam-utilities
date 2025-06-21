@@ -13,7 +13,7 @@ const ContactSection = () => {
         >
             <div
                 className='
-                    w-full xl:w-1/2 bg-white mx-10 my-20 g:m-0 p-10 lg:p-20 flex flex-col 
+                    w-full xl:w-1/2 bg-white mx-5 my-20 g:m-0 p-10 lg:p-20 flex flex-col 
                     xl:absolute xl:left-20 xl:top-1/2 xl:-translate-y-1/2
                 '
             >

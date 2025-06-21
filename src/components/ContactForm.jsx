@@ -98,7 +98,7 @@ const ContactForm = () => {
                                     setActiveInput(null);
                                 }}
                                     className={`p-3 cursor-pointer text-xl text-white capitalize hover:bg-gray-700  ${
-                                    selectedState === option ? "bg-blue-100" : ""
+                                    selectedState === option ? "bg-blue-500" : ""
                                 }`}
                             >
                                 {option}
