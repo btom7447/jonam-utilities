@@ -56,14 +56,12 @@ const HeaderIcons = () => {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: -100 }}
+                        initial={{ opacity: 0, y: -180 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -250 }}
                         transition={{ duration: 0.5 }}
                         className="
-                            fixed
-                            sm:top-1/2 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:-translate-y-1/2
-                            sm:w-[90vw] sm:h-[90vh] sm:max-w-md sm:max-h-[600px]
+                            fixed top-0 left-0 w-screen h-screen
                             bg-gray-900 z-50 shadow-xl p-10
 
                             lg:absolute lg:top-21 lg:right-0 lg:w-120 lg:h-fit lg:p-10
