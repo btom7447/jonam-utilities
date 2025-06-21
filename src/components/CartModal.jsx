@@ -25,7 +25,7 @@ const CartModal = () => {
             </div>
 
             {/* Subtotal */}
-            <div className="h-fit lg:h-fit ">
+            <div className="h-[20dvh] lg:h-fit ">
                 <div className="border-t-1 border-gray-700 flex justify-between font-semibold text-lg my-5 pt-5">
                     <h6 className="text-2xl font-semibold text-white">Subtotal: ₦{getTotalPrice().toLocaleString()}</h6>
                 </div>
