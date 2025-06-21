@@ -54,8 +54,8 @@ const Footer = () => {
                         </div>
                     </div>
                 </div>
-                <hr className='w-full border-t-1 border-gray-700 ' />
-                <div className='py-10 flex flex-wrap justify-between items-center'>
+                <hr className='hidden lg:block w-full border-t-1 border-gray-700 ' />
+                <div className='py-15 flex flex-wrap gap-10 justify-center lg:justify-between items-center'>
                     <p className='text-white text-md'>Jonam Utilities &copy; {currentYear}. All Rights Reserverd.</p>
                     <p className='text-white text-md'>By Kmini Technologies</p>
                 </div>

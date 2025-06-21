@@ -16,7 +16,7 @@ const CartModal = () => {
             <h2 className="text-2xl font-bold mb-5">Shopping Cart</h2>
 
             {/* Cart Items */}
-            <div className="cartItems flex flex-col gap-5 h-[65dvh] lg:max-h-70 overflow-y-scroll my-5">
+            <div className="cartItems flex flex-col gap-5 h-[60dvh] lg:max-h-70 overflow-y-scroll my-5">
                 {cartItems.length === 0 && <p className="text-center text-2xl font-light text-gray-500">Your cart is empty.</p>}
 
                 {cartItems.map((item) => (
