@@ -3,7 +3,7 @@ import React from 'react'
 
 const NoProduct = () => {
   return (
-    <div className='mt-50 mb-30 flex flex-col items-center justify-center'>
+    <div className='mt-30 mb-30 flex flex-col items-center justify-center'>
       <h5 className='mb-5 text-center text-3xl font-semibold text-black'>
         No Product Found
       </h5>

@@ -7,6 +7,7 @@ Airtable.configure({
 const base = Airtable.base(process.env.AIRTABLE_BASE_ID); // configured once
 const categoriesTable = process.env.AIRTABLE_CATEGORIES_NAME || "Categories";
 const productsTable = process.env.AIRTABLE_PRODUCTS_NAME || "Products";
+const brandsTable = process.env.AIRTABLE_BRANDS_NAME || "Brands";
 
 console.log("AIRTABLE_API_KEY loaded?", !!process.env.AIRTABLE_API_KEY);
 
@@ -14,6 +15,15 @@ console.log("AIRTABLE_API_KEY loaded?", !!process.env.AIRTABLE_API_KEY);
 // ✅ Fetch categories
 export async function fetchCategories() {
     const records = await base(categoriesTable).select().all();
+    return records.map(record => ({
+        id: record.id,
+        ...record.fields,
+    }));
+}
+
+// ✅ Fetch brands
+export async function fetchBrands() {
+    const records = await base(brandsTable).select().all();
     return records.map(record => ({
         id: record.id,
         ...record.fields,

@@ -34,15 +34,15 @@ const ProductDetailCaption = ({ product }) => {
                 <div className='flex flex-row items-center gap-5'>
                     {product.discount > 0 && product.discount < 1 ? (
                         <>
-                            <h4 className='my-5 text-3xl font-medium text-gray-300 line-through'>
+                            <h4 className='my-5 text-3xl font-light text-gray-300 line-through'>
                                 ₦ {product.price.toLocaleString()}
                             </h4>
-                            <h4 className='my-5 text-3xl font-medium text-blue-500'>
+                            <h4 className='my-5 text-3xl font-semibold text-blue-500'>
                                 ₦ {finalPrice.toLocaleString()}
                             </h4>
                         </>
                     ) : (
-                        <h4 className='my-5 text-3xl font-medium text-blue-500'>
+                        <h4 className='my-5 text-3xl font-light text-blue-500'>
                             ₦ {product.price.toLocaleString()}
                         </h4>
                     )}

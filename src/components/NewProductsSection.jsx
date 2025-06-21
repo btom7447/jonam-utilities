@@ -5,6 +5,7 @@ import ProductCard from './ProductCard';
 import NoCategories from './NoCategories';
 import { DotLoader } from "react-spinners";
 import Link from 'next/link';
+import NoProduct from './NoProduct';
 
 const NewProductsSection = () => {
     const [products, setProducts] = useState([]);
@@ -47,7 +48,7 @@ const NewProductsSection = () => {
                 New Products
             </h2>
             {products.length === 0 ? (
-                <NoCategories />
+                <NoProduct />
             ) : (
                 <>
                     <div className="w-full grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-20 justify-center mt-10">

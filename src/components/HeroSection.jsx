@@ -16,7 +16,14 @@ const HeroSection = () => {
     return (
         <section className='h-fit md:h-[100dvh] mx-0 md:mx-20 grid grid-cols-1 md:grid-cols-2'>
             {/* Left Side Content */}
-            <div className='sm:h-fit md:h-full flex flex-col justify-center items-start bg-blue-500 p-10 md:p-20'>
+            <div 
+                className='sm:h-fit md:h-full flex flex-col justify-center items-start p-10 md:p-20'
+                style={{
+                    backgroundImage: 'url("/overlay-bg.jpg")',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                }}
+            >
                 <h1
                     className='text-4xl md:text-6xl font-bold text-white mb-3 md:mb-10 text-left max-w-full md:max-w-130'
                     data-aos="fade-up"

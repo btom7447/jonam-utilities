@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from 'lucide-react';
 import React, { useState } from 'react';
 
 const CustomSelect = ({ label = "Select Option", options = [], value, onChange }) => {
@@ -17,9 +18,10 @@ const CustomSelect = ({ label = "Select Option", options = [], value, onChange }
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-5 border border-gray-300 bg-transparent text-xl text-left text-black capitalize cursor-pointer"
+        className="w-full flex gap-10 justify-baseline items-center p-5 border border-gray-500 bg-transparent text-xl text-left text-black capitalize cursor-pointer"
       >
         {value || `Choose ${label.toLowerCase()}`}
+        <ChevronDown size={15} />
       </button>
 
       {isOpen && (

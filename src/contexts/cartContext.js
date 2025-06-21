@@ -45,7 +45,7 @@ export const CartProvider = ({ children }) => {
         });
 
         if (!found) {
-            toast.success(`${item.name} added to cart`);
+            toast.info(`${item.name} added to cart`);
         } else {
             toast.info(`${item.name} quantity updated`);
         }

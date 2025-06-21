@@ -1,144 +1,145 @@
 "use client";
 
 import Link from "next/link";
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const HamburgerMenu = ({ isOpen, setIsOpen }) => {
   const pathname = usePathname();
-  const [isSolutionsOpen, setIsSolutionsOpen] = useState(false);
 
-  const handleToggleSolutions = () => {
-    setIsSolutionsOpen(!isSolutionsOpen);
-  };
+  // Load saved accordion state from localStorage on mount
+  const [isSolutionsOpen, setIsSolutionsOpen] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("solutionsAccordionOpen") === "true";
+    }
+    return false;
+  });
+
+  // Save accordion state to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("solutionsAccordionOpen", isSolutionsOpen);
+    }
+  }, [isSolutionsOpen]);
+
+  const handleToggleSolutions = () => setIsSolutionsOpen((open) => !open);
 
   return (
-    <div
-      className={`fixed top-0 right-0 h-full min-w-xs max-w-lg  bg-white shadow-lg transform z-51 ${
-        isOpen ? "translate-x-0" : "translate-x-full"
-      } transition-transform duration-300 md:hidden`}
-    >
-      {/* Close Button */}
-      <button
-        className="absolute top-10 right-5"
-        onClick={() => setIsOpen(false)}
+    <>
+      {/* Overlay & menu container */}
+      <div
+        className={`fixed top-0 right-0 h-[100dvh] w-[100dvw] bg-gray-900 shadow-xl z-50 px-8 py-10 md:hidden
+          transform transition-transform duration-500 ease-in-out overflow-y-auto
+          ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-[100%] pointer-events-none"}`}
       >
-        <X size={28} />
-      </button>
-
-      {/* Mobile Navigation Links */}
-      <nav className="flex flex-col items-center mt-30 space-y-10">
-        <Link
-          href="/"
-          className={`relative text-xl text-black hover:text-brown transition-colors duration-300 ${
-            pathname === "/" ? "text-brown" : "text-black"
-          }`}
+        {/* Close Button */}
+        <button
           onClick={() => setIsOpen(false)}
+          className="absolute top-5 right-5 text-gray-500 hover:text-white"
+          aria-label="Close menu"
         >
-          Home
-          <span
-            className={`absolute left-0 -bottom-2 h-0.5 transition-all duration-200 ${
-              pathname === "/" ? "w-full bg-brown" : "w-0 bg-black/0"
-            }`}
-          ></span>
-        </Link>
-        <Link
-          href="/about"
-          className={`relative text-xl text-black hover:text-brown transition-colors duration-300 ${
-            pathname === "/about" ? "text-brown" : "text-black"
-          }`}
-          onClick={() => setIsOpen(false)}
-        >
-          About
-          <span
-            className={`absolute left-0 -bottom-2 h-0.5 transition-all duration-200 ${
-              pathname === "/about" ? "w-full bg-brown" : "w-0 bg-black/0"
-            }`}
-          ></span>
-        </Link>
-        {/* Accordion for Solutions */}
-    <div className="relative w-full px-4 text-xl">
-      <button
-        className="flex items-center justify-between w-full text-black hover:text-brown transition-colors duration-300"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation(); // ✅ Ensure it's isolated
-          handleToggleSolutions();
-        }}
-        type="button"
-      >
-        <span>Solutions</span>
-        <span
-          className={`transform transition-transform duration-300 ${
-            isSolutionsOpen ? "rotate-180" : "rotate-0"
-          }`}
-        >
-          ▼
-        </span>
-      </button>
+          <X size={28} />
+        </button>
 
-      {isSolutionsOpen && (
-        <div className="flex flex-col space-y-5 mt-3 ml-4">
-          {/* ✅ Only these links close the menu */}
+        {/* Navigation Links */}
+        <nav className="flex flex-col items-center gap-10 mt-30 text-3xl font-light">
           <Link
-            href="/our-services"
+            href="/"
+            className={`relative ${pathname === "/" ? "text-blue-500" : "text-white"}`}
             onClick={() => setIsOpen(false)}
-            className="text-xl text-black hover:text-brown transition-colors duration-300"
           >
-            Our Services
+            Home
+          </Link>
+
+          <Link
+            href="/about"
+            className={`relative ${pathname === "/about" ? "text-blue-500" : "text-white"}`}
+            onClick={() => setIsOpen(false)}
+          >
+            About
+          </Link>
+
+          {/* Accordion for Solutions */}
+          <div className="w-full">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleToggleSolutions();
+              }}
+              className="flex items-center gap-3 justify-center w-full text-white"
+              aria-expanded={isSolutionsOpen}
+              aria-controls="solutions-accordion"
+            >
+              <span>Solutions</span>
+              <span
+                className={`transform transition-transform duration-300 ${
+                  isSolutionsOpen ? "rotate-180" : "rotate-0"
+                }`}
+              >
+                <ChevronDown size={20} />
+              </span>
+            </button>
+            <div
+              id="solutions-accordion"
+              className={`overflow-hidden flex flex-col items-center gap-10
+                transition-[max-height,opacity,visibility] duration-500 ease-in-out
+                ${
+                  isSolutionsOpen
+                    ? "max-h-[500px] opacity-100 visible mt-10"
+                    : "max-h-0 opacity-0 invisible mt-0"
+                }`}
+              style={{ willChange: "max-height, opacity, visibility" }}
+            >
+              <Link
+                href="/our-services"
+                onClick={() => setIsOpen(false)}
+                className={`relative ${
+                  pathname === "/our-services" ? "text-blue-500" : "text-gray-400"
+                }`}
+              >
+                Our Services
+              </Link>
+              <Link
+                href="/handyman"
+                onClick={() => setIsOpen(false)}
+                className={`relative ${
+                  pathname === "/handyman" ? "text-blue-500" : "text-gray-400"
+                }`}
+              >
+                Handyman
+              </Link>
+              <Link
+                href="/request-quote"
+                onClick={() => setIsOpen(false)}
+                className={`relative ${
+                  pathname === "/request-quote" ? "text-blue-500" : "text-gray-400"
+                }`}
+              >
+                Request Quote
+              </Link>
+            </div>
+          </div>
+
+          <Link
+            href="/shop"
+            className={`relative ${pathname === "/shop" ? "text-blue-500" : "text-white"}`}
+            onClick={() => setIsOpen(false)}
+          >
+            Shop
           </Link>
           <Link
-            href="/handyman"
+            href="/contact"
+            className={`relative ${pathname === "/contact" ? "text-blue-500" : "text-white"}`}
             onClick={() => setIsOpen(false)}
-            className="text-xl text-black hover:text-brown transition-colors duration-300"
           >
-            Handyman
+            Contact
           </Link>
-          <Link
-            href="/request-quote"
-            onClick={() => setIsOpen(false)}
-            className="text-xl text-black hover:text-brown transition-colors duration-300"
-          >
-            Request Quote
-          </Link>
-        </div>
-      )}
-    </div>
-
-
-        <Link
-          href="/shop"
-          className={`relative text-xl text-black hover:text-brown transition-colors duration-300 ${
-            pathname === "/shop" ? "text-brown" : "text-black"
-          }`}
-          onClick={() => setIsOpen(false)}
-        >
-          Shop
-          <span
-            className={`absolute left-0 -bottom-2 h-0.5 transition-all duration-200 ${
-              pathname === "/shop" ? "w-full bg-brown" : "w-0 bg-black/0"
-            }`}
-          ></span>
-        </Link>
-        <Link
-          href="/contact"
-          className={`relative text-xl text-black hover:text-brown transition-colors duration-300 ${
-            pathname === "/contact" ? "text-brown" : "text-black"
-          }`}
-          onClick={() => setIsOpen(false)}
-        >
-          Contact
-          <span
-            className={`absolute left-0 -bottom-2 h-0.5 transition-all duration-200 ${
-              pathname === "/contact" ? "w-full bg-brown" : "w-0 bg-black/0"
-            }`}
-          ></span>
-        </Link>
-
-        
-      </nav>
-    </div>
+        </nav>
+      </div>
+    </>
   );
 };
 

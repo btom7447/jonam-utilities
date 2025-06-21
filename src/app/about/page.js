@@ -1,10 +1,17 @@
+import BrandsSection from '@/components/BrandsSection';
+import MetricsSection from '@/components/MetricsSection';
+import SupportCareSection from '@/components/SupportCareSection';
+import VideoSection from '@/components/VideoSection';
 import React from 'react'
 
 const About = () => {
   return (
-    <div>
-      <h1>This about page</h1>
-    </div>
+    <>
+      <SupportCareSection />
+      <VideoSection />
+      <MetricsSection />
+      <BrandsSection />
+    </>
   )
 }
 

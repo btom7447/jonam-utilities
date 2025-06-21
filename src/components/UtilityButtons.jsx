@@ -39,7 +39,7 @@ const UtilityButtons = ({ product, selectedColor, selectedVariant }) => {
         <div className="mt-10 flex flex-wrap items-center gap-5">
             {/* Quantity Selector */}
             <div className='w-2/3 md:w-30'>
-                <div className="max-w-30 flex items-center border-1 border-gray-300 px-5 py-4">
+                <div className="max-w-30 flex items-center border-1 border-gray-500 px-5 py-4">
                     <input
                         type="text"
                         min={1}
@@ -75,7 +75,7 @@ const UtilityButtons = ({ product, selectedColor, selectedVariant }) => {
             <button
                 type="button"
                 onClick={toggleSave}
-                className=" p-5 rounded-full text-gray-700 cursor-pointer hover:text-blue-500 border-1 border-gray-300"
+                className=" p-5 rounded-full text-gray-700 cursor-pointer hover:text-blue-500 border-1 border-gray-500"
             >
                 <Heart
                     size={20}

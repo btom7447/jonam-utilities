@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { HeartIcon, Search, ShoppingBag, XIcon } from 'lucide-react';
+import { HeartIcon, Search, SearchIcon, ShoppingBag, XIcon } from 'lucide-react';
 import { useCart } from '@/contexts/cartContext';
 import { useWishlist } from '@/contexts/wishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import CartModal from './CartModal';
 import WishlistModal from './WishlistModal';
+import SearchModal from './SearchModal';
 
 const HeaderIcons = () => {
     const { getCartCount } = useCart();
@@ -55,11 +56,11 @@ const HeaderIcons = () => {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: -30 }}
+                        initial={{ opacity: 0, y: -100 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                        className='absolute top-18 lg:top-21 -right-42 lg:right-0 min-w-md  p-10 bg-gray-900 z-50 shadow-xl'
+                        exit={{ opacity: 0, y: -250 }}
+                        transition={{ duration: 0.50 }}
+                        className='absolute -top-10 lg:top-21 -right-41 lg:right-0 w-[100dvw] lg:w-120 h-[100dvh] lg:h-fit  p-10 bg-gray-900 z-50 shadow-xl'
                     >
                         <button
                             onClick={closeModal}
@@ -69,12 +70,16 @@ const HeaderIcons = () => {
                         </button>
                         {activeModal === 'cart' && <CartModal />}
                         {activeModal === 'wishlist' && <WishlistModal />}
+                        {activeModal === 'search' && <SearchModal />}
                     </motion.div>
                 )}
             </AnimatePresence>
 
             {/* Search Icon */}
-            <Search size={28} strokeWidth={1} className='text-black cursor-pointer' />
+            <div className='relative' onClick={() => toggleModal('search')}>
+                <SearchIcon size={28} strokeWidth={1} className='text-black cursor-pointer' />
+            </div>
+            {/* <Search size={28} strokeWidth={1} className='text-black cursor-pointer' /> */}
         </div>
     );
 };

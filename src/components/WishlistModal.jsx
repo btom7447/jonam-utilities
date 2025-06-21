@@ -24,7 +24,7 @@ const WishlistModal = () => {
         <div className="flex flex-col w-full rounded shadow-lg text-white">
             <h2 className="text-2xl font-bold mb-5">Wishlist</h2>
 
-            <div className="cartItems flex flex-col gap-5 max-h-60 lg:max-h-70 overflow-y-scroll my-5">
+            <div className="cartItems flex flex-col gap-5 h-[75dvh] lg:max-h-70 overflow-y-scroll my-5">
                 {isWishlistEmpty && <p className="my-5 text-center text-2xl font-light text-gray-500">Your wishlist is empty.</p>}
 
                 {savedItems.map((item) => (
@@ -37,21 +37,23 @@ const WishlistModal = () => {
                 ))}
             </div>
 
-            <div className="flex gap-5">
-                <button
-                    onClick={clearWishlist}
-                    className="flex-grow border-1 text-white text-xl border-gray-300 hover:bg-white hover:text-black p-3 cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
-                    disabled={isWishlistEmpty}
-                >
-                    Clear
-                </button>
-                <button
-                    onClick={handleMoveAllToCart}
-                    className="flex-grow border-1 text-white text-xl border-blue-500 bg-blue-500 hover:bg-brown hover:text-white hover:border-brown p-3 cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
-                    disabled={isWishlistEmpty}
-                >
-                    All to Cart
-                </button>
+            <div className="h-fit lg:h-fit ">
+                <div className="flex gap-5">
+                    <button
+                        onClick={clearWishlist}
+                        className="flex-grow border-1 text-white text-xl border-gray-300 hover:bg-white hover:text-black p-3 cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
+                        disabled={isWishlistEmpty}
+                    >
+                        Clear
+                    </button>
+                    <button
+                        onClick={handleMoveAllToCart}
+                        className="flex-grow border-1 text-white text-xl border-blue-500 bg-blue-500 hover:bg-brown hover:text-white hover:border-brown p-3 cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
+                        disabled={isWishlistEmpty}
+                    >
+                        All to Cart
+                    </button>
+                </div>
             </div>
         </div>
     );
