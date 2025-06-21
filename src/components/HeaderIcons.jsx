@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { HeartIcon, Search, SearchIcon, ShoppingBag, XIcon } from 'lucide-react';
+import { HeartIcon, MenuIcon, Search, SearchIcon, ShoppingBag, XIcon } from 'lucide-react';
 import { useCart } from '@/contexts/cartContext';
 import { useWishlist } from '@/contexts/wishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,7 +9,7 @@ import CartModal from './CartModal';
 import WishlistModal from './WishlistModal';
 import SearchModal from './SearchModal';
 
-const HeaderIcons = () => {
+const HeaderIcons = ({ hamburgerIsOpen }) => {
     const { getCartCount } = useCart();
     const { getSavedCount } = useWishlist();
     const [isOpen, setIsOpen] = useState(false);
@@ -84,7 +84,9 @@ const HeaderIcons = () => {
             <div className='relative' onClick={() => toggleModal('search')}>
                 <SearchIcon size={28} strokeWidth={1} className='text-black cursor-pointer' />
             </div>
-            {/* <Search size={28} strokeWidth={1} className='text-black cursor-pointer' /> */}
+            <button className="md:hidden text-black" onClick={() => hamburgerIsOpen(!isOpen)}>
+                <MenuIcon size={28} />
+            </button>
         </div>
     );
 };

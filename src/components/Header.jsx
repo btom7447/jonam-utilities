@@ -8,7 +8,6 @@ import HeaderIcons from './HeaderIcons';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRef } from 'react';
-import { Menu } from 'lucide-react';
 import HamburgerMenu from './HamburgerMenu';
 import Image from 'next/image';
 
@@ -102,11 +101,7 @@ const Header = () => {
                     ></span>
                 </Link>
             </nav>
-            <HeaderIcons />
-
-            <button className="md:hidden text-black" onClick={() => setIsOpen(!isOpen)}>
-                <Menu size={28} />
-            </button>
+                <HeaderIcons hamburgerIsOpen={setIsOpen} />
             <HamburgerMenu isOpen={isOpen} setIsOpen={setIsOpen} />
         </div>
     )
