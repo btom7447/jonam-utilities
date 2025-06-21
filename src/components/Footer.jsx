@@ -46,7 +46,7 @@ const Footer = () => {
                     <div className='col-span-1 xl:col-span-2 flex-col '>
                         <h6 className='text-3xl font-semibold text-white capitalize mb-7'>Newsletter</h6>
                         <div className='flex items-center justify-stretch border-b-1 border-gray-700'>
-                            <div className='w-13 h-10'>
+                            <div className='w-13 h-5'>
                                 <Mail size={25} color='#fff' strokeWidth={2} className='mr-5' />
                             </div>
                             <input type='email' placeholder='Enter Your Email Address' className='px-3 flex-1 h-19 text-xl text-white placeholder-shown:text-white border-0 outline-0' />

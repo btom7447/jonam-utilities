@@ -64,7 +64,7 @@ const HeaderIcons = ({ hamburgerIsOpen }) => {
                             fixed top-0 left-0 w-screen h-screen
                             bg-gray-900 z-50 shadow-xl p-10
 
-                            lg:absolute lg:top-21 lg:right-0 lg:w-120 lg:h-fit lg:p-10
+                            lg:absolute lg:top-21 lg:-left-70 lg:w-120 lg:h-fit lg:p-10
                         "
                     >
                         <button
