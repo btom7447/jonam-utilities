@@ -37,7 +37,7 @@ const WishlistModal = () => {
                 ))}
             </div>
 
-            <div className="h-fit lg:h-fit ">
+            <div className="h-[20dvh] lg:h-fit ">
                 <div className="flex gap-5">
                     <button
                         onClick={clearWishlist}
