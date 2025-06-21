@@ -59,14 +59,21 @@ const HeaderIcons = () => {
                         initial={{ opacity: 0, y: -100 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -250 }}
-                        transition={{ duration: 0.50 }}
-                        className='absolute -top-10 lg:top-21 -right-41 lg:right-0 w-[100dvw] lg:w-120 h-[100dvh] lg:h-fit  p-10 bg-gray-900 z-50 shadow-xl'
+                        transition={{ duration: 0.5 }}
+                        className="
+                            fixed
+                            sm:top-1/2 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:-translate-y-1/2
+                            sm:w-[90vw] sm:h-[90vh] sm:max-w-md sm:max-h-[600px]
+                            bg-gray-900 z-50 shadow-xl p-10
+
+                            lg:absolute lg:top-21 lg:right-0 lg:w-120 lg:h-fit lg:p-10
+                        "
                     >
                         <button
                             onClick={closeModal}
                             className='absolute top-5 right-5 text-gray-500 hover:text-white text-xl cursor-pointer'
                         >
-                            <XIcon size={25} />
+                            <XIcon size={30} />
                         </button>
                         {activeModal === 'cart' && <CartModal />}
                         {activeModal === 'wishlist' && <WishlistModal />}

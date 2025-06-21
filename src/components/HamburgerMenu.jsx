@@ -29,7 +29,7 @@ const HamburgerMenu = ({ isOpen, setIsOpen }) => {
     <>
       {/* Overlay & menu container */}
       <div
-        className={`fixed top-0 right-0 h-[100dvh] w-[100dvw] bg-gray-900 shadow-xl z-50 px-8 py-10 md:hidden
+        className={`cartItem fixed top-0 right-0 h-[100dvh] w-[100dvw] bg-gray-900 shadow-xl z-50 px-8 py-10 md:hidden
           transform transition-transform duration-500 ease-in-out overflow-y-auto
           ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-[100%] pointer-events-none"}`}
       >
@@ -39,11 +39,11 @@ const HamburgerMenu = ({ isOpen, setIsOpen }) => {
           className="absolute top-5 right-5 text-gray-500 hover:text-white"
           aria-label="Close menu"
         >
-          <X size={28} />
+          <X size={30} />
         </button>
 
         {/* Navigation Links */}
-        <nav className="flex flex-col items-center gap-10 mt-30 text-3xl font-light">
+        <nav className="flex flex-col items-center gap-10 mt-30 text-xl font-light">
           <Link
             href="/"
             className={`relative ${pathname === "/" ? "text-blue-500" : "text-white"}`}
