@@ -31,7 +31,7 @@ const HeaderIcons = () => {
     };
 
     return (
-        <div className='flex items-center space-x-10 relative z-50'>
+        <div className='flex items-center space-x-5 lg:space-x-10 relative z-50'>
             {/* Cart Icon */}
             <div className='relative' onClick={() => toggleModal('cart')}>
                 <ShoppingBag size={28} strokeWidth={1} className='text-black cursor-pointer' />
