@@ -18,7 +18,7 @@ const BrandsSection = () => {
                 const res = await fetch("/api/brands");
                 const data = await res.json();
                 if (!Array.isArray(data)) {
-                    console.error("Categories not array:", data);
+                    console.error("Brands not array:", data);
                     setBrands([]);
                 } else {
                     setBrands(data);
@@ -36,7 +36,7 @@ const BrandsSection = () => {
     useEffect(() => {
         const timeout = setTimeout(() => {
             setLoading(false);
-        }, 10000); // 10 seconds timeout
+        }, 5000); // 10 seconds timeout
 
         return () => clearTimeout(timeout);
     }, []);

@@ -17,7 +17,7 @@ const NewProductsSection = () => {
             const res = await fetch("/api/products");
             const data = await res.json();
             if (!Array.isArray(data)) {
-                console.error("Categories not array:", data);
+                console.error("Products not array:", data);
                 setProducts([]);
             } else {
                 setProducts(data);
@@ -31,7 +31,7 @@ const NewProductsSection = () => {
     useEffect(() => {
         const timeout = setTimeout(() => {
             setLoading(false);
-        }, 10000); // 10 seconds timeout
+        }, 5000); // 10 seconds timeout
 
         return () => clearTimeout(timeout);
     }, []);

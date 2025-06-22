@@ -35,7 +35,7 @@ const CategorySection = () => {
     useEffect(() => {
         const timeout = setTimeout(() => {
             setLoading(false);
-        }, 10000); // 10 seconds timeout
+        }, 5000); // 10 seconds timeout
 
         return () => clearTimeout(timeout);
     }, []);
