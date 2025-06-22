@@ -6,12 +6,14 @@ import { useWishlist } from '@/contexts/wishlistContext';
 import { ChevronRight, HeartIcon, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const ProductCard = ({ data }) => {
   const router = useRouter();  
     const { addToCart } = useCart();
     const { saveProduct, isSaved } = useWishlist();
+        const [timestamp, setTimestamp] = useState("");
+
 
     let discountPercent = null;
     let finalPrice = data.price;
@@ -20,6 +22,10 @@ const ProductCard = ({ data }) => {
         discountPercent = Math.round(data.discount * 100); // e.g. 0.03 -> 3%
         finalPrice = Math.round(data.price * (1 - data.discount));
     }
+
+    useEffect(() => {
+        setTimestamp(`?t=${Date.now()}`);
+    }, []);
 
     return (
         <div className='flex flex-col'>
@@ -31,7 +37,7 @@ const ProductCard = ({ data }) => {
                 )}
                 {data.images?.[0]?.url && (
                     <Image
-                        src={data.images[0].url}
+                        src={`${data.images[0].url}${timestamp}`}
                         alt={`${data.caption ?? data.name} thumbnail`}
                         width={50}
                         height={70}

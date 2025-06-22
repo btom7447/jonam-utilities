@@ -1,3 +1,5 @@
+"use client";
+
 import Image from 'next/image';
 import React, { useState } from 'react';
 
@@ -5,6 +7,11 @@ const ProductGallery = ({ product }) => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [zoomOrigin, setZoomOrigin] = useState('center');
     const [isZoomed, setIsZoomed] = useState(false);
+    const [timestamp, setTimestamp] = useState("");
+
+    useEffect(() => {
+        setTimestamp(`?t=${Date.now()}`);
+    }, []);
 
     const handleThumbnailClick = (index) => setActiveIndex(index);
     const handleMouseMove = (e) => {
@@ -41,7 +48,7 @@ const ProductGallery = ({ product }) => {
                         `}
                     >
                     <Image
-                        src={img.url}
+                        src={`${img.url}${timestamp}`}
                         alt={`${product.name} thumbnail ${i + 1}`}
                         width={160}
                         height={160}
@@ -66,7 +73,7 @@ const ProductGallery = ({ product }) => {
                 onMouseLeave={() => setIsZoomed(false)}
             >
                 <Image
-                    src={product.images[activeIndex].url}
+                    src={`${product.images[activeIndex].url}${timestamp}`}
                     alt={`${product.name} main`}
                     width={500}
                     height={500}

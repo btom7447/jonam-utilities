@@ -10,6 +10,7 @@ import Image from "next/image";
 const BrandsSection = () => {
     const [brands, setBrands] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [timestamp, setTimestamp] = useState("");
 
     useEffect(() => {
         async function loadData() {
@@ -27,9 +28,21 @@ const BrandsSection = () => {
         loadData();
     }, []);
 
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setLoading(false);
+        }, 10000); // 10 seconds timeout
+
+        return () => clearTimeout(timeout);
+    }, []);
+
+    useEffect(() => {
+        setTimestamp(`?t=${Date.now()}`);
+    }, []);
+
     if (loading) {
         return (
-            <div className="flex justify-center items-center w-full py-20">
+            <div className="flex justify-center items-center w-full py-50">
                 <DotLoader size={80} color="#8b4513" />
             </div>
         );
@@ -41,44 +54,46 @@ const BrandsSection = () => {
             {brands.length === 0 ? (
                 <ErrorFetching />
             ) : (
-                <Splide
-                    options={{
-                        type: "loop",
-                        perPage: 4,
-                        perMove: 1,
-                        gap: "20px",
-                        autoplay: true,
-                        interval: 2000,
-                        arrows: false,
-                        pagination: false,
-                        breakpoints: {
-                            1440: { perPage: 4},
-                            1024: { perPage: 3 },
-                            768: { perPage: 3},
-                            640: { perPage: 2 },
-                        },
-                    }}
-                    className="w-full -mt-20"
-                >
-                    {brands.map((brand) => (
-                        <SplideSlide key={brand.id}>
-                            <div className="flex justify-center">
-                                {brand.image?.[0]?.url && (
-                                    <Image
-                                        src={brand.image[0].url}
-                                        alt={`${brand.name} logo`}
-                                        width={70}
-                                        height={40}
-                                        className=' w-60 h-30 object-contain transition-opacity duration-300 opacity-50 hover:opacity-100'
-                                        unoptimized
-                                    />
-                                )}
-                            </div>
-                        </SplideSlide>
-                    ))}
-                </Splide>
+                <>
+                    <Splide
+                        options={{
+                            type: "loop",
+                            perPage: 4,
+                            perMove: 1,
+                            gap: "20px",
+                            autoplay: true,
+                            interval: 2000,
+                            arrows: false,
+                            pagination: false,
+                            breakpoints: {
+                                1440: { perPage: 4},
+                                1024: { perPage: 3 },
+                                768: { perPage: 3},
+                                640: { perPage: 2 },
+                            },
+                        }}
+                        className="w-full -mt-20"
+                    >
+                        {brands.map((brand) => (
+                            <SplideSlide key={brand.id}>
+                                <div className="flex justify-center">
+                                    {brand.image?.[0]?.url && (
+                                        <Image
+                                            src={`${brand.image[0].url}${timestamp}`}
+                                            alt={`${brand.name} logo`}
+                                            width={70}
+                                            height={40}
+                                            className=' w-60 h-30 object-contain transition-opacity duration-300 opacity-50 hover:opacity-100'
+                                            unoptimized
+                                        />
+                                    )}
+                                </div>
+                            </SplideSlide>
+                        ))}
+                    </Splide>
+                    <h4 className="text-3xl lg:text-5xl font-semibold text-center lg:text-left">We Work with the best brands</h4>
+                </>
             )}
-            <h4 className="text-3xl lg:text-5xl font-semibold text-center lg:text-left">We Work with the best brands</h4>
         </section>
     );
 };

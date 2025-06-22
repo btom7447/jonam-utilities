@@ -27,6 +27,14 @@ const CategorySection = () => {
         loadData();
     }, []);
 
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setLoading(false);
+        }, 10000); // 10 seconds timeout
+
+        return () => clearTimeout(timeout);
+    }, []);
+
     if (loading) {
         return (
             <div className="flex justify-center items-center w-full py-20">

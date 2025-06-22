@@ -2,10 +2,10 @@ import React from 'react'
 
 const ErrorFetching = () => {
     return (
-        <div>
-            <h6>Error Fetching</h6>
+        <div className="mt-20 col-span-full text-center text-gray-500 text-3xl">
+            No brands found.
         </div>
-    )
-}
+    );
+};
 
-export default ErrorFetching
+export default ErrorFetching;

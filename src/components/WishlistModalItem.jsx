@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { XIcon, ShoppingCart } from "lucide-react";
 
 const WishlistModalItem = ({ item, removeSavedProduct, addToCart }) => {
+    const [timestamp, setTimestamp] = useState("");
+
     const finalPrice = item.discount
         ? Math.round(item.price * (1 - item.discount))
         : item.price;
@@ -14,10 +16,14 @@ const WishlistModalItem = ({ item, removeSavedProduct, addToCart }) => {
         removeSavedProduct(item.id);
     };
 
+    useEffect(() => {
+        setTimestamp(`?t=${Date.now()}`);
+    }, []);
+
     return (
         <div className="flex items-center gap-5">
             <Image
-                src={item.images[0]?.url}
+                src={`${item.images[0]?.url}${timestamp}`}
                 alt={item.name}
                 width={70}
                 height={70}

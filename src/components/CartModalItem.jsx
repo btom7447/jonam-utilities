@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { XIcon } from "lucide-react";
 
 const CartModalItem = ({ item, removeFromCart }) => {
-    console.log("cart item", item)
+    const [timestamp, setTimestamp] = useState("");
+
     // Calculate discount percentage if discount and price exist
     let discountPercent = null;
     let finalPrice = item.price;
@@ -15,10 +16,14 @@ const CartModalItem = ({ item, removeFromCart }) => {
         finalPrice = Math.round(item.price * (1 - item.discount));
     }
 
+    useEffect(() => {
+        setTimestamp(`?t=${Date.now()}`);
+    }, []);
+
     return (
         <div className="flex items-center gap-5">
             <Image
-                src={item.images[0]?.url}
+                src={`${item.images[0]?.url}${timestamp}`}
                 alt={item.name}
                 width={70}
                 height={70}
