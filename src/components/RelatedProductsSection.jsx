@@ -5,7 +5,7 @@ import ProductCard from './ProductCard';
 import NoProduct from './NoProduct';
 import { DotLoader } from "react-spinners";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
-import "@splidejs/react-splide/css"; 
+import "@splidejs/react-splide/css";
 
 const MAX_ITEMS = 10;
 
@@ -19,43 +19,44 @@ const RelatedProductsSection = ({ product }) => {
                 const res = await fetch("/api/products");
                 const data = await res.json();
 
+                if (!Array.isArray(data)) {
+                    console.error("Expected array, got:", data);
+                    setFilteredProducts([]); // fallback to empty
+                    return;
+                }
+
+                const products = data;
                 const category = product.category?.[0];
                 const brand = product.brand_name?.[0];
 
                 if (!category && !brand) {
-                    setFilteredProducts(data.slice(0, MAX_ITEMS));
-                    setLoading(false);
+                    setFilteredProducts(products.slice(0, MAX_ITEMS));
                     return;
                 }
 
-                const sameCategory = data.filter(
+                const sameCategory = products.filter(
                     (p) => p.id !== product.id && p.category?.[0] === category
                 );
 
-                const remaining = MAX_ITEMS - sameCategory.length;
-
-                const sameBrand = data.filter(
+                const sameBrand = products.filter(
                     (p) => p.id !== product.id &&
-                    !sameCategory.includes(p) &&
-                    p.brand_name?.[0] === brand
+                        !sameCategory.includes(p) &&
+                        p.brand_name?.[0] === brand
                 );
 
                 const combined = [...sameCategory, ...sameBrand];
-                const stillRemaining = MAX_ITEMS - combined.length;
-
-                const fallback = data.filter(
-                    (p) =>
-                        p.id !== product.id &&
-                        !combined.includes(p)
+                const fallback = products.filter(
+                    (p) => p.id !== product.id && !combined.includes(p)
                 );
 
-                // Shuffle fallback before slicing
                 const shuffledFallback = fallback.sort(() => 0.5 - Math.random());
+                const remaining = MAX_ITEMS - combined.length;
+                const finalList = [...combined, ...shuffledFallback.slice(0, remaining)];
 
-                const finalList = [...combined, ...shuffledFallback.slice(0, stillRemaining)];
                 setFilteredProducts(finalList.slice(0, MAX_ITEMS));
             } catch (err) {
                 console.error("Error loading products:", err);
+                setFilteredProducts([]); // in case of fetch error
             } finally {
                 setLoading(false);
             }
@@ -73,8 +74,8 @@ const RelatedProductsSection = ({ product }) => {
     }
 
     return (
-        <section className='mt-10 mb-20 flex flex-col items-start'>
-            <h2 className='text-5xl font-semibold text-black'>Related products</h2>
+        <section className="mt-10 mb-20 flex flex-col items-start">
+            <h2 className="text-5xl font-semibold text-black">Related products</h2>
 
             {filteredProducts.length === 0 ? (
                 <NoProduct />
