@@ -21,7 +21,8 @@ const RelatedProductsSection = ({ product }) => {
 
                 if (!Array.isArray(data)) {
                     console.error("Expected array, got:", data);
-                    setFilteredProducts([]); // fallback to empty
+                    setFilteredProducts([]);
+                    setLoading(false); // <--- add this
                     return;
                 }
 

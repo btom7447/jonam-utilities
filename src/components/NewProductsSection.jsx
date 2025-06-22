@@ -16,7 +16,12 @@ const NewProductsSection = () => {
         async function loadProducts() {
             const res = await fetch("/api/products");
             const data = await res.json();
-            setProducts(data);
+            if (!Array.isArray(data)) {
+                console.error("Categories not array:", data);
+                setProducts([]);
+            } else {
+                setProducts(data);
+            }
             setLoading(false);
         }
 

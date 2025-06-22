@@ -16,7 +16,12 @@ const CategorySection = () => {
             try {
                 const res = await fetch("/api/categories");
                 const data = await res.json();
-                setCategories(data);
+                if (!Array.isArray(data)) {
+                    console.error("Categories not array:", data);
+                    setCategories([]);
+                } else {
+                    setCategories(data);
+                }
             } catch (err) {
                 console.error("Error fetching categories:", err);
             } finally {

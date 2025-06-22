@@ -17,7 +17,12 @@ const BrandsSection = () => {
             try {
                 const res = await fetch("/api/brands");
                 const data = await res.json();
-                setBrands(data);
+                if (!Array.isArray(data)) {
+                    console.error("Categories not array:", data);
+                    setBrands([]);
+                } else {
+                    setBrands(data);
+                }
             } catch (err) {
                 console.error("Error fetching brands:", err);
             } finally {
