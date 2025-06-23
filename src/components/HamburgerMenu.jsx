@@ -94,6 +94,15 @@ const HamburgerMenu = ({ isOpen, setIsOpen }) => {
               style={{ willChange: "max-height, opacity, visibility" }}
             >
               <Link
+                href="/handyman"
+                onClick={() => setIsOpen(false)}
+                className={`relative ${
+                  pathname === "/handyman" ? "text-blue-500" : "text-gray-400"
+                }`}
+              >
+                Handyman
+              </Link>
+              <Link
                 href="/our-services"
                 onClick={() => setIsOpen(false)}
                 className={`relative ${
@@ -103,13 +112,13 @@ const HamburgerMenu = ({ isOpen, setIsOpen }) => {
                 Our Services
               </Link>
               <Link
-                href="/handyman"
+                href="/projects"
                 onClick={() => setIsOpen(false)}
                 className={`relative ${
-                  pathname === "/handyman" ? "text-blue-500" : "text-gray-400"
+                  pathname === "/projects" ? "text-blue-500" : "text-gray-400"
                 }`}
               >
-                Handyman
+                Projects
               </Link>
               <Link
                 href="/request-quote"

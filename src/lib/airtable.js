@@ -9,9 +9,9 @@ const base = Airtable.base(process.env.AIRTABLE_BASE_ID); // configured once
 const categoriesTable = process.env.AIRTABLE_CATEGORIES_NAME || "Categories";
 const productsTable = process.env.AIRTABLE_PRODUCTS_NAME || "Products";
 const brandsTable = process.env.AIRTABLE_BRANDS_NAME || "Brands";
+const projectsTable = process.env.AIRTABLE_PROJECTS_NAME || "Projects";
 
-console.log("AIRTABLE_API_KEY loaded?", !!process.env.AIRTABLE_API_KEY);
-
+// console.log("AIRTABLE_API_KEY loaded?", !!process.env.AIRTABLE_API_KEY);
 
 // ✅ Fetch categories (with caching)
 export async function fetchCategories() {
@@ -43,7 +43,7 @@ export async function fetchBrands() {
     return brands;
 }
 
-// ✅ Fetch all products
+// ✅ Fetch all products (with caching)
 export async function fetchProducts() {
     const cached = getCachedData("products");
     if (cached) return cached;
@@ -58,7 +58,22 @@ export async function fetchProducts() {
     return products;
 }
 
-// ✅ Fetch product by ID
+// ✅ Fetch all projects (with caching)
+export async function fetchProjects() {
+    const cached = getCachedData("projects");
+    if (cached) return cached;
+
+    const records = await base(projectsTable).select().all();
+    const projects = records.map(record => ({
+        recordId: record.id,
+        ...record.fields,
+    }));
+
+    setCachedData("projects", projects);
+    return projects;
+}
+
+// ✅ Fetch product by ID (with caching)
 export async function fetchProductById(id) {
     if (!id) return null;
 
@@ -76,6 +91,28 @@ export async function fetchProductById(id) {
         return product;
     } catch (error) {
         console.error("Error fetching product details:", error);
+        return null;
+    }
+}
+
+// ✅ Fetch project by ID (with caching)
+export async function fetchProjectById(id) {
+    if (!id) return null;
+
+    const cached = getCachedData(`project_${id}`);
+    if (cached) return cached;
+
+    try {
+        const record = await base(projectsTable).find(id);
+        const project = {
+            recordId: record.id,
+            ...record.fields,
+        };
+
+        setCachedData(`project_${id}`, project);
+        return project;
+    } catch (error) {
+        console.error("Error fetching project details:", error);
         return null;
     }
 }

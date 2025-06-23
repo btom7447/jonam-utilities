@@ -1,11 +1,20 @@
+import BrandsSection from '@/components/BrandsSection'
+import CategorySection from '@/components/CategorySection'
+import MetricsSection from '@/components/MetricsSection'
+import QuotePoster from '@/components/QuotePoster'
+import ServicesPoster from '@/components/ServicesPoster'
 import React from 'react'
 
-const page = () => {
+const ServicesPage = () => {
     return (
-        <div>
-            <h1>This is services page</h1>
-        </div>
+        <>
+            {/* <CategorySection /> */}
+            <ServicesPoster />
+            <QuotePoster />
+            <MetricsSection />
+            <BrandsSection />
+        </>
     )
 }
 
-export default page
+export default ServicesPage
