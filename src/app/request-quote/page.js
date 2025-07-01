@@ -1,11 +1,16 @@
+import BrandsSection from '@/components/BrandsSection';
+import FeedbackSection from '@/components/FeedbackSection';
+import RequestQuoteSection from '@/components/RequestQuoteSection';
 import React from 'react'
 
-const page = () => {
+const RequestQuote = () => {
     return (
-        <div>
-            <h1>This is the request quote page</h1>
-        </div>
+        <>
+            <RequestQuoteSection />
+            <BrandsSection />
+            <FeedbackSection />
+        </>
     )
 }
 
-export default page
+export default RequestQuote;

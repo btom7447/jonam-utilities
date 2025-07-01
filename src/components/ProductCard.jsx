@@ -12,7 +12,7 @@ const ProductCard = ({ data }) => {
   const router = useRouter();  
     const { addToCart } = useCart();
     const { saveProduct, isSaved } = useWishlist();
-        const [timestamp, setTimestamp] = useState("");
+    const [timestamp, setTimestamp] = useState("");
 
 
     let discountPercent = null;

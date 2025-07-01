@@ -61,25 +61,26 @@ const Header = () => {
                                 transition={{ duration: 0.2 }}
                                 className='absolute top-17 left-0 mt-3 w-65 p-7 bg-gray-900 z-50 flex flex-col space-y-7'
                             >
-                                <Link href="/handyman" className="group text-2xl text-gray-300 hover:text-white transition-all duration-300 inline-block relative">
+                                <Link href="/handyman" className={`group text-2xl hover:text-white transition-all duration-300 inline-block relative ${pathname === "/handyman" ? "text-blue-500" : "text-gray-300"}`}>
                                     <span className="inline-block group-hover:translate-x-4 transition-transform duration-200">
                                         Handy Man
                                         <span className="block h-0.5 w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
+                                        
                                     </span>
                                 </Link>
-                                <Link href="/our-services" className="group text-2xl text-gray-300 hover:text-white transition-all duration-300 inline-block relative">
+                                <Link href="/our-services" className={`group text-2xl hover:text-white transition-all duration-300 inline-block relative ${pathname === "/our-services" ? "text-blue-500" : "text-gray-300"}`}>
                                     <span className="inline-block group-hover:translate-x-4 transition-transform duration-200">
                                         Our Services
                                         <span className="block h-0.5 w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
                                     </span>
                                 </Link>
-                                <Link href="/projects" className="group text-2xl text-gray-300 hover:text-white transition-all duration-300 inline-block relative">
+                                <Link href="/projects" className={`group text-2xl hover:text-white transition-all duration-300 inline-block relative ${pathname === "/projects" ? "text-blue-500" : "text-gray-300"}`}>
                                     <span className="inline-block group-hover:translate-x-4 transition-transform duration-200">
                                         Projects
                                         <span className="block h-0.5 w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
                                     </span>
                                 </Link>
-                                <Link href="/request-quote" className="group text-2xl text-gray-300 hover:text-white transition-all duration-300 inline-block relative">
+                                <Link href="/request-quote" className={`group text-2xl hover:text-white transition-all duration-300 inline-block relative ${pathname === "/request-quote" ? "text-blue-500" : "text-gray-300"}`}>
                                     <span className="inline-block group-hover:translate-x-4 transition-transform duration-200">
                                         Request Quote
                                         <span className="block h-0.5 w-0 bg-white transition-all duration-300 group-hover:w-full"></span>

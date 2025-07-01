@@ -1,17 +1,20 @@
 import BrandsSection from '@/components/BrandsSection'
-import CategorySection from '@/components/CategorySection'
+import FeedbackSection from '@/components/FeedbackSection'
 import MetricsSection from '@/components/MetricsSection'
-import QuotePoster from '@/components/QuotePoster'
+import RequestQuoteBanner from '@/components/RequestQuoteBanner'
+import ServicesBanner from '@/components/ServicesBanner'
 import ServicesPoster from '@/components/ServicesPoster'
 import React from 'react'
 
 const ServicesPage = () => {
     return (
         <>
+            <ServicesBanner />
             {/* <CategorySection /> */}
             <ServicesPoster />
-            <QuotePoster />
-            <MetricsSection />
+            <RequestQuoteBanner />
+            {/* <MetricsSection /> */}
+            <FeedbackSection />
             <BrandsSection />
         </>
     )
