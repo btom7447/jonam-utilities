@@ -7,7 +7,7 @@ import CustomSelect from './CustomSelect';
 const ProductDetailCaption = ({ product }) => {
     const [selectedColor, setSelectedColor] = useState(product.product_colors?.[0] || "");
     const [selectedVariant, setSelectedVarient] = useState(product.variants?.[0] || "");
-    console.log("product data", product)
+    // console.log("product data", product)
 
     let discountPercent = null;
     let finalPrice = product.price;

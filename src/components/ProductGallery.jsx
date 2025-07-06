@@ -1,7 +1,7 @@
 "use client";
 
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const ProductGallery = ({ product }) => {
     const [activeIndex, setActiveIndex] = useState(0);
