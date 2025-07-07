@@ -12,7 +12,7 @@ const CustomSelect = ({ label = "Select Option", options = [], value, onChange }
   };
 
   return (
-    <div className="relative min-w-40 max-w-60">
+    <div className="relative min-w-40 max-w-160">
       {label && <h5 className="mb-2 text-xl text-black font-semibold capitalize">{label}</h5>}
 
       <button
@@ -25,7 +25,7 @@ const CustomSelect = ({ label = "Select Option", options = [], value, onChange }
       </button>
 
       {isOpen && (
-        <ul className="absolute z-10 w-full bg-gray-900 border border-gray-900">
+        <ul className="absolute z-30 w-full bg-gray-900 border border-gray-900">
           {options.map((option) => (
             <li
               key={option}

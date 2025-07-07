@@ -9,11 +9,13 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 const ProductCard = ({ data }) => {
-  const router = useRouter();  
+    
+    const router = useRouter();  
     const { addToCart } = useCart();
     const { saveProduct, isSaved } = useWishlist();
     const [timestamp, setTimestamp] = useState("");
 
+    if (!data || typeof data !== 'object') return null;
 
     let discountPercent = null;
     let finalPrice = data.price;
