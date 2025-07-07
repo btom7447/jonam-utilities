@@ -25,15 +25,12 @@ const ShopPage = () => {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [displayedProducts, setDisplayedProducts] = useState([]);
 
-    // Filter by search params, category, brand and search
+    // Filter by search params, category 
     useEffect(() => {
-        const categoryFromUrl = searchParams.get('category') || "";
-        const brandFromUrl = searchParams.get('brand') || "";
-        const searchFromUrl = searchParams.get('search') || "";
-
-        setSelectedCategory(categoryFromUrl);
-        setSelectedBrand(brandFromUrl);
-        setSearch(searchFromUrl);
+        const categoryFromUrl = searchParams.get('category');
+        if (categoryFromUrl) {
+            setSelectedCategory(categoryFromUrl);
+        }
     }, [searchParams]);
 
     // Fetch products on mount
