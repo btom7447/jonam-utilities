@@ -2,11 +2,13 @@
 
 import { ChevronRight } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 const FALLBACK_IMAGE = "/fallback.jpg";
 
 const CategoryCard = ({ data }) => {
+    const  router = useRouter();
     const [timestamp, setTimestamp] = useState("");
 
     useEffect(() => {
@@ -18,8 +20,12 @@ const CategoryCard = ({ data }) => {
     const originalUrl = data?.images?.[0]?.url;
     const imageUrl = originalUrl ? `${originalUrl}${timestamp}` : FALLBACK_IMAGE;
 
+    const handleNavigate = () => {
+        router.push(`/shop?category=${encodeURIComponent(data.caption)}`);
+    };
+
     return (
-        <div className='flex flex-col justify-center items-center group'>
+        <div onClick={handleNavigate} className='flex flex-col justify-center items-center group'>
             {imageUrl && (
                 <Image 
                     src={imageUrl}

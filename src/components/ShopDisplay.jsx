@@ -81,11 +81,11 @@ const ShopDisplay = ({ products = [], isOpen, setIsOpen }) => {
 
             {/* Pagination */}
             {totalPages > 1 && (
-                <div className="flex justify-center mt-10 gap-2 items-center">
+                <div className="flex justify-center mt-20 gap-2 items-center">
                     {currentPage > 1 && (
                         <button
                             onClick={() => goToPage(currentPage - 1)}
-                            className="p-3 w-15 h-15 flex justify-center items-center bg-white text-gray-900 border border-gray-900 hover:bg-gray-900 hover:text-white hover:border-gray-900 cursor-pointer"
+                            className="p-3 w-15 h-15 flex justify-center items-center bg-gray-900 text-white border border-brown hover:bg-brown hover:text-white hover:border-brown cursor-pointer"
                         >
                             <ChevronLeft size={20} />
                         </button>
@@ -97,7 +97,7 @@ const ShopDisplay = ({ products = [], isOpen, setIsOpen }) => {
                             onClick={() => goToPage(index + 1)}
                             className={`p-3 w-15 h-15 flex justify-center items-center border text-xl text-center font-semibold cursor-pointer ${
                                 currentPage === index + 1
-                                ? "bg-brown text-white border-brown hover:opacity-80"
+                                ? "bg-blue-500 text-white border-blue-500 hover:opacity-80"
                                 : "bg-white text-blue-500 border-blue-500 hover:bg-blue-50"
                             }`}
                         >
@@ -108,7 +108,7 @@ const ShopDisplay = ({ products = [], isOpen, setIsOpen }) => {
                     {currentPage < totalPages && (
                         <button
                             onClick={() => goToPage(currentPage + 1)}
-                            className="p-3 w-15 h-15 flex justify-center items-center bg-gray-500 text-white border border-gray-700 hover:bg-gray-900 hover:text-white hover:border-gray-900 cursor-pointer"
+                            className="p-3 w-15 h-15 flex justify-center items-center bg-gray-900 text-white border border-gray-900 hover:bg-brown hover:text-white hover:border-brown cursor-pointer"
                         >
                             <ChevronRight size={20} />
                         </button>

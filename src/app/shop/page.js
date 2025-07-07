@@ -6,8 +6,10 @@ import { DotLoader } from "react-spinners";
 import ShopDisplay from "@/components/ShopDisplay";
 import ShopFilter from "@/components/ShopFilter";
 import ShopFilterMobile from "@/components/ShopFilterMobile";
+import { useSearchParams } from "next/navigation";
 
 const ShopPage = () => {
+    const searchParams = useSearchParams();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +24,17 @@ const ShopPage = () => {
 
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [displayedProducts, setDisplayedProducts] = useState([]);
+
+    // Filter by search params, category, brand and search
+    useEffect(() => {
+        const categoryFromUrl = searchParams.get('category') || "";
+        const brandFromUrl = searchParams.get('brand') || "";
+        const searchFromUrl = searchParams.get('search') || "";
+
+        setSelectedCategory(categoryFromUrl);
+        setSelectedBrand(brandFromUrl);
+        setSearch(searchFromUrl);
+    }, [searchParams]);
 
     // Fetch products on mount
     useEffect(() => {
@@ -121,6 +134,7 @@ const ShopPage = () => {
         setSelectedBrand((prev) => (prev === brand ? "" : brand));
     };
 
+    // console.log("Products", products)
     if (loading) {
         return (
             <div className="flex justify-center items-center w-full py-20">
