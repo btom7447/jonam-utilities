@@ -31,15 +31,15 @@ const ShopDisplay = ({ products = [], isOpen, setIsOpen }) => {
     const goToPage = (page) => setCurrentPage(page);
 
     // Map sortOrder to display label
-    const sortLabel = sortOrder === "highest" ? "Highest to Lowest" : "Lowest to Highest";
+    const sortLabel = sortOrder === "highest" ? "High to Low" : "Low to High";
 
     // Options for CustomSelect
-    const sortOptions = ["Highest to Lowest", "Lowest to Highest"];
+    const sortOptions = ["High to Low", "Low to High"];
 
     // Map display label back to sortOrder key
     const handleSortChange = (selectedLabel) => {
-        if (selectedLabel === "Highest to Lowest") setSortOrder("highest");
-        else if (selectedLabel === "Lowest to Highest") setSortOrder("lowest");
+        if (selectedLabel === "High to Low") setSortOrder("highest");
+        else if (selectedLabel === "Low to High") setSortOrder("lowest");
     };
 
     return (

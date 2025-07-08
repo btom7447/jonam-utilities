@@ -7,9 +7,9 @@ import ShopDisplay from "@/components/ShopDisplay";
 import ShopFilter from "@/components/ShopFilter";
 import ShopFilterMobile from "@/components/ShopFilterMobile";
 import { useSearchParams } from "next/navigation";
+import ShopParamsReader from "@/components/ShopParamsReader";
 
 const ShopPage = () => {
-    const searchParams = useSearchParams();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
@@ -24,14 +24,6 @@ const ShopPage = () => {
 
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [displayedProducts, setDisplayedProducts] = useState([]);
-
-    // Filter by search params, category 
-    useEffect(() => {
-        const categoryFromUrl = searchParams.get('category');
-        if (categoryFromUrl) {
-            setSelectedCategory(categoryFromUrl);
-        }
-    }, [searchParams]);
 
     // Fetch products on mount
     useEffect(() => {
@@ -139,6 +131,14 @@ const ShopPage = () => {
             </div>
         );
     }
+
+    <ShopParamsReader
+        onParams={({ category, brand, search }) => {
+            setSelectedCategory(category);
+            setSelectedBrand(brand);
+            setSearch(search);
+        }}
+    />
 
     return (
         <div className="px-5 md:px-20 xl:px-30 py-10 xl:py-30 bg-blue-50 grid grid-cols-1 xl:grid-cols-3 items-start gap-10">
