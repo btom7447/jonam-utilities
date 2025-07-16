@@ -1,26 +1,45 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import { HeartIcon, MenuIcon, Search, SearchIcon, ShoppingBag, XIcon } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+  HeartIcon,
+  MenuIcon,
+  ShoppingCartIcon,
+  UserIcon,
+  XIcon
+} from 'lucide-react';
 import { useCart } from '@/contexts/cartContext';
 import { useWishlist } from '@/contexts/wishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import CartModal from './CartModal';
 import WishlistModal from './WishlistModal';
-import SearchModal from './SearchModal';
+import ProfileModal from './ProfileModal';
+import AuthModal from './AuthModal';
+import { getUserSession } from '@/lib/firebase'; 
 
 const HeaderIcons = ({ hamburgerIsOpen }) => {
     const { getCartCount } = useCart();
     const { getSavedCount } = useWishlist();
-    const [isOpen, setIsOpen] = useState(false);
-    const [activeModal, setActiveModal] = useState(null); 
+
     const [isHydrated, setIsHydrated] = useState(false);
+    const [activeModal, setActiveModal] = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     useEffect(() => {
         setIsHydrated(true);
     }, []);
 
-    const toggleModal = (type) => {
+    const toggleModal = async (type) => {
+        if (type === 'profile') {
+            const session = await getUserSession();
+            if (!session?.isLoggedIn) {
+                setShowAuthModal(true);
+                return;
+            }
+        }
+
         setActiveModal(type);
         setIsOpen(true);
     };
@@ -34,7 +53,7 @@ const HeaderIcons = ({ hamburgerIsOpen }) => {
         <div className='flex items-center space-x-5 lg:space-x-10 relative z-50'>
             {/* Cart Icon */}
             <div className='relative' onClick={() => toggleModal('cart')}>
-                <ShoppingBag size={28} strokeWidth={1} className='text-black cursor-pointer' />
+                <ShoppingCartIcon size={28} strokeWidth={1} className='text-black cursor-pointer' />
                 {isHydrated && getCartCount() > 0 && (
                     <span className="py-1 px-2 absolute -top-2 -right-2 bg-brown text-white text-xs rounded-full flex items-center justify-center">
                         {getCartCount()}
@@ -52,7 +71,17 @@ const HeaderIcons = ({ hamburgerIsOpen }) => {
                 )}
             </div>
 
-            {/* Modal */}
+            {/* User Icon */}
+            <div className='relative' onClick={() => toggleModal('profile')}>
+                <UserIcon size={28} strokeWidth={1} className='text-black cursor-pointer' />
+            </div>
+
+            {/* Hamburger Menu */}
+            <button className="md:hidden text-black" onClick={() => hamburgerIsOpen(!isOpen)}>
+                <MenuIcon size={28} />
+            </button>
+
+            {/*  Content Modal (Cart, Wishlist, Profile) */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -60,33 +89,27 @@ const HeaderIcons = ({ hamburgerIsOpen }) => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -250 }}
                         transition={{ duration: 0.5 }}
-                        className="
-                            fixed top-0 left-0 w-screen h-screen
-                            bg-gray-900 z-50 shadow-xl p-10
-
-                            lg:absolute lg:top-19 lg:-left-70 lg:w-120 lg:h-fit lg:p-10
-                        "
+                        className={`fixed -top-5  w-screen h-screen bg-gray-900 z-50 shadow-xl p-10 lg:absolute lg:top-19 lg:-left-70 ${activeModal === 'profile' ? 'lg:w-70 lg:left-[-60] left-0' : 'lg:w-120 left-0'} lg:h-fit lg:p-10`}
                     >
                         <button
                             onClick={closeModal}
-                            className='absolute top-5 right-5 text-gray-500 hover:text-white text-xl cursor-pointer'
+                            className='absolute top-10 right-10 text-gray-500 hover:text-white text-xl cursor-pointer'
                         >
                             <XIcon size={30} />
                         </button>
                         {activeModal === 'cart' && <CartModal />}
                         {activeModal === 'wishlist' && <WishlistModal />}
-                        {activeModal === 'search' && <SearchModal />}
+                        {activeModal === 'profile' && <ProfileModal closeModal={closeModal} />}
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Search Icon */}
-            <div className='relative' onClick={() => toggleModal('search')}>
-                <SearchIcon size={28} strokeWidth={1} className='text-black cursor-pointer' />
-            </div>
-            <button className="md:hidden text-black" onClick={() => hamburgerIsOpen(!isOpen)}>
-                <MenuIcon size={28} />
-            </button>
+            {/* Auth Modal (only when not logged in) */}
+            <AnimatePresence>
+                {showAuthModal && (
+                    <AuthModal onClose={() => setShowAuthModal(false)} back={false} />
+                )}
+            </AnimatePresence>
         </div>
     );
 };

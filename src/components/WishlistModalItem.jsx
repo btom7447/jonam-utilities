@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { XIcon, ShoppingCart } from "lucide-react";
+import { XIcon, ShoppingCart, DeleteIcon } from "lucide-react";
 
 const WishlistModalItem = ({ item, removeSavedProduct, addToCart }) => {
     const [timestamp, setTimestamp] = useState("");
@@ -36,12 +36,12 @@ const WishlistModalItem = ({ item, removeSavedProduct, addToCart }) => {
                     ₦{finalPrice.toLocaleString()}
                 </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-4">
                 <button onClick={handleMoveToCart} aria-label="Move to Cart" className="cursor-pointer">
                     <ShoppingCart size={20} className="text-blue-400 hover:text-blue-600" />
                 </button>
                 <button onClick={() => removeSavedProduct(item.id)} aria-label="Remove from Wishlist" className="cursor-pointer">
-                    <XIcon size={20} className="text-gray-400 hover:text-white" />
+                    <DeleteIcon size={20} className="text-gray-400 hover:text-white" />
                 </button>
             </div>
         </div>

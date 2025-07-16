@@ -8,7 +8,7 @@ import { ToastContainer } from "react-toastify";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
-  weights: ["400", "500", "700"],
+  weight: ["400", "500", "700"],
   variable: "--font-sans", 
 });
 

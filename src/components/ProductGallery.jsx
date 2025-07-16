@@ -35,7 +35,7 @@ const ProductGallery = ({ product }) => {
                     px-2
                 "
             >
-                {product.images.map((img, i) => (
+                {product?.images?.map?.((img, i) => (
                     <button
                         key={i}
                         onClick={() => handleThumbnailClick(i)}
@@ -47,43 +47,43 @@ const ProductGallery = ({ product }) => {
                             ${i === activeIndex ? 'opacity-100' : 'opacity-50'}
                         `}
                     >
+                        <Image
+                            src={`${img?.url ?? ''}${timestamp}`}
+                            alt={`${product?.name ?? ''} thumbnail ${i + 1}`}
+                            width={160}
+                            height={160}
+                            className="object-cover w-full h-full cursor-pointer"
+                            unoptimized
+                        />
+                    </button>
+                ))}
+            </div>
+
+            {/* Main Image with Zoom */}
+            <div className="flex-1 bg-white flex items-center justify-center h-full overflow-hidden">
+                <div
+                    className="w-full h-full"
+                    style={{
+                        transform: isZoomed ? 'scale(2)' : 'scale(1)',
+                        transformOrigin: zoomOrigin,
+                        transition: isZoomed ? 'transform 0s' : 'transform 0.2s ease-out',
+                    }}
+                    onMouseMove={handleMouseMove}
+                    onMouseEnter={() => setIsZoomed(true)}
+                    onMouseLeave={() => setIsZoomed(false)}
+                >
                     <Image
-                        src={`${img.url}${timestamp}`}
-                        alt={`${product.name} thumbnail ${i + 1}`}
-                        width={160}
-                        height={160}
-                        className="object-cover w-full h-full"
+                        src={`${product?.images?.[activeIndex]?.url ?? ''}${timestamp}`}
+                        alt={`${product?.name ?? ''} main`}
+                        width={500}
+                        height={500}
+                        className="object-contain w-full h-full cursor-zoom-in"
                         unoptimized
                     />
-                </button>
-            ))}
-        </div>
-
-      {/* Main Image with Zoom */}
-        <div className="flex-1 bg-white flex items-center justify-center h-full overflow-hidden">
-            <div
-                className="w-full h-full"
-                style={{
-                    transform: isZoomed ? 'scale(2)' : 'scale(1)',
-                    transformOrigin: zoomOrigin,
-                    transition: isZoomed ? 'transform 0s' : 'transform 0.2s ease-out',
-                }}
-                onMouseMove={handleMouseMove}
-                onMouseEnter={() => setIsZoomed(true)}
-                onMouseLeave={() => setIsZoomed(false)}
-            >
-                <Image
-                    src={`${product.images[activeIndex].url}${timestamp}`}
-                    alt={`${product.name} main`}
-                    width={500}
-                    height={500}
-                    className="object-contain w-full h-full"
-                    unoptimized
-                />
+                </div>
             </div>
         </div>
-    </div>
-  );
+    );
 };
 
 export default ProductGallery;

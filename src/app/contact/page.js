@@ -1,10 +1,13 @@
+import ContactPoster from '@/components/ContactPoster'
+import MapSection from '@/components/MapSection'
 import React from 'react'
 
 const page = () => {
     return (
-        <div>
-            <h1>This is the contact page</h1>
-        </div>
+        <>
+            <ContactPoster />
+            <MapSection />
+        </>
     )
 }
 

@@ -24,7 +24,7 @@ const Header = () => {
     }, []);
 
     return (
-        <div className={`bg-white w-full flex items-center justify-between py-3 px-5 md:px-20 fixed top-0 left-0 z-50 transition-all duration-300 ${isScrolled ? "shadow-md" : "bg-transparent"}`}>
+        <div className={`bg-white w-full flex items-center justify-between py-3 px-5 md:px-20 fixed -top-3.5 left-0 z-50 transition-all duration-300 ${isScrolled ? "shadow-md" : "bg-transparent"}`}>
             <Link href="/" className='flex items-center' >
                 <Image src={logo} alt="Jonam Utilties logo" width={80} height={30} className='w-30 h-auto xl:w-40 xl:h-auto object-cover' unoptimized />
             </Link>
@@ -46,7 +46,11 @@ const Header = () => {
                     ></span>
                 </Link>
                 <span
-                    className='relative text-2xl text-black cursor-pointer'
+                    className={`relative text-2xl cursor-pointer transition-colors duration-300 ${
+                        ["/handyman", "/our-services", "/projects", "/request-quote"].includes(pathname)
+                            ? "text-blue-500"
+                            : "text-black"
+                    }`}
                     onMouseEnter={() => setIsOpen(true)}
                     onMouseLeave={() => setIsOpen(false)}
                 >
@@ -89,16 +93,33 @@ const Header = () => {
                             </motion.div>
                         )}
                     </AnimatePresence>
+                    <span
+                        className={`absolute left-0 -bottom-2 h-0.5 transition-all duration-200 ${
+                            ["/handyman", "/our-services", "/projects", "/request-quote"].includes(pathname)
+                                ? "w-full bg-blue-500"
+                                : "w-0 bg-black/0"
+                        }`}
+                    ></span>
                 </span>
 
-                <Link href="/shop" className={`relative text-2xl hover:text-blue-500 transition-colors duration-300 capitalize ${pathname === "/shop" ? "text-blue-500" : "text-black"} `}>
+                <Link
+                    href="/shop"
+                    className={`relative text-2xl hover:text-blue-500 transition-colors duration-300 capitalize ${
+                        pathname === "/shop" || pathname.startsWith("/product")
+                        ? "text-blue-500"
+                        : "text-black"
+                    }`}
+                >
                     Shop
                     <span
                         className={`absolute left-0 -bottom-2 h-0.5 transition-all duration-200 ${
-                            pathname === "/shop" ? "w-full bg-blue-500" : "w-0 bg-black/0"
+                        pathname === "/shop" || pathname.startsWith("/product")
+                            ? "w-full bg-blue-500"
+                            : "w-0 bg-black/0"
                         }`}
                     ></span>
                 </Link>
+
                 <Link href="/contact" className={`relative text-2xl hover:text-blue-500 transition-colors duration-300 capitalize ${pathname === "/contact" ? "text-blue-500" : "text-black"} `}>
                     Contact
                     <span

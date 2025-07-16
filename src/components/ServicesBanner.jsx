@@ -6,7 +6,7 @@ import aboutPosterTwo from "../../public/service-banner.png";
 
 const ServicesBanner = () => {
     return (
-        <section className='bg-blue-50 flex flex-wrap xl:flex-nowrap gap-5 xl:gap-20 px-5 md:px-20 py-20 items-center'>
+        <section className='flex flex-wrap xl:flex-nowrap gap-5 xl:gap-20 px-5 md:px-20 py-20 items-center'>
             <div className='w-full xl:w-1/2 h-100 xl:h-150'>
                 <div className='relative w-full h-full'>
                     <Image

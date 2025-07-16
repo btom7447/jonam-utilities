@@ -95,6 +95,12 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-white);
 }
 
+/* Auth Scroll */
+.authModal::-webkit-scrollbar-thumb {
+  cursor: pointer;
+  background: var(--color-white);
+}
+
 /* * {
   outline: red solid 1px;
 } */

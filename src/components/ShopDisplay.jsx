@@ -91,17 +91,25 @@ const ShopDisplay = ({ products = [], isOpen, setIsOpen }) => {
                         </button>
                     )}
 
-                    {Array.from({ length: totalPages }, (_, index) => (
+                    {/* Dynamically render up to 5 pagination buttons */}
+                    {Array.from({ length: totalPages }, (_, index) => index + 1)
+                        .filter(page => {
+                            if (totalPages <= 5) return true;
+                            if (currentPage <= 3) return page <= 5;
+                            if (currentPage >= totalPages - 2) return page >= totalPages - 4;
+                            return Math.abs(currentPage - page) <= 2;
+                        })
+                    .map(page => (
                         <button
-                            key={index}
-                            onClick={() => goToPage(index + 1)}
+                            key={page}
+                            onClick={() => goToPage(page)}
                             className={`p-3 w-15 h-15 flex justify-center items-center border text-xl text-center font-semibold cursor-pointer ${
-                                currentPage === index + 1
+                                currentPage === page
                                 ? "bg-blue-500 text-white border-blue-500 hover:opacity-80"
                                 : "bg-white text-blue-500 border-blue-500 hover:bg-blue-50"
                             }`}
                         >
-                            {index + 1}
+                            {page}
                         </button>
                     ))}
 

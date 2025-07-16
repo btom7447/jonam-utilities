@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { XIcon } from "lucide-react";
+import { DeleteIcon, XIcon } from "lucide-react";
 
 const CartModalItem = ({ item, removeFromCart }) => {
     const [timestamp, setTimestamp] = useState("");
@@ -48,7 +48,7 @@ const CartModalItem = ({ item, removeFromCart }) => {
                 aria-label="Remove item from cart"
                 className="cursor-pointer text-gray-400 hover:text-white"
             >
-                <XIcon size={20} />
+                <DeleteIcon size={20} />
             </button>
         </div>
     );

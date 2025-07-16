@@ -5,7 +5,7 @@ import posterImageTwo from "../../public/service-poster-one.jpg";
 
 const ServicesPoster = () => {
     return (
-        <section className='flex flex-wrap xl:flex-nowrap gap-5 xl:gap-20 px-5 md:px-20 py-20 items-center'>
+        <section className='bg-blue-50 flex flex-wrap xl:flex-nowrap gap-5 xl:gap-20 px-5 md:px-20 py-20 items-center'>
             <div className='flex gap-5 w-full xl:w-1/2 h-full overflow-hidden'>
                 <Image
                     src={posterImageOne}

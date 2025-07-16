@@ -9,9 +9,10 @@ import React from 'react'
 const ServicesPage = () => {
     return (
         <>
-            <ServicesBanner />
+           
             {/* <CategorySection /> */}
             <ServicesPoster />
+            <ServicesBanner />
             <RequestQuoteBanner />
             {/* <MetricsSection /> */}
             <FeedbackSection />
