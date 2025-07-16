@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { CartProvider } from "@/contexts/cartContext";
 import { WishlistProvider } from "@/contexts/wishlistContext";
 import { ToastContainer } from "react-toastify";
+import 'leaflet/dist/leaflet.css';
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
