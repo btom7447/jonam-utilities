@@ -11,13 +11,13 @@ import {
 } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDcLDil3sSQAqx6FI-eDJROtgYuV7AaV_k",
-  authDomain: "jonam-utilities.firebaseapp.com",
-  projectId: "jonam-utilities",
-  storageBucket: "jonam-utilities.firebasestorage.app",
-  messagingSenderId: "1001368904584",
-  appId: "1:1001368904584:web:83697b52174ba35f5d103d",
-  measurementId: "G-BQCDCTLLDJ"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize app once
