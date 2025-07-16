@@ -15,7 +15,7 @@
     "airtable": "^0.12.2",
     "aos": "^2.3.4",
     "firebase": "^11.10.0",
-    "framer-motion": "^12.6.3",
+    "framer-motion": "^12.23.6",
     "ionicons": "^7.4.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.487.0",

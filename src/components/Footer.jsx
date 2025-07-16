@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react'
 import logo from "../../public/logo-trans.png";
-import { ChevronRight, Mail, } from 'lucide-react';
+import { ChevronRight, Mail, SendHorizonal, } from 'lucide-react';
 
 
 const Footer = () => {
@@ -51,7 +51,7 @@ const Footer = () => {
                             </div>
                             <input type='email' placeholder='Enter Your Email Address' className='px-3 flex-1 h-19 text-xl text-white placeholder-shown:text-white border-0 outline-0' />
                             <button type='submit' className='p-5'>
-                                <ChevronRight size={25} color='#fff' />
+                                <SendHorizonal size={25} color='#fff' />
                             </button>
                         </div>
                     </div>

@@ -32,7 +32,6 @@ const AuthModal = ({ onClose, back }) => {
         <AnimatePresence>
             <motion.div
                 className="fixed inset-0 bg-black/60 z-[999] flex justify-center items-center px-4"
-                // onClick={onClose}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -56,31 +55,33 @@ const AuthModal = ({ onClose, back }) => {
                     </div>
 
                     {/* Right Modal Section */}
-                    <div className="px-10 py-15 pt-20 flex flex-col justify-center overflow-y-scroll authModal relative">
+                    <div className="px-10 py-10 flex flex-col justify-center overflow-y-scroll authModal relative">
                         {/* Back Button - Hidden on login */}
-                        {view !== "login" && (
+                        <div className={`flex items-center justify-between mb-10 ${view === "login" ? "flex-row-reverse" : ""}`}>
+                            {view !== "login" && (
+                                <button
+                                    type="button"
+                                    onClick={goBack}
+                                    className="text-blue-500 hover:text-brown text-xl flex items-center cursor-pointer"
+                                >
+                                    <ChevronLeft size={20} />
+                                    Back
+                                </button>
+                            )}
+
                             <button
                                 type="button"
-                                onClick={goBack}
-                                className="absolute top-10 left-10 text-blue-500 hover:text-brown text-xl flex items-center cursor-pointer"
+                                className="cursor-pointer text-black hover:text-gray-700"
+                                onClick={() => {
+                                    if (back === true && typeof window !== "undefined") {
+                                        window.history.back();
+                                    }
+                                    onClose && onClose();
+                                }}
                             >
-                                <ChevronLeft size={20} />
-                                Back
+                                <XIcon size={20} />
                             </button>
-                        )}
-
-                        <button
-                            type="button"
-                            className="absolute top-10 right-10 cursor-pointer text-black hover:text-gray-700"
-                            onClick={() => {
-                                if (back === true && typeof window !== "undefined") {
-                                    window.history.back();
-                                }
-                                onClose && onClose();
-                            }}
-                        >
-                            <XIcon size={20} />
-                        </button>
+                        </div>
 
                         <h5 className="text-center text-2xl text-gray-700 mb-8">
                             {{

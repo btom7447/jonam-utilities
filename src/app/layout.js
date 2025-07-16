@@ -36,7 +36,7 @@ export default function RootLayout({ children }) {
               pauseOnHover
               draggable
             />
-            <div className="mt-26">
+            <div className="mt-19 lg:mt-26">
               {children}
             </div>
             <Footer />

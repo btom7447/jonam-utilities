@@ -61,10 +61,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .splide__arrow--prev {
-  left: -1.2rem !important;
+  left: 1rem !important;
 }
 .splide__arrow--next {
-  right: -1.2rem !important;
+  right: 1rem !important;
 }
 
 /* Main Scroll */
@@ -101,6 +101,15 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-white);
 }
 
-/* * {
+.leaflet-tooltip.custom-tooltip {
+  padding: 20px !important;
+  max-width: 250px !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  text-align: left !important;
+}
+
+* {
   outline: red solid 1px;
-} */
+}

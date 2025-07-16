@@ -1,14 +1,17 @@
-import ContactPoster from '@/components/ContactPoster'
-import MapSection from '@/components/MapSection'
-import React from 'react'
+"use client";
 
-const page = () => {
+import ContactPoster from "@/components/ContactPoster";
+import dynamic from "next/dynamic";
+
+const MapSection = dynamic(() => import("@/components/MapSection"), {
+    ssr: false,
+});
+
+export default function ContactPage() {
     return (
         <>
             <ContactPoster />
             <MapSection />
         </>
-    )
+    );
 }
-
-export default page
