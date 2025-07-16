@@ -8,17 +8,17 @@ export default function CheckoutLayout({ children }) {
   const [showModal, setShowModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
 
-    useEffect(() => {
-        async function checkAuth() {
-            const session = await getUserSession();
-            if (!session?.isLoggedIn) {
-                setShowModal(true);
-            } else {
-                setIsVerified(true);
-            }
-        }
-        checkAuth();
-    }, []);
+  useEffect(() => {
+    async function checkAuth() {
+      const session = await getUserSession();
+      if (!session?.isLoggedIn) {
+        setShowModal(true);
+      } else {
+        setIsVerified(true);
+      }
+    }
+    checkAuth();
+  }, []);
 
   if (!isVerified && !showModal) return null;
 

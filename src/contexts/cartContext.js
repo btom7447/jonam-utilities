@@ -76,7 +76,7 @@ export const CartProvider = ({ children }) => {
 
     const clearCart = () => {
         setCartItems([]);
-        toast.info("All items removed from cart");
+        // toast.info("All items removed from cart");
     };
 
     const updateQuantity = (id, quantity) => {
