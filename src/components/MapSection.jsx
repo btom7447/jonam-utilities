@@ -79,11 +79,12 @@ const MapSection = ({ lat = 40.73061, lng = -73.935242, description = "Ile Ife B
                     userSelect: "none",
                 }}
                 onClick={() => {
-                    // Opens Google Maps directions in a new tab
-                    window.open(
+                    if (typeof window !== "undefined") {
+                        window.open(
                         `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
                         "_blank"
-                    );
+                        );
+                    }
                 }}
                 title="Get Directions"
             >
