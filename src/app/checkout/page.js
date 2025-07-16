@@ -7,7 +7,7 @@ import PaymentOptions from '@/components/PaymentOptions'
 import { useCart } from '@/contexts/cartContext'
 import React, { useState } from 'react'
 
-const page = () => {
+const Page = () => {
     const {
         cartItems,
         clearCart,
@@ -29,4 +29,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page
