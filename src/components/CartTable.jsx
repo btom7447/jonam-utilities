@@ -151,13 +151,13 @@ const CartTable = () => {
                         <div className="flex gap-5">
                             <button
                                 onClick={() => router.push("/shop")}
-                                className="border border-gray-300 text-xl font-semibold text-gray-700 py-7 px-10 cursor-pointer hover:bg-gray-900 hover:text-white hover:border-gray-900"
+                                className="border border-gray-300 text-md lg:text-xl font-semibold text-gray-700 py-7 px-5 lg:px-10 cursor-pointer hover:bg-gray-900 hover:text-white hover:border-gray-900"
                             >
                                 Continue Shopping
                             </button>
                             <button
                                 onClick={handleUpdateCart}
-                                className="bg-blue-500 text-white text-xl font-semibold py-7 px-15 cursor-pointer hover:bg-brown"
+                                className="bg-blue-500 text-white text-md lg:text-xl font-semibold py-7 px-7 lg:px-15 cursor-pointer hover:bg-brown"
                             >
                                 Checkout
                             </button>

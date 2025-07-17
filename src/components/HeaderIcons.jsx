@@ -97,8 +97,8 @@ const HeaderIcons = ({ hamburgerIsOpen }) => {
                         >
                             <XIcon size={30} />
                         </button>
-                        {activeModal === 'cart' && <CartModal />}
-                        {activeModal === 'wishlist' && <WishlistModal />}
+                        {activeModal === 'cart' && <CartModal closeModal={closeModal} />}
+                        {activeModal === 'wishlist' && <WishlistModal closeModal={closeModal} />}
                         {activeModal === 'profile' && <ProfileModal closeModal={closeModal} />}
                     </motion.div>
                 )}

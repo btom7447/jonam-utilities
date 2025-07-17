@@ -14,7 +14,7 @@ const PaymentOptions = ({ clearCart }) => {
 
     const handlePlaceOrder = () => {
         setStep(STEP_INDEX.place)
-        // resetSteps();
+        resetSteps();
         clearCart();
         toast.success("Your order has been placed!")
     };

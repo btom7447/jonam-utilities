@@ -18,13 +18,13 @@ const OrderProgress = () => {
                 return (
                     <div key={label} className="flex items-center gap-5">
                         <div
-                            className={`w-10 h-10 flex items-center justify-center text-lg font-semibold text-white ${
+                            className={`w-8 h-8 lg:w-12 lg:h-12 flex items-center justify-center text-sm font-semibold text-white ${
                                 isComplete ? "bg-blue-500" : isActive ? "bg-brown" : "bg-gray-700" }`}
                         >
                             {index + 1}
                         </div>
                         <span
-                            className={`text-lg font-medium ${
+                            className={`text-md font-medium ${
                                 isComplete ? "text-blue-500" : isActive ? "text-brown" : "text-gray-700"
                             }`}
                         >

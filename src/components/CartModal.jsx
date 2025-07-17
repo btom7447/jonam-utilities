@@ -5,7 +5,7 @@ import { useCart } from "@/contexts/cartContext";
 import CartModalItem from "./CartModalItem";
 import { useRouter } from "next/navigation";
 
-const CartModal = () => {
+const CartModal = ({ closeModal }) => {
     const { cartItems, getTotalPrice, removeFromCart } = useCart();
     const router = useRouter();
 
@@ -33,14 +33,14 @@ const CartModal = () => {
                 {/* Buttons */}
                 <div className="flex gap-5">
                     <button
-                        onClick={() => router.push("/cart")}
+                        onClick={() => { router.push("/cart"); closeModal(true); }}
                         className="flex-grow border-1 text-white text-xl border-gray-300 hover:bg-white hover:text-black p-3 cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
                         disabled={isCartEmpty}
                     >
                         View Cart
                     </button>
                     <button
-                        onClick={() => router.push("/checkout")}
+                        onClick={() => { router.push("/checkout?from=cart-modal"); closeModal(true); }}
                         className="flex-grow border-1 text-white text-xl border-blue-500 bg-blue-500 hover:bg-brown hover:text-white hover:border-brown p-3 cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
                         disabled={isCartEmpty}
                     >

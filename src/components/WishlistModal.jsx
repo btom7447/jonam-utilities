@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useWishlist } from "@/contexts/wishlistContext";
 import { useCart } from "@/contexts/cartContext";
 
-const WishlistModal = () => {
+const WishlistModal = ({ closeModal }) => {
     const { savedItems, removeSavedProduct, clearWishlist } = useWishlist();
     const { addToCart } = useCart();
     const router = useRouter();
@@ -16,8 +16,13 @@ const WishlistModal = () => {
             addToCart(item);
         });
         clearWishlist();
+        closeModal(true);
     };
 
+    const handleClearWishList = () => {
+        clearWishlist();
+        closeModal(true);
+    }
     const isWishlistEmpty = savedItems.length === 0;
 
     return (
@@ -40,7 +45,7 @@ const WishlistModal = () => {
             <div className="h-[20dvh] lg:h-fit ">
                 <div className="flex gap-5">
                     <button
-                        onClick={clearWishlist}
+                        onClick={handleClearWishList}
                         className="flex-grow border-1 text-white text-xl border-gray-300 hover:bg-white hover:text-black p-3 cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
                         disabled={isWishlistEmpty}
                     >

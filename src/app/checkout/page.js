@@ -5,7 +5,9 @@ import CartHeader from '@/components/CartHeader'
 import OrderDetails from '@/components/OrderDetails'
 import PaymentOptions from '@/components/PaymentOptions'
 import { useCart } from '@/contexts/cartContext'
-import React, { useState } from 'react'
+import { useCheckout, STEP_INDEX } from '@/contexts/checkoutContext';
+import { useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react'
 
 const Page = () => {
     const {
@@ -14,6 +16,15 @@ const Page = () => {
         getTotalPrice,
     } = useCart();
     const [deliveryPrice, setDeliveryPrice] = useState(0);
+    const searchParams = useSearchParams();
+    const { setStep } = useCheckout();
+
+    useEffect(() => {
+        const from = searchParams.get("from");
+        if (from === "cart-modal") {
+            setStep(STEP_INDEX.payment);
+        }
+    }, [searchParams, setStep]);
 
     return (
         <>
