@@ -8,7 +8,7 @@ const RequestQuoteSection = () => {
     >
         <div
             className='
-                w-full xl:w-1/2 mx-5 g:m-0 p-10 lg:p-20 flex flex-col 
+                w-full xl:w-1/2 mx-5 lg:m-0 p-10 lg:p-20 flex flex-col 
             '
         >
             <h5 className="text-xl md:text-2xl text-black text-left uppercase font-semibold mb-5">

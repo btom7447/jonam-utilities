@@ -37,7 +37,7 @@ const AuthModal = ({ onClose, back }) => {
                 exit={{ opacity: 0 }}
             >
                 <motion.div
-                    className="relative bg-white w-full max-w-[100dvw] lg:max-w-[70%] h-[100dvh] lg:h-[80%] grid grid-cols-1 md:grid-cols-2 shadow-md"
+                    className="relative bg-white w-full max-w-[100dvw] lg:max-w-[92%] xl:max-w-[70%] h-[100dvh] lg:h-[55%] xl:h-[80%] grid grid-cols-1 md:grid-cols-2 shadow-md"
                     onClick={(e) => e.stopPropagation()}
                     initial={{ y: -30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}

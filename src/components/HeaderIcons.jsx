@@ -77,7 +77,7 @@ const HeaderIcons = ({ hamburgerIsOpen }) => {
             </div>
 
             {/* Hamburger Menu */}
-            <button className="md:hidden text-black" onClick={() => hamburgerIsOpen(!isOpen)}>
+            <button className="xl:hidden text-black" onClick={() => hamburgerIsOpen(!isOpen)}>
                 <MenuIcon size={28} />
             </button>
 
@@ -89,7 +89,7 @@ const HeaderIcons = ({ hamburgerIsOpen }) => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -250 }}
                         transition={{ duration: 0.5 }}
-                        className={`fixed -top-5  w-screen h-screen bg-gray-900 z-50 shadow-xl p-10 lg:absolute lg:top-19 lg:-left-70 ${activeModal === 'profile' ? 'lg:w-70 lg:left-[-60] left-0' : 'lg:w-120 left-0'} lg:h-fit lg:p-10`}
+                        className={`fixed -top-5  w-screen h-screen bg-gray-900 z-50 shadow-xl p-10 xl:absolute xl:top-19 xl:-left-70 ${activeModal === 'profile' ? 'xl:w-70 xl:left-[-60] left-0' : 'xl:w-120 left-0'} xl:h-fit xl:p-10`}
                     >
                         <button
                             onClick={closeModal}

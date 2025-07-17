@@ -46,7 +46,7 @@ const ShopDisplay = ({ products = [], isOpen, setIsOpen }) => {
         <section className="col-span-1 xl:col-span-2 w-full">
             {/* Showing text and sort dropdown */}
             <div className="flex justify-between items-center mb-10">
-                <div className="w-full flex flex-wrap justify-between items-start gap-5">
+                <div className="w-full flex flex-col xl:flex-row justify-between items-start gap-5">
                     <p className="text-lg font-medium text-gray-700">
                         Showing {startIndex + 1}–{endIndex} of {products.length} products
                     </p>

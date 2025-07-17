@@ -73,7 +73,7 @@ const CategorySection = () => {
                         breakpoints: {
                             1440: { perPage: 4},
                             1024: { perPage: 3 },
-                            768: { perPage: 2},
+                            850: { perPage: 2},
                             640: { perPage: 1 },
                         },
                     }}

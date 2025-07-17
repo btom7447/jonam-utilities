@@ -24,7 +24,7 @@ const WishlistModal = () => {
         <div className="flex flex-col w-full rounded shadow-lg text-white">
             <h2 className="text-2xl font-bold mb-5">Wishlist</h2>
 
-            <div className="cartItems flex flex-col gap-5 h-[65dvh] lg:max-h-70 overflow-y-scroll my-5">
+            <div className="cartItems flex flex-col gap-5 h-[65dvh] xl:max-h-80 overflow-y-scroll my-5">
                 {isWishlistEmpty && <p className="my-5 text-center text-2xl font-light text-gray-500">Your wishlist is empty.</p>}
 
                 {savedItems.map((item) => (

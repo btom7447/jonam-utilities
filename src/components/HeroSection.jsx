@@ -14,7 +14,7 @@ const HeroSection = () => {
     }, []);
 
     return (
-        <section className='h-fit md:h-[100dvh] mx-0 md:mx-20 grid grid-cols-1 md:grid-cols-2'>
+        <section className='h-fit xl:h-[100dvh] mx-0 xl:mx-20 grid grid-cols-1 md:grid-cols-2'>
             {/* Left Side Content */}
             <div 
                 className='sm:h-fit md:h-full flex flex-col justify-center items-start p-10 md:p-20'

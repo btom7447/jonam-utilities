@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react';
 const ProductCard = ({ data }) => {
     const router = useRouter();  
     const { addToCart } = useCart();
-    const { saveProduct, isSaved } = useWishlist();
+    const { saveProduct, removeSavedProduct, isSaved} = useWishlist();
     const [timestamp, setTimestamp] = useState("");
 
     useEffect(() => {
@@ -30,6 +30,14 @@ const ProductCard = ({ data }) => {
         discountPercent = Math.round(discount * 100);
         finalPrice = Math.round(price * (1 - discount));
     }
+    
+    const toggleSave = () => {
+        if (isSaved(data.id)) {
+            removeSavedProduct(data.id);
+        } else {
+            saveProduct(data);
+        }
+    };
 
     return (
         <div className='flex flex-col'>
@@ -62,7 +70,7 @@ const ProductCard = ({ data }) => {
                 >
                     <button
                         type='button'
-                        onClick={() => saveProduct(data)}
+                        onClick={toggleSave}
                         className='p-3 rounded-full bg-white text-gray-700 cursor-pointer hover:text-blue-500 hover:-translate-y-3'
                     >
                         <HeartIcon

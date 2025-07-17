@@ -1,6 +1,5 @@
 "use client";
 
-// import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import logo from "../../public/logo-trans.png";
 import Link from 'next/link';
@@ -24,11 +23,11 @@ const Header = () => {
     }, []);
 
     return (
-        <div className={`bg-white w-full flex items-center justify-between py-3 px-5 md:px-20 fixed -top-3.5 left-0 transition-all duration-300 ${isScrolled ? "shadow-md" : "bg-transparent"}`} style={{ zIndex: 1000}}>
+        <div className={`bg-white w-full flex items-center justify-between py-3 px-5 lg:px-20 fixed -top-3.5 left-0 transition-all duration-300 ${isScrolled ? "shadow-md" : "bg-transparent"}`} style={{ zIndex: 1000}}>
             <Link href="/" className='flex items-center' >
                 <Image src={logo} alt="Jonam Utilties logo" width={80} height={30} className='w-30 h-auto xl:w-40 xl:h-auto object-cover' unoptimized />
             </Link>
-            <nav className='hidden lg:flex space-x-10 '>
+            <nav className='hidden xl:flex space-x-10 '>
                 <Link href="/" className={`relative text-2xl hover:text-blue-500 transition-colors duration-300 ${pathname === "/" ? "text-blue-500" : "text-black"} `}>
                     Home
                     <span

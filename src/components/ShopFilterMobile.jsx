@@ -35,14 +35,14 @@ const ShopFilterMobile = ({
         <>
             {/* Overlay & menu container */}
             <div
-                className={`cartItem fixed top-0 right-0 h-[100dvh] w-[100dvw] bg-gray-900 shadow-xl z-50 py-10 md:hidden
+                className={`cartItem fixed top-0 right-0 h-[100dvh] w-[100dvw] bg-gray-900 shadow-xl z-50 py-10 xl:hidden
                 transform transition-transform duration-500 ease-in-out overflow-y-auto
                 ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-[100%] pointer-events-none"}`}
             >
                 {/* Close Button */}
                 <button
                     onClick={() => setIsOpen(false)}
-                    className="absolute top-5 right-5 text-gray-500 hover:text-white"
+                    className="absolute top-27 right-7 text-gray-500 hover:text-white"
                     aria-label="Close menu"
                 >
                     <X size={30} />

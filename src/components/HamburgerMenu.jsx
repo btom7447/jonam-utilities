@@ -29,7 +29,7 @@ const HamburgerMenu = ({ isOpen, setIsOpen }) => {
     <>
       {/* Overlay & menu container */}
       <div
-        className={`cartItem fixed top-0 right-0 h-[100dvh] w-[100dvw] bg-gray-900 shadow-xl z-50 px-8 py-10 md:hidden
+        className={`cartItem fixed top-0 right-0 h-[100dvh] w-[100dvw] bg-gray-900 shadow-xl z-50 px-8 py-10 xl:hidden
           transform transition-transform duration-500 ease-in-out overflow-y-auto
           ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-[100%] pointer-events-none"}`}
       >

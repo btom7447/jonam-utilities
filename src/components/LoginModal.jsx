@@ -7,39 +7,39 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth, signInWithGoogle } from "@/lib/firebase";
 
 const LoginModal = ({ setView, onClose }) => {
-    const [currentUser, setCurrentUser] = useState(null);
-    const [loading, setLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-    // Listen for auth state changes
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const googleProvider = user.providerData.find(
-                    (provider) => provider.providerId === "google.com"
-                );
-                if (googleProvider) {
-                    setCurrentUser(user);
-                } else {
-                    setCurrentUser(null);
-                }
-            } else {
-                setCurrentUser(null);
-            }
-        });
-        return () => unsubscribe();
-    }, []);
-
-    const handleGoogleSignIn = async () => {
-        setLoading(true);
-        try {
-            await signInWithGoogle();
-            toast.success("Signed in with Google!");
-            setCurrentUser(auth.currentUser); 
-            onClose();
-        } catch (error) {
-        toast.error(error.message || "Google sign-in failed");
+  // Listen for auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const googleProvider = user.providerData.find(
+          (provider) => provider.providerId === "google.com"
+        );
+        if (googleProvider) {
+          setCurrentUser(user);
+        } else {
+          setCurrentUser(null);
         }
-        setLoading(false);
+        } else {
+          setCurrentUser(null);
+        }
+      });
+      return () => unsubscribe();
+  }, []);
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      await signInWithGoogle();
+      toast.success("Signed in with Google!");
+      setCurrentUser(auth.currentUser); 
+      onClose();
+    } catch (error) {
+      toast.error(error.message || "Google sign-in failed");
+    }
+      setLoading(false);
     };
 
   const handleContinueAsUser = () => {
