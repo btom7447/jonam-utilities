@@ -13,30 +13,20 @@ const ProjectPage = () => {
     const [loading, setLoading] = useState(true);
     
 
-    // useEffect(() => {
-    //     async function loadProducts() {
-    //         const res = await fetch("/api/products");
-    //         const data = await res.json();
-    //         if (!Array.isArray(data)) {
-    //             console.error("Products not array:", data);
-    //             setProjects([]);
-    //         } else {
-    //             setProjects(data);
-    //         }
-    //         setLoading(false);
-    //     }
-
-    //     loadProducts();
-    // }, []);
-
     useEffect(() => {
-        // Simulate API delay
-        const timeout = setTimeout(() => {
-            setProjects(projectsData);
+        async function loadProducts() {
+            const res = await fetch("/api/projects");
+            const data = await res.json();
+            if (!Array.isArray(data)) {
+                console.error("Projects not array:", data);
+                setProjects([]);
+            } else {
+                setProjects(data);
+            }
             setLoading(false);
-        }, 1000); 
+        }
 
-        return () => clearTimeout(timeout);
+        loadProducts();
     }, []);
 
     useEffect(() => {
