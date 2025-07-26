@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import 'leaflet/dist/leaflet.css';
 import { CheckoutProvider } from "@/contexts/checkoutContext";
 import { OrderProvider } from "@/contexts/orderContext";
+import Script from "next/script";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -29,7 +30,10 @@ export default function RootLayout({ children }) {
           <WishlistProvider>
             <html lang="en">
               <head>
-                <script src="https://js.paystack.co/v1/inline.js" strategy="afterInteractive"></script>
+                <Script
+                  src="https://js.paystack.co/v1/inline.js"
+                  strategy="afterInteractive"
+                />
               </head>
               <body
                 className={`${dmSans.variable} antialiased`}
