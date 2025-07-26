@@ -5,13 +5,14 @@ Airtable.configure({
     apiKey: process.env.AIRTABLE_API_KEY,
 });
 
+const AIRTABLE_BASE = process.env.AIRTABLE_BASE_ID;
+const API_KEY = process.env.AIRTABLE_API_KEY;
 const base = Airtable.base(process.env.AIRTABLE_BASE_ID); // configured once
 const categoriesTable = process.env.AIRTABLE_CATEGORIES_NAME || "Categories";
 const productsTable = process.env.AIRTABLE_PRODUCTS_NAME || "Products";
 const brandsTable = process.env.AIRTABLE_BRANDS_NAME || "Brands";
 const projectsTable = process.env.AIRTABLE_PROJECTS_NAME || "Projects";
-
-// console.log("AIRTABLE_API_KEY loaded?", !!process.env.AIRTABLE_API_KEY);
+const handymanTable = process.env.AIRTABLE_HANDYMAN_NAME || "Handyman";
 
 // ✅ Fetch categories (with caching)
 export async function fetchCategories() {
@@ -73,6 +74,21 @@ export async function fetchProjects() {
     return projects;
 }
 
+// ✅ Fetch all handymen (with caching)
+export async function fetchHandyman() {
+    const cached = getCachedData("handyman");
+    if (cached) return cached;
+
+    const records = await base(handymanTable).select().all();
+    const handyman = records.map(record => ({
+        recordId: record.id,
+        ...record.fields,
+    }));
+
+    setCachedData("handyman", handyman);
+    return handyman;
+}
+
 // ✅ Fetch product by ID (with caching)
 export async function fetchProductById(id) {
     if (!id) return null;
@@ -116,3 +132,44 @@ export async function fetchProjectById(id) {
         return null;
     }
 }
+
+// ✅ Fetch handyman by ID (with caching)
+export async function fetchHandymanById(id) {
+    if (!id) return null;
+
+    const cached = getCachedData(`handyman_${id}`);
+    if (cached) return cached;
+
+    try {
+        const record = await base(handymanTable).find(id);
+        const handyman = {
+            recordId: record.id,
+            ...record.fields,
+        };
+
+        setCachedData(`handyman_${id}`, handyman);
+        return handyman;
+    } catch (error) {
+        console.error("Error fetching handyman details:", error);
+        return null;
+    }
+}
+
+export const createRecord = async (table, fields) => {
+    const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(table)}`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${API_KEY}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fields }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        throw new Error(data.error?.message || "Airtable error");
+    }
+
+    return data;
+};

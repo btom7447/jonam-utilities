@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 import { DotLoader } from "react-spinners";
 import ProjectCard from '@/components/ProjectCard';
 import NoProject from '@/components/NoPoject';
-import { projectsData } from '@/contexts/projectsData';
 import AOS from "aos";
 import "aos/dist/aos.css";
 

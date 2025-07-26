@@ -7,6 +7,7 @@ import { WishlistProvider } from "@/contexts/wishlistContext";
 import { ToastContainer } from "react-toastify";
 import 'leaflet/dist/leaflet.css';
 import { CheckoutProvider } from "@/contexts/checkoutContext";
+import { OrderProvider } from "@/contexts/orderContext";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -22,30 +23,32 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <CheckoutProvider>
-      <CartProvider>
-        <WishlistProvider>
-          <html lang="en">
-            <body
-              className={`${dmSans.variable} antialiased`}
-            >
-              <Header />
-              <ToastContainer
-                position="top-right"
-                autoClose={2000}
-                hideProgressBar={false}
-                closeOnClick
-                pauseOnHover
-                draggable
-              />
-              <div className="mt-19 lg:mt-20 xl:mt-26">
-                {children}
-              </div>
-              <Footer />
-            </body>
-          </html>
-        </WishlistProvider>
-      </CartProvider>
-    </CheckoutProvider>
+    <OrderProvider>
+      <CheckoutProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <html lang="en">
+              <body
+                className={`${dmSans.variable} antialiased`}
+              >
+                <Header />
+                <ToastContainer
+                  position="top-right"
+                  autoClose={2000}
+                  hideProgressBar={false}
+                  closeOnClick
+                  pauseOnHover
+                  draggable
+                />
+                <div className="mt-19 lg:mt-20 xl:mt-26">
+                  {children}
+                </div>
+                <Footer />
+              </body>
+            </html>
+          </WishlistProvider>
+        </CartProvider>
+      </CheckoutProvider>
+    </OrderProvider>
   );
 }

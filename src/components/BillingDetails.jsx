@@ -44,7 +44,7 @@ const stateOptions = {
   "Zamfara": 5000
 };
 
-const BillingDetails = ({ setDeliveryPrice }) => {
+const BillingDetails = ({ getTotalPrice, setDeliveryPrice, deliveryPrice, setDeliveryState, billingDetails, setBillingDetails }) => {
     const [activeInput, setActiveInput] = useState(null);
     const [selectedState, setSelectedState] = useState("");
 
@@ -56,14 +56,16 @@ const BillingDetails = ({ setDeliveryPrice }) => {
 
     const handleStateSelect = (state) => {
         setSelectedState(state);
+        setDeliveryState(state);
         setActiveInput(null);
-        setDeliveryPrice(stateOptions[state]); // 👈 Set the price here
+        setDeliveryPrice(stateOptions[state]);
+        setBillingDetails((prev) => ({ ...prev, state }));
     };
 
     return (
         <section className="col-span-1">
             <h2 className="text-3xl font-semibold text-gray-900 mb-5">Billing Details</h2>
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <form className="grid grid-cols-1 gap-10">
                 {fields.map(({ label, name, type }) => (
                     <div key={name} className="relative group">
                         <input
@@ -73,6 +75,10 @@ const BillingDetails = ({ setDeliveryPrice }) => {
                             placeholder={label}
                             onFocus={() => setActiveInput(name)}
                             onBlur={() => setActiveInput(null)}
+                            value={billingDetails[name]}
+                            onChange={(e) =>
+                                setBillingDetails((prev) => ({ ...prev, [name]: e.target.value }))
+                            }
                             className="w-full text-xl py-5 border-b-1 outline-none bg-transparent border-gray-500 text-black transition-all duration-300"
                         />
                         <span
@@ -89,10 +95,10 @@ const BillingDetails = ({ setDeliveryPrice }) => {
                     <button
                         type="button"
                         onClick={() =>
-                        setActiveInput(activeInput === "state" ? null : "state")
+                            setActiveInput(activeInput === "state" ? null : "state")
                         }
                         className={`w-full flex justify-between items-center py-5 border-b-1 border-gray-500 text-xl bg-transparent cursor-pointer ${
-                        selectedState ? "text-black" : "text-gray-500"
+                            selectedState ? "text-black" : "text-gray-500"
                         }`}
                     >
                         {selectedState || "Choose State"}
@@ -122,32 +128,6 @@ const BillingDetails = ({ setDeliveryPrice }) => {
                         group-hover:w-full group-hover:bg-blue-500`}
                     ></span>
                 </div>
-
-                {/* Message - full span */}
-                <div className="relative group md:col-span-2">
-                    <textarea
-                        name="message"
-                        id="message"
-                        placeholder="Your Message"
-                        rows={3}
-                        onFocus={() => setActiveInput("message")}
-                        onBlur={() => setActiveInput(null)}
-                        className="w-full text-xl py-5 border-b-1 outline-none bg-transparent resize-none border-gray-500 text-black transition-all duration-300"
-                    />
-                    <span
-                        className={`absolute left-0 bottom-1.5 h-0.5 
-                        transition-all duration-200 
-                        ${activeInput === "message" ? "w-full bg-blue-500" : "w-0 bg-gray-700"} 
-                        group-hover:w-full group-hover:bg-blue-500`}
-                    ></span>
-                </div>
-
-                <button
-                    type="submit"
-                    className="py-5 px-10 text-xl bg-blue-500 text-white hover:bg-brown cursor-pointer"
-                >
-                    Get in touch
-                </button>
             </form>
         </section>
     );

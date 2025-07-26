@@ -63,7 +63,7 @@ const HeaderIcons = ({ hamburgerIsOpen }) => {
 
             {/* Wishlist Icon */}
             <div className='relative' onClick={() => toggleModal('wishlist')}>
-                <HeartIcon size={28} strokeWidth={1} className='text-black cursor-pointer' />
+                <HeartIcon size={28} strokeWidth={1} className='text-black cursor-pointer hover:text-red-500' />
                 {isHydrated && getSavedCount() > 0 && (
                     <span className="py-1 px-2 absolute -top-2 -right-2 bg-brown text-white text-xs rounded-full flex items-center justify-center">
                         {getSavedCount()}
