@@ -155,6 +155,7 @@ export async function fetchHandymanById(id) {
     }
 }
 
+// Create Record for Orders and Order Item after payment
 export const createRecord = async (table, fields) => {
     const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(table)}`, {
         method: "POST",
@@ -172,4 +173,90 @@ export const createRecord = async (table, fields) => {
     }
 
     return data;
+};
+
+// Create Booking record for hiring Handyman
+export const createBooking = async (bookingData) => {
+    try {
+        const created = await base('Bookings').create([
+            {
+                fields: {
+                    handyman: bookingData.handyman,
+                    "customer_name": bookingData.customer_name,
+                    "customer_email": bookingData.customer_email,
+                    "customer_number": bookingData.customer_number,
+                    "customer_address": bookingData.customer_address,
+                    "service_type": bookingData.service_type,
+                    "booking_date": bookingData.booking_date,
+                    "status": "pending",
+                    "additional_notes": bookingData.additonal_notes || "",
+                },
+            },
+        ]);
+        return { success: true, id: created[0].id };
+    } catch (error) {
+        console.error("Airtable booking error:", error);
+        return { success: false, error };
+    }
+};
+
+// Create Request Quote record 
+export const requestQuote = async (quoteData) => {
+    try {
+        const created = await base('Quotes').create([
+            {
+                fields: {
+                    "full_name": quoteData.full_name,
+                    "phone_number": quoteData.phone_number,
+                    "email_address": quoteData.email_address,
+                    "description": quoteData.description,
+                    "service_type": quoteData.service_type,
+                    "status": "pending"
+                },
+            },
+        ]);
+        return { success: true, id: created[0].id };
+    } catch (error) {
+        console.error("Airtable request quote error:", error);
+        return { success: false, error };
+    }
+};
+
+// Create Contact Form record 
+export const contactForm = async (contactData) => {
+    try {
+        const created = await base('Contact').create([
+            {
+                fields: {
+                    "full_name": contactData.full_name,
+                    "phone_number": contactData.phone_number,
+                    "message": contactData.message,
+                    "state": contactData.state,
+                    "status": "pending"
+                },
+            },
+        ]);
+        return { success: true, id: created[0].id };
+    } catch (error) {
+        console.error("Airtable contact form error:", error);
+        return { success: false, error };
+    }
+};
+
+// Create Newsletter record 
+export const newsletter = async (newData) => {
+    try {
+        const created = await base('Newsletter').create([
+            {
+                fields: {
+                    "email_address": newData.email_address,
+                    "status": "pending"
+                },
+            },
+        ]);
+        return { success: true, id: created[0].id };
+    } catch (error) {
+        console.error("Airtable newsletter error:", error);
+        return { success: false, error };
+    }
 };

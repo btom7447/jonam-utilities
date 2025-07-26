@@ -3,6 +3,7 @@
 import { Star } from 'lucide-react';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
+import HireForm from './HireForm';
 
 const HandymanProfile = ({ data }) => {
     const [timestamp, setTimestamp] = useState("");
@@ -48,7 +49,7 @@ const HandymanProfile = ({ data }) => {
                         />
                     ))}
                 </div>
-                <button type="submit" className="py-5 px-10 text-xl bg-blue-500 text-white hover:bg-brown cursor-pointer">Hire Handyman</button>
+                <HireForm data={data} />
             </div>
         </section>
     )

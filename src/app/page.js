@@ -3,7 +3,7 @@ import CategorySection from "@/components/CategorySection";
 import ContactSection from "@/components/ContactSection";
 import FooterSocials from "@/components/FooterSocials";
 import HeroSection from "@/components/HeroSection";
-import NewProductsSection from "@/components/NewProductsSection";
+import NewProductsSection from "@/components/FeaturedProductSection";
 import QuotePoster from "@/components/QuotePoster";
 import ServicesPoster from "@/components/ServicesPoster";
 

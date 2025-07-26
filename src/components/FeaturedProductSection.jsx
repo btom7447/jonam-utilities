@@ -2,12 +2,11 @@
 
 import React, { useEffect, useState } from 'react'
 import ProductCard from './ProductCard';
-import NoCategories from './NoCategories';
 import { DotLoader } from "react-spinners";
 import Link from 'next/link';
 import NoProduct from './NoProduct';
 
-const NewProductsSection = () => {
+const FeaturedProductSection = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     
@@ -20,7 +19,8 @@ const NewProductsSection = () => {
                 console.error("Products not array:", data);
                 setProducts([]);
             } else {
-                setProducts(data);
+                const featured = data.filter((item) => item.featured === "true").slice(0, 8);
+                setProducts(featured);
             }
             setLoading(false);
         }
@@ -50,14 +50,14 @@ const NewProductsSection = () => {
                 Our Catalog
             </h5>
             <h2 className="text-3xl md:text-7xl text-black text-center font-bold max-w-full md:max-w-5xl">
-                New Products
+                Featured Products
             </h2>
             {products.length === 0 ? (
                 <NoProduct />
             ) : (
                 <>
                     <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-20 justify-center mt-10">
-                        {products.slice(0, 8).map((product, idx) => (
+                        {products.map(( product, idx) => (
                             <div
                                 key={product.recordId}
                                 data-aos="fade-up"
@@ -79,4 +79,4 @@ const NewProductsSection = () => {
     )
 }
 
-export default NewProductsSection
+export default FeaturedProductSection

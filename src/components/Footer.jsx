@@ -2,12 +2,50 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react'
+import React, { useState } from 'react'
 import logo from "../../public/logo-trans.png";
-import { ChevronRight, Mail, SendHorizonal, } from 'lucide-react';
+import {  Mail, SendHorizonal, } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 
 const Footer = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formData, setFormData] = useState({ email: "" });
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        const payload = { email_address: formData.email };
+
+        try {
+            const res = await fetch("/api/newsletter", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            const result = await res.json();
+            if (res.ok) {
+                toast.success("Joined newsletter!");
+                setFormData({ email: "" });
+            } else {
+                console.error(result.error);
+                toast.error("Unable to join newsletter");
+            }
+        } catch (error) {
+            console.error("Newsletter error:", error);
+            toast.error("Something went wrong");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+        
     const currentYear = new Date().getFullYear();
     return (
         <footer className='flex-col'>
@@ -45,15 +83,26 @@ const Footer = () => {
                     </div>
                     <div className='col-span-1 md:col-span-2 flex-col '>
                         <h6 className='text-3xl font-semibold text-white capitalize mb-7'>Newsletter</h6>
-                        <div className='flex items-center justify-stretch border-b-1 border-gray-700'>
+                        <form
+                            onSubmit={handleSubmit}
+                            autoComplete='on' className='flex items-center justify-stretch border-b-1 border-gray-700'
+                        >
                             <div className='w-13 h-5'>
                                 <Mail size={25} color='#fff' strokeWidth={2} className='mr-5' />
                             </div>
-                            <input type='email' placeholder='Enter Your Email Address' className='px-3 flex-1 h-19 text-xl text-white placeholder-shown:text-white border-0 outline-0' />
-                            <button type='submit' className='p-5'>
+                            <input
+                                name="email"
+                                type='email'
+                                required
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                placeholder='Enter Your Email Address'
+                                className='flex-1 h-12 bg-transparent outline-0 text-xl text-white placeholder:text-white border-none outline-none'
+                            />
+                            <button type='submit' disabled={isSubmitting} className='p-5 cursor-pointer'>
                                 <SendHorizonal size={25} color='#fff' />
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 <hr className='hidden lg:block lg:mt-20 w-full border-t-1 border-gray-700 ' />
