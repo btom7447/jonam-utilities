@@ -28,6 +28,9 @@ export default function RootLayout({ children }) {
         <CartProvider>
           <WishlistProvider>
             <html lang="en">
+              <head>
+                <script src="https://js.paystack.co/v1/inline.js"></script>
+              </head>
               <body
                 className={`${dmSans.variable} antialiased`}
               >

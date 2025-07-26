@@ -3,7 +3,11 @@
 import React, { useState } from "react";
 import { STEP_INDEX, useCheckout } from "@/contexts/checkoutContext";
 import { useOrder } from "@/contexts/orderContext";
+import { initiatePaystackPayment } from "@/lib/paystack";
+import { formatOrderDetails } from "@/lib/formOrderDetails";
 import { toast } from "react-toastify";
+import { MoonLoader } from "react-spinners";
+import { sendOrderEmail } from "@/lib/sendOrderEmail";
 
 const PaymentOptions = ({
     clearCart,
@@ -26,39 +30,94 @@ const PaymentOptions = ({
 
   const isDeliveryAvailable = ["Osun", "Lagos"].includes(deliveryState);
 
-  const handlePlaceOrder = async () => {
-    if (!isFormValid) return;
+const handlePlaceOrder = async () => {
+  if (!isFormValid) {
+    toast.error("Please fill out all required fields.");
+    return;
+  }
 
-    setLoading(true);
-    try {
-    const paymentOption = selected;
+  setLoading(true);
 
-    const result = await placeOrder({
-      cartItems,
+  if (selected === "paystack") {
+    initiatePaystackPayment({
       billingDetails,
-      deliveryState,
-      deliveryOption,
-      deliveryPrice,
-      paymentOption, 
-      grandTotal
-    });
+      grandTotal,
+      onSuccess: async (response) => {
+        try {
+          const result = await placeOrder({
+            cartItems,
+            billingDetails,
+            deliveryState,
+            deliveryOption,
+            deliveryPrice,
+            paymentOption: "paystack",
+            grandTotal,
+            paystack_ref: response.reference,
+          });
 
-      if (result.success) {
-            toast.success("Your order has been placed!");
+          if (result.success) {
+            const orderDetails = formatOrderDetails({
+              cartItems,
+              billingDetails,
+              deliveryState,
+              deliveryOption,
+              deliveryPrice,
+              grandTotal,
+              orderId: result.orderId,
+            });
+
+            console.log("Order receipt:", orderDetails);
+            // await sendOrderEmail(orderDetails)
+
+            toast.success("Payment successful! Order placed.");
             clearCart();
             resetSteps();
             setStep(STEP_INDEX.place);
+          } else {
+            toast.error("Order placement failed after payment.");
+          }
+        } catch (err) {
+          toast.error("Unexpected error.");
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      },
+      onClose: () => {
+        toast.info("Payment was cancelled.");
+        setLoading(false);
+      },
+    });
+  } else {
+    // Cash on delivery fallback
+    try {
+      const result = await placeOrder({
+        cartItems,
+        billingDetails,
+        deliveryState,
+        deliveryOption,
+        deliveryPrice,
+        paymentOption: "delivery",
+        grandTotal,
+      });
+
+      if (result.success) {
+        toast.success("Order placed with Cash on Delivery.");
+        clearCart();
+        resetSteps();
+        setStep(STEP_INDEX.place);
       } else {
-            toast.error("Failed to place order. Try again.");
-            console.error(result.error);
+        toast.error("Failed to place order.");
       }
     } catch (err) {
-        toast.error("An unexpected error occurred.");
-        console.error(err);
+      toast.error("Unexpected error.");
+      console.error(err);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-  };
+  }
+};
+
 
   return (
     <div>
@@ -129,16 +188,14 @@ const PaymentOptions = ({
         </div>
 
         <button
-          type="submit"
+          type="button" 
           onClick={handlePlaceOrder}
           disabled={!isFormValid || loading}
-          className={`mt-5 py-5 px-10 text-xl text-white transition-all ${
-            isFormValid && !loading
-              ? "bg-blue-500 hover:bg-brown cursor-pointer"
-              : "bg-gray-400 cursor-not-allowed"
+          className={`flex items-center justify-center mt-10 mb-10 py-5 px-10 text-xl bg-blue-500 text-white hover:bg-brown cursor-pointer ${
+            loading || !isFormValid ? "bg-gray-500 cursor-not-allowed" : ""
           }`}
         >
-          {loading ? "Placing Order..." : "Place Order"}
+          {loading ? <MoonLoader size={25} color="#fff" /> : "Place Order"}  
         </button>
       </div>
     </div>
