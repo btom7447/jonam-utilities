@@ -100,23 +100,29 @@ const DatePickerDropdown = ({ selectedDate, onSelectDate, activeInput, setActive
 
           <div className="grid grid-cols-7 gap-2 mt-1">
             {days.map((day) => {
+              const isTodayDate = isToday(day);
+              const isSelected = selectedDate === format(day, "yyyy-MM-dd");
               const isDisabled = isBefore(day, new Date()) || isToday(day);
-              const isSelected = selectedDate === format(day, "dd/MM/yyyy");
+
+              let dayClass =
+                "p-2 text-sm font-medium transition-colors";
+
+              if (isSelected) {
+                dayClass += " bg-blue-600 text-white";
+              } else if (isTodayDate) {
+                dayClass += " border border-blue-400 text-blue-400 bg-gray-900";
+              } else if (isDisabled) {
+                dayClass += " bg-gray-700 text-gray-500 cursor-not-allowed";
+              } else {
+                dayClass += " bg-gray-800 text-white hover:bg-brown cursor-pointer";
+              }
               return (
                 <button
                   key={day.toISOString()}
                   type="button"
                   disabled={isDisabled}
                   onClick={() => handleDateClick(day)}
-                  className={`p-2 text-sm font-medium transition-colors 
-                    ${
-                      isDisabled
-                        ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                        : isSelected
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-800 text-white hover:bg-brown cursor-pointer"
-                    }
-                  `}
+                  className={dayClass}
                 >
                   {format(day, "d")}
                 </button>
