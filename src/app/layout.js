@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
           <WishlistProvider>
             <html lang="en">
               <head>
-                <script src="https://js.paystack.co/v1/inline.js"></script>
+                <script src="https://js.paystack.co/v1/inline.js" strategy="afterInteractive"></script>
               </head>
               <body
                 className={`${dmSans.variable} antialiased`}
