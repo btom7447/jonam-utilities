@@ -93,26 +93,29 @@ const ShopPage = () => {
     // Extract unique categories
     const categories = Array.from(
         new Set(
-        (products || []).flatMap((product) =>
-            Array.isArray(product?.category) && product.category.length > 0
-            ? product.category
-            : ["Uncategorized"]
-        )
+            (products || []).flatMap((product) =>
+                Array.isArray(product?.category) && product.category.length > 0
+                ? product.category
+                : ["Uncategorized"]
+            )
         )
     );
 
-        // Extract unique brands
-        const brands = Array.from(
+    // Extract unique brands
+    const brands = Array.from(
         new Set(
             products.flatMap((p) =>
             Array.isArray(p.brand_name)
                 ? p.brand_name.filter(Boolean) 
                 : p.brand_name
                 ? [p.brand_name]
-                : []
+                : ["Unbranded"]
             )
         )
     );
+
+    console.log("Brands extracted", brands)
+    console.log("Category extracted", categories)
 
     // Handle toggles
     const toggleCategory = (category) => {
@@ -132,54 +135,56 @@ const ShopPage = () => {
         );
     }
 
-    <ShopParamsReader
-        onParams={({ category, brand, search }) => {
-            setSelectedCategory(category);
-            setSelectedBrand(brand);
-            setSearch(search);
-        }}
-    />
-
     return (
-        <div className="px-5 md:px-20 xl:px-30 py-10 xl:py-30 bg-blue-50 grid grid-cols-1 xl:grid-cols-3 items-start gap-10">
-            <ShopDisplay
-                products={displayedProducts}
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
+        <>
+            <ShopParamsReader
+                onParams={({ category, brand, search }) => {
+                    setSelectedCategory(category);
+                    setSelectedBrand(brand);
+                    setSearch(search);
+                }}
             />
 
-            <ShopFilter
-                categories={categories}
-                brands={brands}
-                minPrice={minPrice}
-                maxPrice={maxPrice}
-                priceRange={priceRange}
-                setPriceRange={setPriceRange}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={toggleCategory}
-                selectedBrand={selectedBrand}
-                setSelectedBrand={toggleBrand}
-                setSearch={setSearch}
-                setUserAdjustedPrice={setUserAdjustedPrice}
-            />
+            <div className="px-5 md:px-20 xl:px-30 py-10 xl:py-30 bg-blue-50 grid grid-cols-1 xl:grid-cols-3 items-start gap-10">
+                <ShopDisplay
+                    products={displayedProducts}
+                    isOpen={isOpen}
+                    setIsOpen={setIsOpen}
+                />
 
-            <ShopFilterMobile
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                categories={categories}
-                brands={brands}
-                minPrice={minPrice}
-                maxPrice={maxPrice}
-                priceRange={priceRange}
-                setPriceRange={setPriceRange}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={toggleCategory}
-                selectedBrand={selectedBrand}
-                setSelectedBrand={toggleBrand}
-                setSearch={setSearch}
-                setUserAdjustedPrice={setUserAdjustedPrice}
-            />
-        </div>
+                <ShopFilter
+                    categories={categories}
+                    brands={brands}
+                    minPrice={minPrice}
+                    maxPrice={maxPrice}
+                    priceRange={priceRange}
+                    setPriceRange={setPriceRange}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={toggleCategory}
+                    selectedBrand={selectedBrand}
+                    setSelectedBrand={toggleBrand}
+                    setSearch={setSearch}
+                    setUserAdjustedPrice={setUserAdjustedPrice}
+                />
+
+                <ShopFilterMobile
+                    isOpen={isOpen}
+                    setIsOpen={setIsOpen}
+                    categories={categories}
+                    brands={brands}
+                    minPrice={minPrice}
+                    maxPrice={maxPrice}
+                    priceRange={priceRange}
+                    setPriceRange={setPriceRange}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={toggleCategory}
+                    selectedBrand={selectedBrand}
+                    setSelectedBrand={toggleBrand}
+                    setSearch={setSearch}
+                    setUserAdjustedPrice={setUserAdjustedPrice}
+                />
+            </div>
+        </>
     );
 };
 

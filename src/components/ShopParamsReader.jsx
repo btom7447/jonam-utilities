@@ -7,11 +7,12 @@ const ShopParamsReader = ({ onParams }) => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const category = searchParams.get("category") || "";
-    const brand = searchParams.get("brand") || "";
-    const search = searchParams.get("search") || "";
-    onParams({ category, brand, search });
-  }, [searchParams, onParams]);
+      const category = searchParams.get("category") || "";
+      const brand = searchParams.get("brand") || "";
+      const search = searchParams.get("search") || "";
+      onParams({ category, brand, search });
+  }, []); 
+
 
   return null;
 };

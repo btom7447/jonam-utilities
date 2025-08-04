@@ -17,6 +17,7 @@ const ShopFilter = ({
     setSearch,
     setUserAdjustedPrice,
 }) => {
+    console.log("passed brands", brands)
     const [activeInput, setActiveInput] = useState(null);
     const [localSearch, setLocalSearch] = useState("");
 
