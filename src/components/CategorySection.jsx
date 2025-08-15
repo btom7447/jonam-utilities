@@ -47,6 +47,8 @@ const CategorySection = () => {
             </div>
         );
     }
+
+    console.log("Categories", categories)
     
     return (
         <section className="flex flex-col items-center justify-center bg-white px-5 md:px-20 py-20">

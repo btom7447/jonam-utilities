@@ -16,7 +16,6 @@ const dmSans = DM_Sans({
   variable: "--font-sans", 
 });
 
-
 export const metadata = {
   title: "Jonam Utilities Website",
   description: "A platform for purchasing plumbing materials, hiring handymen, and accessing various utility services.",
