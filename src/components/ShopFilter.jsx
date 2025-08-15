@@ -60,7 +60,7 @@ const ShopFilter = ({
             <h4 className="text-2xl font-bold mb-5">Categories</h4>
             <ul className="mb-10 flex flex-row flex-wrap items-start gap-5 text-lg font-light capitalize cursor-pointer">
                 {categories && categories.length > 0 ? (
-                    categories.map((category, idx) => (
+                    [...categories].sort((a, b) => a.localeCompare(b)).map((category, idx) => (
                         <li
                             key={idx}
                             className={`py-2 px-3  text-gray-500  border ${
@@ -78,7 +78,7 @@ const ShopFilter = ({
 
             <h4 className="text-2xl font-bold mb-5">Brands</h4>
             <ul className="mb-10 flex flex-row flex-wrap items-start gap-5 text-lg font-light capitalize cursor-pointer">
-                {brands.map((brand, idx) => (
+                {[...brands].sort((a, b) => a.localeCompare(b)).map((brand, idx) => (
                     <li
                         key={idx}
                         className={`py-2 px-3  text-gray-500  border ${

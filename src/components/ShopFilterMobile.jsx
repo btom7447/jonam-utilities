@@ -57,12 +57,24 @@ const ShopFilterMobile = ({
                                     id="search"
                                     placeholder="Search for a product ..."
                                     value={localSearch}
-                                    onChange={handleSearchChange}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault(); // Prevent form submission if inside a form
+                                            setIsOpen(false);
+                                        }
+                                    }}
                                     onFocus={() => setActiveInput("search")}
                                     onBlur={() => setActiveInput(null)}
                                     className="w-full text-xl py-2 outline-none bg-transparent text-white placeholder:text-gray-500"
                                 />
-                                <button type="button" className="text-white cursor-pointer z-10">
+                                <button 
+                                    type="button" 
+                                    onClick={() => {
+                                        setIsOpen(false);
+                                    }} 
+                                    className="text-white cursor-pointer z-10"
+                                >
                                     <SearchIcon size={20} strokeWidth={1} />
                                 </button>
                             </div>
@@ -76,13 +88,16 @@ const ShopFilterMobile = ({
                         <h4 className="text-2xl font-bold mb-5 text-white">Categories</h4>
                         <ul className="mb-10 flex flex-row flex-wrap items-start gap-5 text-lg font-light capitalize cursor-pointer">
                             {categories && categories.length > 0 ? (
-                                categories.map((category, idx) => (
+                                [...categories].sort((a, b) => a.localeCompare(b)).map((category, idx) => (
                                     <li
                                         key={idx}
                                         className={`py-2 px-3  text-gray-500  border ${
                                             selectedCategory === category ? "bg-blue-500 border-blue-500 text-white" : "bg-gray-900 text-white border-white hover:border-blue-500 hover:text-blue-500"
                                         }`}
-                                        onClick={() => handleCategoryClick(category)}
+                                        onClick={() =>  {
+                                            handleCategoryClick(category);
+                                            setIsOpen(false);
+                                        }}
                                     >
                                         {category}
                                     </li>
@@ -94,13 +109,16 @@ const ShopFilterMobile = ({
 
                         <h4 className="text-2xl font-bold mb-5">Brands</h4>
                         <ul className="mb-10 flex flex-row flex-wrap items-start gap-5 text-lg font-light capitalize cursor-pointer">
-                            {brands.map((brand, idx) => (
+                            {[...brands].sort((a, b) => a.localeCompare(b)).map((brand, idx) => (
                                 <li
                                     key={idx}
                                     className={`py-2 px-3  text-gray-500  border ${
                                         selectedBrand === brand ? "bg-blue-500 border-blue-500 text-white" : "bg-gray-900 text-white border-white hover:border-blue-500 hover:text-blue-500"
                                     }`}
-                                    onClick={() => setSelectedBrand(brand)}
+                                    onClick={() => { 
+                                        setSelectedBrand(brand);
+                                        setIsOpen(false);
+                                    }}
                                 >
                                     {brand}
                                 </li>
@@ -171,6 +189,7 @@ const ShopFilterMobile = ({
                                 setSelectedBrand("");
                                 setSearch("");
                                 setPriceRange([minPrice, maxPrice]);
+                                setIsOpen(false);
                             }}
                         >
                             Reset Filters

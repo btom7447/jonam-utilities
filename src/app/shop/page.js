@@ -54,8 +54,9 @@ const ShopPage = () => {
             : true;
 
         const matchesSearch = search
-            ? product.name.toLowerCase().includes(search.toLowerCase())
+            ? (product.name || "").toLowerCase().includes(search.toLowerCase())
             : true;
+
 
         const matchesBrand = selectedBrand
     ? Array.isArray(product.brand_name) &&
