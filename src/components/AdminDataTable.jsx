@@ -22,12 +22,16 @@ const getStatusStyle = (status) => {
   switch (normalized) {
     case "completed":
       return "bg-green-100 text-green-700 border border-green-300";
+    case "true":
+      return "bg-green-100 text-green-700 border border-green-300";
     case "confirmed":
       return "bg-orange-100 text-orange-500 border border-orange-500";
     case "pending":
       return "bg-yellow-100 text-yellow-700 border border-yellow-300";
     case "transit":
       return "bg-blue-100 text-blue-700 border border-blue-300";
+    case "false":
+    return "bg-blue-100 text-blue-700 border border-blue-300";
     case "cancelled":
       return "bg-red-100 text-red-700 border border-red-300";
     default:
@@ -119,11 +123,11 @@ export default function AdminDataTable({ data = [], columns = [], onEdit, onDele
     <section className="mx-5 lg:mx-10 mb-10 bg-white rounded-xl border border-gray-200 overflow-x-auto relative">
       <table className="w-full border-collapse">
         <thead>
-          <tr className="bg-brown border-b border-gray-200 text-xl text-left text-white min-w-lg">
+          <tr className="bg-brown border-b border-gray-200 text-xl text-left text-white">
             {columns.map((col) => (
               <th key={col} className="p-5 font-semibold">{formatColumnLabel(col)}</th>
             ))}
-            <th className="p-5 border-b font-semibold text-right relative">
+            <th className="p-5 border-b font-semibold text-right relative ">
               <button type="button" onClick={() => setDropdownOpen(!dropdownOpen)}>
                 <EllipsisVertical size={25} strokeWidth={1} />
               </button>
@@ -182,7 +186,7 @@ export default function AdminDataTable({ data = [], columns = [], onEdit, onDele
                   </td>
                 );
               })}
-              <td className="p-5 border-b border-gray-200 text-center relative">
+              <td className="min-w-50 xl:min-w-fit p-5 border-b border-gray-200 text-center relative">
                 <button onClick={(e) => { e.stopPropagation(); openUpdateModal(row, "status") }} className="text-blue-500 hover:text-blue-800 hover:cursor-pointer mr-7">
                   <PenLine size={25} strokeWidth={1} />
                 </button>

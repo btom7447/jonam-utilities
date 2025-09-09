@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 const ADMIN_EMAILS = [
   "jonamengr@gmail.com",
-  "Joshuaobasi236@gmail.com",
+  "joshuaobasi236@gmail.com",
   "tomekemini7447@gmail.com",
   "tombenjamin7447@gmail.com", // your email
 ];

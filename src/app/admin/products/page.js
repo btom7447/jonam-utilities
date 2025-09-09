@@ -47,12 +47,13 @@ export default function AdminOrdersPage() {
         // call delete API
     };
 
+    // console.log("Products", products)
     return (
         <>
             <AdminHeader title={"Products Management"} />
             <AdminDataTable
                 data={products}
-                columns={["ID", "Name", "Price", "Payment_Option", "Order_Date", "Status"]}
+                columns={["Id", "Name", "Price", "Quantity", "Category", "Featured"]}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
             />
