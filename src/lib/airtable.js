@@ -13,6 +13,8 @@ const productsTable = process.env.AIRTABLE_PRODUCTS_NAME || "Products";
 const brandsTable = process.env.AIRTABLE_BRANDS_NAME || "Brands";
 const projectsTable = process.env.AIRTABLE_PROJECTS_NAME || "Projects";
 const handymanTable = process.env.AIRTABLE_HANDYMAN_NAME || "Handyman";
+const ordersTable = process.env.AIRTABLE_ORDERS_NAME || "Orders";
+const bookingsTable = process.env.AIRTABLE_BOOKINGS_NAME || "Bookings"
 
 // ✅ Fetch categories (with caching)
 export async function fetchCategories() {
@@ -87,6 +89,36 @@ export async function fetchHandyman() {
 
     setCachedData("handyman", handyman);
     return handyman;
+}
+
+// ✅ Fetch all orders (with caching)
+export async function fetchOrders() {
+    const cached = getCachedData("orders");
+    if (cached) return cached;
+
+    const records = await base(ordersTable).select().all();
+    const orders = records.map(record => ({
+        recordId: record.id,
+        ...record.fields,
+    }));
+
+    setCachedData("order", orders);
+    return orders;
+}
+
+// ✅ Fetch all Bookings (with caching)
+export async function fetchBookings() {
+    const cached = getCachedData("bookings");
+    if (cached) return cached;
+
+    const records = await base(bookingsTable).select().all();
+    const bookings = records.map(record => ({
+        recordId: record.id,
+        ...record.fields,
+    }));
+
+    setCachedData("Bookings", bookings);
+    return bookings;
 }
 
 // ✅ Fetch product by ID (with caching)
@@ -260,3 +292,35 @@ export const newsletter = async (newData) => {
         return { success: false, error };
     }
 };
+
+// Update Order Record
+export async function updateOrders(tableName, recordId, data) {
+  try {
+    console.log("Updating Airtable:", { tableName, recordId, data });
+
+    const record = await base(tableName).update([
+      {
+        id: recordId,
+        fields: data,
+      },
+    ]);
+
+    console.log("Airtable responded with:", record);
+
+    return { id: record[0].id, ...record[0].fields };
+  } catch (error) {
+    console.error("Airtable updateOrders error:", error);
+    throw error;
+  }
+}
+
+// Delete Order Record
+export async function deleteOrder(tableName, recordId) {
+    try {
+        const deletedRecord = await base(tableName).destroy(recordId);
+        return deletedRecord; // contains id & deleted boolean
+    } catch (error) {
+        console.error("Error deleting order:", error);
+        throw error;
+    }
+}

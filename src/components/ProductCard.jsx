@@ -108,7 +108,7 @@ const ProductCard = ({ data }) => {
             <div className='mt-5 w-full'>
                 <Link
                     href={`/product/${data?.recordId}`}
-                    className='w-full text-xl xl:text-2xl font-semibold text-black capitalize hover:text-blue-500'
+                    className='w-full text-lg lg:text-xl font-semibold text-black capitalize hover:text-blue-500'
                 >
                     {data?.name ?? "Untitled Product"}
                 </Link>
@@ -118,12 +118,12 @@ const ProductCard = ({ data }) => {
                         <p className="text-lg text-gray-500 line-through">
                             ₦{typeof price === 'number' ? price.toLocaleString() : ""}
                         </p>
-                        <p className=" text-xl xl:text-2xl font-bold text-black">
+                        <p className=" text-lg xl:text-xl font-bold text-black">
                             ₦{typeof finalPrice === 'number' ? finalPrice.toLocaleString() : ""}
                         </p>
                     </div>
                 ) : (
-                    <p className="text-xl xl:text-2xl font-bold text-black mt-1">
+                    <p className="text-lg xl:text-xl font-bold text-black mt-1">
                         ₦{typeof price === 'number' ? price.toLocaleString() : ""}
                     </p>
                 )}

@@ -5,10 +5,19 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, signInWithGoogle } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+
+
+const ADMIN_EMAILS = [
+  "admin1@example.com",
+  "tomekemini7447@gmail.com",
+  "tombenjamin7447@gmail.com", // your email
+];
 
 const LoginModal = ({ setView, onClose }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   // Listen for auth state changes
   useEffect(() => {
@@ -28,6 +37,17 @@ const LoginModal = ({ setView, onClose }) => {
       });
       return () => unsubscribe();
   }, []);
+
+  const redirectUser = (user) => {
+    if (!user) return;
+    if (ADMIN_EMAILS.includes(user.email)) {
+      router.push("/admin"); // admin redirect
+    } else {
+      router.push("/"); // regular user
+    }
+    onClose();
+  };
+
 
   const handleGoogleSignIn = async () => {
     setLoading(true);

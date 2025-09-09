@@ -5,12 +5,20 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 import { MoonLoader } from "react-spinners";
+import { useRouter } from "next/navigation";
+
+const ADMIN_EMAILS = [
+  "admin1@example.com",
+  "tomekemini7447@gmail.com",
+  "tombenjamin7447@gmail.com", // your email
+];
 
 const EmailModal = ({ setView, onClose }) => {
   const [activeInput, setActiveInput] = useState(null);
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const fields = [
     { label: "Email", name: "email", type: "email" },
@@ -37,15 +45,24 @@ const EmailModal = ({ setView, onClose }) => {
 
     try {
       setLoading(true);
-      await loginWithEmail(form.email, form.password);
+      const user = await loginWithEmail(form.email, form.password);
       toast.success("Logged in successfully!");
+
+      // redirect depending on email
+      if (ADMIN_EMAILS.includes(user?.email)) {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
+
       onClose();
     } catch (error) {
       toast.error(error.message || "Login failed");
     } finally {
       setLoading(false);
     }
-  };
+};
+
 
   return (
     <section>
