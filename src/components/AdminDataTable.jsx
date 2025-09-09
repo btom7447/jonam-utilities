@@ -119,7 +119,7 @@ export default function AdminDataTable({ data = [], columns = [], onEdit, onDele
     <section className="mx-5 lg:mx-10 mb-10 bg-white rounded-xl border border-gray-200 overflow-x-auto relative">
       <table className="w-full border-collapse">
         <thead>
-          <tr className="bg-brown border-b border-gray-200 text-xl text-left text-white">
+          <tr className="bg-brown border-b border-gray-200 text-xl text-left text-white min-w-lg">
             {columns.map((col) => (
               <th key={col} className="p-5 font-semibold">{formatColumnLabel(col)}</th>
             ))}

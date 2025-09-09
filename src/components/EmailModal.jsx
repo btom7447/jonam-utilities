@@ -8,7 +8,8 @@ import { MoonLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 
 const ADMIN_EMAILS = [
-  "admin1@example.com",
+  "jonamengr@gmail.com",
+  "Joshuaobasi236@gmail.com",
   "tomekemini7447@gmail.com",
   "tombenjamin7447@gmail.com", // your email
 ];
