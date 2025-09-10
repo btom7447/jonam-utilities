@@ -8,7 +8,6 @@ import AdminSidebar from "@/components/AdminSidebar";
 import { MoonLoader } from "react-spinners";
 import {
   Package,
-  Settings,
   HouseIcon,
   ZapIcon,
   HardHatIcon,
@@ -41,7 +40,6 @@ export default function AdminLayout({ children }) {
     { href: "/admin/products", label: "Products", icon: ShoppingCartIcon,  title: "Product Management"  },
     { href: "/admin/projects", label: "Projects", icon: FoldersIcon,  title: "Product Management"  },
     { href: "/admin/services", label: "Services", icon: ZapIcon,  title: "Services Management" },
-    { href: "/admin/settings", label: "Settings", icon: Settings,  title: "Admin Settings" },
   ];
 
   useEffect(() => {
