@@ -21,7 +21,7 @@ export default function AdminSidebar({ navItems }) {
     };
 
     return (
-        <aside className="w-full h-full bg-gray-900 p-10 flex flex-col justify-between items-center overflow-y-auto">
+        <aside className="adminSidebar w-full h-full bg-gray-900 px-10 py-5 flex flex-col justify-between items-center overflow-y-auto">
             <div className="flex flex-col items-center">
                 <Link href="/" className='flex items-center bg-white p-2 rounded-full'>
                     <Image
@@ -29,7 +29,7 @@ export default function AdminSidebar({ navItems }) {
                         alt="Jonam Utilities logo"
                         width={30}
                         height={30}
-                        className='w-30 h-30 object-contain'
+                        className='w-20 h-20 object-contain'
                         unoptimized
                     />
                 </Link>

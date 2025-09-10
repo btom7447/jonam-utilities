@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["your-image-domain.com"],
+    domains: ["v5.airtableusercontent.com"],
   },
 };
 

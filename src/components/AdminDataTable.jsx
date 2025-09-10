@@ -24,6 +24,8 @@ const getStatusStyle = (status) => {
       return "bg-green-100 text-green-700 border border-green-300";
     case "true":
       return "bg-green-100 text-green-700 border border-green-300";
+    case "publish":
+      return "bg-green-100 text-green-700 border border-green-300";
     case "confirmed":
       return "bg-orange-100 text-orange-500 border border-orange-500";
     case "pending":
@@ -33,6 +35,8 @@ const getStatusStyle = (status) => {
     case "false":
     return "bg-blue-100 text-blue-700 border border-blue-300";
     case "cancelled":
+      return "bg-red-100 text-red-700 border border-red-300";
+    case "draft":
       return "bg-red-100 text-red-700 border border-red-300";
     default:
       return "bg-gray-100 text-gray-700 border border-gray-300";
@@ -96,23 +100,27 @@ export default function AdminDataTable({ data = [], columns = [], onEdit, onDele
     setShowModal(true);
     setLoading(false);
   };
+const handleUpdate = async ({ recordId, field, value }) => {
+  setLoading(true);
 
-  const handleUpdate = async ({ recordId, field, value }) => {
-    setLoading(true);
-    await onEdit?.({ recordId, status: value }); // call parent API
+  // ✅ Send dynamic field key + value
+  await onEdit?.({
+    recordId,
+    values: { [field]: value },
+  });
 
-    // Update local table instantly
-    setTableData((prev) =>
-      prev.map((r) => (r.recordId === recordId ? { ...r, [field]: value } : r))
-    );
+  // Update local table instantly
+  setTableData((prev) =>
+    prev.map((r) => (r.recordId === recordId ? { ...r, [field]: value } : r))
+  );
 
-    setLoading(false);
-    setShowModal(false);
-  };
+  setLoading(false);
+  setShowModal(false);
+};
 
   if (!tableData || tableData.length === 0) {
     return (
-      <section className="m-5 lg:m-10 bg-white rounded-xl p-20 border border-blue-500 flex flex-col items-center ">
+      <section className="mx-5 lg:mx-10 mb-10 bg-white rounded-xl p-20 border border-gray-200 flex flex-col items-center ">
         <CloudOff size={40} strokeWidth={1} />
         <p className="mt-5 text-gray-500 text-center text-2xl">No data available</p>
       </section>

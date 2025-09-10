@@ -101,6 +101,11 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-white);
 }
 
+/* Admin Sidebar Scroll */
+.adminSidebar::-webkit-scrollbar-thumb {
+  display: none !important;
+}
+
 .leaflet-tooltip.custom-tooltip {
   padding: 20px !important;
   max-width: 250px !important;

@@ -25,7 +25,7 @@ const CustomSelect = ({ label = "Select Option", options = [], value, onChange }
       </button>
 
       {isOpen && (
-        <ul className="absolute z-30 w-full bg-gray-900 border border-gray-900">
+        <ul className="absolute z-50 w-full bg-gray-900 border border-gray-900">
           {options.map((option) => (
             <li
               key={option}

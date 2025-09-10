@@ -295,23 +295,65 @@ export const newsletter = async (newData) => {
 
 // Update Order Record
 export async function updateOrders(tableName, recordId, data) {
-  try {
-    console.log("Updating Airtable:", { tableName, recordId, data });
+    try {
+        console.log("Updating Airtable:", { tableName, recordId, data });
 
-    const record = await base(tableName).update([
-      {
-        id: recordId,
-        fields: data,
-      },
-    ]);
+        const record = await base(tableName).update([
+            {
+                id: recordId,
+                fields: data,
+            },
+        ]);
 
-    console.log("Airtable responded with:", record);
+        console.log("Airtable responded with:", record);
 
-    return { id: record[0].id, ...record[0].fields };
-  } catch (error) {
-    console.error("Airtable updateOrders error:", error);
-    throw error;
-  }
+        return { id: record[0].id, ...record[0].fields };
+    } catch (error) {
+        console.error("Airtable updateOrders error:", error);
+        throw error;
+    }
+}
+
+// Update Booking Record
+export async function updateBookings(tableName, recordId, data) {
+    try {
+        console.log("Updating Airtable:", { tableName, recordId, data });
+
+        const record = await base(tableName).update([
+        {
+            id: recordId,
+            fields: data,
+        },
+        ]);
+
+        console.log("Airtable responded with:", record);
+
+        return { id: record[0].id, ...record[0].fields };
+    } catch (error) {
+        console.error("Airtable updateBookings error:", error);
+        throw error;
+    }
+}
+
+// Update Handyman Record
+export async function updateHandyman(tableName, recordId, data) {
+    try {
+        console.log("Updating Airtable:", { tableName, recordId, data });
+
+        const record = await base(tableName).update([
+        {
+            id: recordId,
+            fields: data,
+        },
+        ]);
+
+        console.log("Airtable responded with:", record);
+
+        return { id: record[0].id, ...record[0].fields };
+    } catch (error) {
+        console.error("Airtable updateHandyman error:", error);
+        throw error;
+    }
 }
 
 // Delete Order Record
@@ -321,6 +363,28 @@ export async function deleteOrder(tableName, recordId) {
         return deletedRecord; // contains id & deleted boolean
     } catch (error) {
         console.error("Error deleting order:", error);
+        throw error;
+    }
+}
+
+// Delete Bookings Record
+export async function deleteBooking(tableName, recordId) {
+    try {
+        const deletedRecord = await base(tableName).destroy(recordId);
+        return deletedRecord; // contains id & deleted boolean
+    } catch (error) {
+        console.error("Error deleting booking:", error);
+        throw error;
+    }
+}
+
+// Delete Handyman Record
+export async function deleteHandyman(tableName, recordId) {
+    try {
+        const deletedRecord = await base(tableName).destroy(recordId);
+        return deletedRecord; // contains id & deleted boolean
+    } catch (error) {
+        console.error("Error deleting handyman:", error);
         throw error;
     }
 }

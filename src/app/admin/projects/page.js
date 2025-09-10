@@ -4,31 +4,33 @@ import { useEffect, useState } from "react";
 import { DotLoader } from "react-spinners";
 import AdminHeader from "@/components/AdminHeader";
 import { toast } from "react-toastify";
-import HandymanMetricSection from "@/components/HandymanMetricsSection";
-import AdminHandymanTable from "@/components/AdminHandymanTable";
+import ProductMetricSection from "@/components/ProductMetricSection";
+import AdminProductTable from "@/components/AdminProductTable";
+import ProjectsMetricSection from "@/components/ProjectsMetricSection";
+import AdminProjectsTable from "@/components/AdminProjectsTable";
 
 export default function AdminBookingsPage() {
-    const [handyman, setHandyman] = useState([]);
+    const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false)
-    const [selectedHandyman, setSelectedHandyman] = useState(null); 
+    const [selectedProject, setSelectedProject] = useState(null); 
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState(null);
 
-    const handleDeleteClick = (booking) => {
-        setDeleteTarget(booking);
+    const handleDeleteClick = (product) => {
+        setDeleteTarget(product);
         setDeleteModalOpen(true);
     };
 
     useEffect(() => {
         async function loadData() {
             try {
-                const res = await fetch("/api/handyman");
+                const res = await fetch("/api/projects");
                 const data = await res.json();
-                setHandyman(Array.isArray(data) ? data : []);
+                setProjects(Array.isArray(data) ? data : []);
             } catch (err) {
-                console.error("Error fetching handyman:", err);
-                setHandyman([]);
+                console.error("Error fetching projects:", err);
+                setProjects([]);
             } finally {
                 setLoading(false);
             }
@@ -44,12 +46,12 @@ export default function AdminBookingsPage() {
         );
     }
 
-    const handleRowClick = (handyman) => {
+    const handleRowClick = (project) => {
         // order now includes recordId
-        setSelectedHandyman(booking);
+        setSelectedProject(project);
     };
 
-const handleUpdateHandyman = async (updatedRow) => {
+const handleUpdateProject = async (updatedRow) => {
   setUpdating(true);
   try {
     if (!updatedRow?.recordId) {
@@ -64,7 +66,7 @@ const handleUpdateHandyman = async (updatedRow) => {
       payload.image = [{ url: payload.image }];
     }
 
-    const res = await fetch(`/api/handyman/${updatedRow.recordId}`, {
+    const res = await fetch(`/api/projects/${updatedRow.recordId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -72,23 +74,23 @@ const handleUpdateHandyman = async (updatedRow) => {
 
     if (!res.ok) {
       const errorData = await res.json();
-      throw new Error(errorData.error || "Failed to update handyman");
+      throw new Error(errorData.error || "Failed to update projects");
     }
 
-    const updatedHandyman = await res.json();
+    const updatedProject = await res.json();
 
-    setHandyman(prev =>
+    setProjects(prev =>
       prev.map(o =>
         o.recordId === updatedRow.recordId
-          ? { ...o, ...updatedHandyman }
+          ? { ...o, ...updatedProject }
           : o
       )
     );
 
-    toast.success("Handyman record updated successfully!");
-    setSelectedHandyman(null);
+    toast.success("Project record updated successfully!");
+    setSelectedProject(null);
   } catch (err) {
-    console.error("Error updating handyman:", err);
+    console.error("Error updating project:", err);
     toast.error(`Update failed: ${err.message}`);
   } finally {
     setUpdating(false);
@@ -97,22 +99,22 @@ const handleUpdateHandyman = async (updatedRow) => {
 
 
 
-    const handleDelete = async (handyman) => {
-        if (!handyman?.recordId) return toast.error("No record ID found for deletion");
+    const handleDelete = async (project) => {
+        if (!project?.recordId) return toast.error("No record ID found for deletion");
 
         setUpdating(true); // optional: disables buttons while deleting
         try {
-            const res = await fetch(`/api/handyman/${bookings.recordId}`, { method: "DELETE" });
+            const res = await fetch(`/api/projects/${product.recordId}`, { method: "DELETE" });
 
             if (!res.ok) {
             const errData = await res.json();
-            throw new Error(errData.error || "Failed to delete handyman");
+            throw new Error(errData.error || "Failed to delete project");
             }
 
             // Remove from local state so both table and metrics update instantly
-            setHandyman(prev => prev.filter(o => o.recordId !== book.recordId));
+            setProjects(prev => prev.filter(o => o.recordId !== project.recordId));
 
-            toast.success("Handyman deleted successfully!");
+            toast.success("Project deleted successfully!");
         } catch (err) {
             console.error("Delete failed:", err);
             toast.error(`Delete failed: ${err.message}`);
@@ -122,15 +124,15 @@ const handleUpdateHandyman = async (updatedRow) => {
     };
 
 
-    // console.log("Bookings", bookings)
+    console.log("Projects", projects)
     return (
         <>
-            <AdminHeader title="Booking Management" />
-            <HandymanMetricSection handyman={handyman} />
+            <AdminHeader title="Products Management" />
+            <ProjectsMetricSection projects={projects} />
 
-            <AdminHandymanTable
-                data={handyman}
-                onEdit={handleUpdateHandyman}
+            <AdminProjectsTable
+                data={projects}
+                onEdit={handleUpdateProject}
                 onDelete={handleDelete}
             />
         </>

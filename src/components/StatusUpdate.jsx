@@ -38,7 +38,7 @@ export default function StatusUpdate({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60">
       <div className="bg-white rounded-xl shadow-lg p-10 w-full max-w-lg">
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-2xl capitalize font-semibold">

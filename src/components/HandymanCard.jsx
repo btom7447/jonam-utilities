@@ -7,7 +7,6 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 const HandymanCard = ({ data }) => {
-    console.log("handy man data", data)
     const router = useRouter();  
     const [timestamp, setTimestamp] = useState("");
 

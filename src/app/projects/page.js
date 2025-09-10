@@ -13,20 +13,30 @@ const ProjectPage = () => {
     
 
     useEffect(() => {
-        async function loadProducts() {
-            const res = await fetch("/api/projects");
-            const data = await res.json();
-            if (!Array.isArray(data)) {
-                console.error("Projects not array:", data);
+        async function loadProjects() {
+            try {
+                const res = await fetch("/api/projects");
+                const data = await res.json();
+
+                if (!Array.isArray(data)) {
+                    console.error("Projects not array:", data);
+                    setProjects([]);
+                } else {
+                    // ✅ Filter to only published projects
+                    const publishedProjects = data.filter(project => project.status === "publish");
+                    setProjects(publishedProjects);
+                }
+            } catch (err) {
+                console.error("Error loading projects:", err);
                 setProjects([]);
-            } else {
-                setProjects(data);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         }
 
-        loadProducts();
+        loadProjects();
     }, []);
+
 
     useEffect(() => {
         AOS.init({ duration: 600 });

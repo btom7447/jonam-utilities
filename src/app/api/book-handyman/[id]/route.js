@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { updateOrders, deleteOrder } from "@/lib/airtable";
+import { updateBookings, deleteBooking } from "@/lib/airtable";
 
 export async function PATCH(req, { params }) {
     const { id } = params; // Airtable recordId
@@ -17,19 +17,19 @@ export async function PATCH(req, { params }) {
             );
         }
 
-        const updatedOrder = await updateOrders(
-            process.env.AIRTABLE_ORDERS_NAME,
+        const updatedBooking = await updateBookings(
+            process.env.AIRTABLE_BOOKINGS_NAME,
             id,
             { status: body.status } // raw fields, updateOrders will wrap into { fields: ... }
         );
 
-        console.log("Order after Airtable update:", updatedOrder);
+        console.log("Booking after Airtable update:", updatedBooking);
 
-        return NextResponse.json(updatedOrder);
+        return NextResponse.json(updatedBooking);
     } catch (error) {
-        console.error("Error updating order:", error);
+        console.error("Error updating booking:", error);
         return NextResponse.json(
-            { error: "Failed to update order" },
+            { error: "Failed to update booking" },
             { status: 500 }
         );
     }
@@ -43,10 +43,10 @@ export async function DELETE(req, { params }) {
     }
 
     try {
-        const deleted = await deleteOrder(process.env.AIRTABLE_ORDERS_NAME, id);
+        const deleted = await deleteBooking(process.env.AIRTABLE_BOOKING_NAME, id);
         return NextResponse.json({ success: true, deleted });
     } catch (err) {
-        console.error("Failed to delete order:", err);
-        return NextResponse.json({ error: "Failed to delete order" }, { status: 500 });
+        console.error("Failed to delete booking:", err);
+        return NextResponse.json({ error: "Failed to delete booking" }, { status: 500 });
     }
 }
