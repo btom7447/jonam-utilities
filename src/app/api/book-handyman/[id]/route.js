@@ -43,7 +43,7 @@ export async function DELETE(req, { params }) {
     }
 
     try {
-        const deleted = await deleteBooking(process.env.AIRTABLE_BOOKING_NAME, id);
+        const deleted = await deleteBooking(process.env.AIRTABLE_BOOKINGS_NAME, id);
         return NextResponse.json({ success: true, deleted });
     } catch (err) {
         console.error("Failed to delete booking:", err);

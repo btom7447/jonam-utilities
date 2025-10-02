@@ -1,15 +1,27 @@
 import { NextResponse } from "next/server";
-import { createRecord } from "@/lib/airtable";
+import { getOrderItems } from "@/lib/airtable";
 
-export async function POST(req) {
-    try {
-        const body = await req.json();
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const ids = searchParams.get("ids")?.split(",").map((id) => id.trim());
 
-        const newItem = await createRecord(process.env.AIRTABLE_ORDER_ITEM, body);
+  if (!ids?.length) {
+    return NextResponse.json({ error: "No ids provided" }, { status: 400 });
+  }
 
-        return NextResponse.json(newItem, { status: 201 });
-    } catch (error) {
-        console.error("Error creating order item:", error.message || error);
-        return NextResponse.json({ error: "Failed to create order item: " + error.message }, { status: 500 });
-    }
+  try {
+    const items = await getOrderItems(ids);
+    return NextResponse.json(items);
+  } catch (err) {
+    console.error("Error fetching order items:", err);
+
+    // ✅ Pass Airtable’s error details directly
+    return NextResponse.json(
+      { 
+        error: err.message || "Unknown error",
+        details: err, // includes Airtable’s error object
+      },
+      { status: 500 }
+    );
+  }
 }

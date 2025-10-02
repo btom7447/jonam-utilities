@@ -1,38 +1,53 @@
-import { NextResponse } from "next/server";
-import formidable from "formidable";
-import fs from "fs";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
 
-// Disable Next.js body parsing for this route (important for file streams)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: false, // let FormData handle this
   },
 };
 
-export async function POST(req) {
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
   try {
-    // Save uploads into /public/uploads
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    const data = await new Promise((resolve, reject) => {
+      const busboy = require("busboy");
+      const bb = busboy({ headers: req.headers });
+      let fileBuffer = null;
 
-    // Parse file with formidable
-    const form = formidable({ multiples: false, uploadDir, keepExtensions: true });
-
-    const [fields, files] = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        else resolve([fields, files]);
+      bb.on("file", (_, file) => {
+        const chunks = [];
+        file.on("data", (chunk) => chunks.push(chunk));
+        file.on("end", () => {
+          fileBuffer = Buffer.concat(chunks);
+        });
       });
+
+      bb.on("finish", () => resolve(fileBuffer));
+      req.pipe(bb);
     });
 
-    const file = files.file[0]; // assuming input name="file"
-    const fileName = path.basename(file.filepath);
-    const fileUrl = `/uploads/${fileName}`; // public URL (served by Next.js /public folder)
+    if (!data) return res.status(400).json({ error: "No file uploaded" });
 
-    return NextResponse.json({ url: fileUrl });
-  } catch (err) {
-    console.error("Upload error:", err);
-    return NextResponse.json({ error: "File upload failed" }, { status: 500 });
+    const uploadRes = await cloudinary.uploader.upload_stream(
+      { folder: "handymen" },
+      (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ url: result.secure_url });
+      }
+    );
+
+    require("streamifier").createReadStream(data).pipe(uploadRes);
+  } catch (error) {
+    console.error("Cloudinary upload error:", error);
+    res.status(500).json({ error: "Upload failed" });
   }
 }

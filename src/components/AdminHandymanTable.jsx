@@ -12,6 +12,7 @@ import {
     ChevronLeft,
     ChevronRight,
     Star,
+    Trash2,
 } from "lucide-react";
 import Image from "next/image";
 import AdminDataUpdate from "./AdminDataUpdate";
@@ -30,7 +31,7 @@ const getAvailabilityStyle = (status) => {
     }
 };
 
-export default function AdminHandymanTable({ data = [], onEdit, onDelete }) {
+export default function AdminHandymanTable({ data = [], onEdit, onDelete, updating }) {
     const [tableData, setTableData] = useState(data);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -54,10 +55,16 @@ export default function AdminHandymanTable({ data = [], onEdit, onDelete }) {
     const openDeleteModal = (row) => setModal({ type: "delete", row });
     const closeModal = () => setModal({ type: null, row: null });
 
-    const handleUpdate = async ({ recordId, field, value }) => {
-        await onEdit?.({ recordId, [field]: value });
-        setTableData((prev) =>
-        prev.map((r) => (r.recordId === recordId ? { ...r, [field]: value } : r))
+    const handleUpdate = async ({ recordId, field, value, values }) => {
+        // normalize into values object
+        const payload = values || { [field]: value };
+        await onEdit?.({ recordId, values: payload });
+    
+        // update local table immediately
+            setTableData((prev) =>
+                prev.map((r) =>
+                r.recordId === recordId ? { ...r, ...payload } : r
+            )
         );
         closeModal();
     };
@@ -161,7 +168,7 @@ export default function AdminHandymanTable({ data = [], onEdit, onDelete }) {
                             </td>
 
                             {/* Name */}
-                            <td className="p-5 border-b border-gray-200 text-left text-gray-900">
+                            <td className="min-w-xs p-5 border-b border-gray-200 text-left text-gray-900">
                                 {row.name}
                             </td>
 
@@ -196,7 +203,7 @@ export default function AdminHandymanTable({ data = [], onEdit, onDelete }) {
                         </td>
 
                         {/* Actions */}
-                        <td className="p-5 border-b border-gray-200 text-right">
+                        <td className="min-w-50 xl:min-w-fit p-5 border-b border-gray-200 text-right">
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -213,7 +220,7 @@ export default function AdminHandymanTable({ data = [], onEdit, onDelete }) {
                                 }}
                                 className="text-red-500 hover:text-red-800 hover:cursor-pointer"
                             >
-                                <DeleteIcon size={25} strokeWidth={1} />
+                                <Trash2 size={25} strokeWidth={1} />
                             </button>
                         </td>
                         </tr>
@@ -245,7 +252,7 @@ export default function AdminHandymanTable({ data = [], onEdit, onDelete }) {
             </div>
 
             {/* Status Modal */}
-             {modal.type === "update" && modal.row && (
+            {modal.row && (
                 <AdminDataUpdate
                     row={modal.row}
                     open={true}
@@ -253,11 +260,12 @@ export default function AdminHandymanTable({ data = [], onEdit, onDelete }) {
                     onUpdate={handleUpdate}
                     onDelete={onDelete}
                     loading={false}
-                    mode="update"
+                    updating={updating}
+                    mode={modal.type}   // <-- dynamic: "update" or "delete"
                     formFields={[
                         { name: "image", label: "Image", type: "file" },
                         { name: "name", label: "Name", type: "text" },
-                        { name: "profile", label: "Profile", type: "textarea" }, // use textarea for longer text
+                        { name: "profile", label: "Profile", type: "textarea" },
                         { name: "certifications", label: "Certifications", type: "textarea" },
                         { name: "rating", label: "Rating", type: "number" },
                         { name: "gigs", label: "Gigs", type: "number" },

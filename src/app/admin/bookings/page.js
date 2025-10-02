@@ -55,16 +55,17 @@ export default function AdminBookingsPage() {
     const handleUpdateBooking = async (updatedRow) => {
         setUpdating(true);
         try {
-            if (!updatedRow?.recordId) {
+                if (!updatedRow?.recordId) {
                 toast.error("RecordId is missing from payload");
                 setUpdating(false);
                 return;
             }
 
+            // ✅ send full values object, not just status
             const res = await fetch(`/api/book-handyman/${updatedRow.recordId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: updatedRow.status }),
+                body: JSON.stringify(updatedRow.values),
             });
 
             if (!res.ok) {
@@ -74,49 +75,48 @@ export default function AdminBookingsPage() {
 
             const updatedBooking = await res.json();
 
-            // Update local state using recordId
             setBookings(prev =>
-                prev.map(o => 
-                    o.recordId === updatedRow.recordId 
-                    ? { ...o, ...updatedBooking.fields } 
-                    : o
+                prev.map(o =>
+                    o.recordId === updatedRow.recordId ? { ...o, ...updatedBooking } : o
                 )
             );
 
-            toast.success("Booking status updated successfully!");
-            setSelectedBookings(null); // modal closing is handled by AdminDataTable/StatusUpdate
-
-        } catch (err) {
-            console.error("Error updating booking:", err);
-            toast.error(`Update failed: ${err.message}`);
-        } finally {
-            setUpdating(false);
-        }
-    };
+            toast.success("Booking updated successfully!");
+            setSelectedBookings(null);
+            } catch (err) {
+                console.error("Error updating booking:", err);
+                toast.error(`Update failed: ${err.message}`);
+            } finally {
+                setUpdating(false);
+            }
+        };
 
     const handleDelete = async (booking) => {
-        if (!bookings?.recordId) return toast.error("No record ID found for deletion");
+  if (!booking?.recordId) return toast.error("No record ID found for deletion");
 
-        setUpdating(true); // optional: disables buttons while deleting
-        try {
-            const res = await fetch(`/api/book-handyman/${bookings.recordId}`, { method: "DELETE" });
+  setUpdating(true);
+  try {
+    const res = await fetch(`/api/book-handyman/${booking.recordId}`, {
+      method: "DELETE",
+    });
 
-            if (!res.ok) {
-            const errData = await res.json();
-            throw new Error(errData.error || "Failed to delete booking");
-            }
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.error || "Failed to delete booking");
+    }
 
-            // Remove from local state so both table and metrics update instantly
-            setBookings(prev => prev.filter(o => o.recordId !== book.recordId));
+    // ✅ Remove deleted row from local state
+    setBookings(prev => prev.filter(o => o.recordId !== booking.recordId));
 
-            toast.success("Booking deleted successfully!");
-        } catch (err) {
-            console.error("Delete failed:", err);
-            toast.error(`Delete failed: ${err.message}`);
-        } finally {
-            setUpdating(false);
-        }
-    };
+    toast.success("Booking deleted successfully!");
+  } catch (err) {
+    console.error("Delete failed:", err);
+    toast.error(`Delete failed: ${err.message}`);
+  } finally {
+    setUpdating(false);
+  }
+};
+
 
 
     const fieldOptions = {

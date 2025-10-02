@@ -14,13 +14,14 @@ export default function AdminDataUpdate({
   onUpdate,
   onDelete,
   loading,
+  updating,
   mode = "update",
   formFields = [],
 }) {
   const [values, setValues] = useState({});
   const [imagePreview, setImagePreview] = useState("");
+  const [uploading, setUploading] = useState(false);
 
-  console.log("Row", row)
   useEffect(() => {
     if (row && mode === "update") {
       const initialValues = {};
@@ -29,8 +30,7 @@ export default function AdminDataUpdate({
       });
       setValues(initialValues);
 
-      // Set image preview if image exists
-      if (row.image) setImagePreview(row.image[0].url);
+      if (row.image?.[0]?.url) setImagePreview(row.image[0].url);
     }
   }, [row, formFields, mode]);
 
@@ -41,30 +41,42 @@ export default function AdminDataUpdate({
   };
 
   const handleFileChange = async (e, name) => {
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const formData = new FormData();
-  formData.append("file", file);
+    setUploading(true);
 
-  // Send to Next.js API
-  const res = await fetch("/api/upload", {
-    method: "POST",
-    body: formData,
-  });
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
 
-  const data = await res.json();
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-  if (data.url) {
-    handleChange(name, { url: window.location.origin + data.url });
-  }
-};
+      const data = await res.json();
 
+      if (data.url) {
+        handleChange(name, [{ url: data.url }]); // ✅ Airtable array format
+        setImagePreview(data.url);
+      } else {
+        console.error("Upload failed:", data.error);
+      }
+    } catch (err) {
+      console.error("File upload error:", err);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!onUpdate) return;
-    await onUpdate({ recordId: row.recordId, row, values });
+    await onUpdate({
+      recordId: row.recordId,
+      values,
+    });
     onClose();
   };
 
@@ -75,7 +87,7 @@ export default function AdminDataUpdate({
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-5">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 p-5">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-5xl overflow-y-auto max-h-[90vh]">
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-2xl capitalize font-semibold">
@@ -140,6 +152,7 @@ export default function AdminDataUpdate({
                           src={imagePreview}
                           alt="preview"
                           className="mb-3 w-30 h-30 object-cover"
+                          unoptimized
                         />
                       )}
                       <label className="mb-3 text-xl font-semibold">{field.label}</label>
@@ -147,8 +160,14 @@ export default function AdminDataUpdate({
                         type="file"
                         accept="image/*"
                         onChange={(e) => handleFileChange(e, field.name)}
+                        disabled={uploading}
                         className="border border-gray-700 p-5 focus:outline-none cursor-pointer"
                       />
+                      {uploading && (
+                        <div className="py-10 flex items-center justify-center">
+                          <MoonLoader size={25} color="#fff" />
+                        </div>
+                      )}
                     </>
                   ) : (
                     <>
@@ -175,12 +194,16 @@ export default function AdminDataUpdate({
               </button>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={updating || uploading} // ✅ disable while uploading
                 className={`py-3 px-10 text-xl flex items-center justify-center
-                  ${!loading ? "bg-blue-500 hover:bg-brown cursor-pointer" : "bg-gray-500 cursor-not-allowed"} 
+                  ${!updating && !uploading ? "bg-blue-500 hover:bg-brown cursor-pointer" : "bg-gray-500 cursor-not-allowed"} 
                   text-white transition-all duration-300`}
               >
-                {loading ? <MoonLoader size={25} color="#fff" /> : "Update"}
+                {updating || uploading ? (
+                  <MoonLoader size={25} color="#fff" />
+                ) : (
+                  "Update"
+                )}
               </button>
             </div>
           </form>

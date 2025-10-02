@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import ProductMetricSection from "@/components/ProductMetricSection";
 import AdminProductTable from "@/components/AdminProductTable";
 
-export default function AdminBookingsPage() {
+export default function AdminProductPage() {
     const [product, setProduct] = useState([]);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false)
@@ -125,7 +125,8 @@ const handleUpdateProduct = async (updatedRow) => {
     console.log("Products", product)
     return (
         <>
-            <AdminHeader title="Products Management" />
+          <h1>Test</h1>
+            <AdminHeader title="Products Managementssss" />
             <ProductMetricSection product={product} />
 
             <AdminProductTable

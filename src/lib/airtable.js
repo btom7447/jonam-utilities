@@ -14,6 +14,7 @@ const brandsTable = process.env.AIRTABLE_BRANDS_NAME || "Brands";
 const projectsTable = process.env.AIRTABLE_PROJECTS_NAME || "Projects";
 const handymanTable = process.env.AIRTABLE_HANDYMAN_NAME || "Handyman";
 const ordersTable = process.env.AIRTABLE_ORDERS_NAME || "Orders";
+const orderItemsTable = process.env.AIRTABLE_ORDER_ITEMS_NAME || "Order-Items"
 const bookingsTable = process.env.AIRTABLE_BOOKINGS_NAME || "Bookings"
 
 // ✅ Fetch categories (with caching)
@@ -102,7 +103,7 @@ export async function fetchOrders() {
         ...record.fields,
     }));
 
-    setCachedData("order", orders);
+    setCachedData("orders", orders);
     return orders;
 }
 
@@ -186,6 +187,34 @@ export async function fetchHandymanById(id) {
         return null;
     }
 }
+
+export async function getOrderItems(ids) {
+  if (!ids || ids.length === 0) return [];
+
+  try {
+    const formula = `OR(${ids.map((id) => `RECORD_ID() = '${id}'`).join(",")})`;
+    const records = await base(orderItemsTable)
+      .select({ filterByFormula: formula })
+      .all();
+
+    return records.map((r) => ({
+      recordId: r.id,
+      ...r.fields,
+    }));
+  } catch (err) {
+    console.error("Airtable fetch error (order items):", err);
+    throw err; // bubble it up to API route
+  }
+};
+
+export async function fetchOrderItems() {
+  const records = await base("Order-Items").select().all();
+  return records.map(r => ({
+    recordId: r.id,
+    ...r.fields,
+  }));
+};
+
 
 // Create Record for Orders and Order Item after payment
 export const createRecord = async (table, fields) => {

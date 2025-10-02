@@ -1,6 +1,6 @@
 "use client";
 
-import { HardHatIcon, UserRoundCheck, UserRoundX, UserCog2Icon, ShoppingCartIcon, PercentIcon, StarIcon, ChevronsDownIcon } from "lucide-react";
+import { ShoppingCartIcon, PercentIcon, StarIcon, ChevronsDownIcon } from "lucide-react";
 
 export default function ProductMetricSection({ product }) {
 

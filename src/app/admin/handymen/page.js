@@ -7,132 +7,142 @@ import { toast } from "react-toastify";
 import HandymanMetricSection from "@/components/HandymanMetricsSection";
 import AdminHandymanTable from "@/components/AdminHandymanTable";
 
-export default function AdminBookingsPage() {
-    const [handyman, setHandyman] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [updating, setUpdating] = useState(false)
-    const [selectedHandyman, setSelectedHandyman] = useState(null); 
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [deleteTarget, setDeleteTarget] = useState(null);
+export default function AdminHandymanPage() {
+  const [handyman, setHandyman] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+  const [selectedHandyman, setSelectedHandyman] = useState(null);
 
-    const handleDeleteClick = (booking) => {
-        setDeleteTarget(booking);
-        setDeleteModalOpen(true);
-    };
-
-    useEffect(() => {
-        async function loadData() {
-            try {
-                const res = await fetch("/api/handyman");
-                const data = await res.json();
-                setHandyman(Array.isArray(data) ? data : []);
-            } catch (err) {
-                console.error("Error fetching handyman:", err);
-                setHandyman([]);
-            } finally {
-                setLoading(false);
-            }
-        }
-        loadData();
-    }, []);
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center w-full h-screen py-20">
-                <DotLoader size={80} color="#8b4513" />
-            </div>
-        );
+  // --- Fetch handyman records ---
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const res = await fetch("/api/handyman");
+        const data = await res.json();
+        setHandyman(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Error fetching handyman:", err);
+        setHandyman([]);
+      } finally {
+        setLoading(false);
+      }
     }
+    loadData();
+  }, []);
 
-    const handleRowClick = (handyman) => {
-        // order now includes recordId
-        setSelectedHandyman(booking);
-    };
-
-const handleUpdateHandyman = async (updatedRow) => {
-  setUpdating(true);
-  try {
-    if (!updatedRow?.recordId) {
-      toast.error("RecordId is missing from payload");
-      setUpdating(false);
-      return;
-    }
-
-    const payload = { ...updatedRow.values };
-
-    if (payload.image && typeof payload.image === "string") {
-      payload.image = [{ url: payload.image }];
-    }
-
-    const res = await fetch(`/api/handyman/${updatedRow.recordId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.error || "Failed to update handyman");
-    }
-
-    const updatedHandyman = await res.json();
-
-    setHandyman(prev =>
-      prev.map(o =>
-        o.recordId === updatedRow.recordId
-          ? { ...o, ...updatedHandyman }
-          : o
-      )
-    );
-
-    toast.success("Handyman record updated successfully!");
-    setSelectedHandyman(null);
-  } catch (err) {
-    console.error("Error updating handyman:", err);
-    toast.error(`Update failed: ${err.message}`);
-  } finally {
-    setUpdating(false);
-  }
-};
-
-
-
-    const handleDelete = async (handyman) => {
-        if (!handyman?.recordId) return toast.error("No record ID found for deletion");
-
-        setUpdating(true); // optional: disables buttons while deleting
-        try {
-            const res = await fetch(`/api/handyman/${bookings.recordId}`, { method: "DELETE" });
-
-            if (!res.ok) {
-            const errData = await res.json();
-            throw new Error(errData.error || "Failed to delete handyman");
-            }
-
-            // Remove from local state so both table and metrics update instantly
-            setHandyman(prev => prev.filter(o => o.recordId !== book.recordId));
-
-            toast.success("Handyman deleted successfully!");
-        } catch (err) {
-            console.error("Delete failed:", err);
-            toast.error(`Delete failed: ${err.message}`);
-        } finally {
-            setUpdating(false);
-        }
-    };
-
-
-    // console.log("Bookings", bookings)
+  // --- Loader ---
+  if (loading) {
     return (
-        <>
-            <AdminHeader title="Booking Management" />
-            <HandymanMetricSection handyman={handyman} />
-
-            <AdminHandymanTable
-                data={handyman}
-                onEdit={handleUpdateHandyman}
-                onDelete={handleDelete}
-            />
-        </>
+      <div className="flex justify-center items-center w-full h-screen py-20">
+        <DotLoader size={80} color="#8b4513" />
+      </div>
     );
+  }
+
+  // --- Helper: normalize image(s) for Airtable ---
+  const formatImages = (images) => {
+    if (!images) return [];
+    if (typeof images === "string") return [{ url: images }];
+    if (Array.isArray(images)) {
+      return images.map((img) =>
+        typeof img === "string" ? { url: img } : { url: img.url }
+      );
+    }
+    if (images.url) return [{ url: images.url }];
+    return [];
+  };
+
+  // --- Update handyman record ---
+  const handleUpdateHandyman = async ({ recordId, values }) => {
+    setUpdating(true);
+    try {
+      if (!recordId) {
+        toast.error("RecordId is missing from payload");
+        return;
+      }
+
+      const payload = {
+        ...values,
+        // ✅ Convert numbers
+        rating: values.rating ? parseInt(values.rating, 10) : undefined,
+        gigs: values.gigs ? parseInt(values.gigs, 10) : undefined,
+        // ✅ Format image(s)
+        image: formatImages(values.image),
+      };
+
+      // ✅ Normalize availability
+      if (payload.availability) {
+        const availabilityMap = {
+          away: "away",
+          available: "available",
+          busy: "busy",
+        };
+        const clean = payload.availability
+          .replace(/^"+|"+$/g, "")
+          .toLowerCase();
+        payload.availability = availabilityMap[clean] || clean;
+      }
+
+      const res = await fetch(`/api/handyman/${recordId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error((await res.json()).error);
+
+      const updatedHandyman = await res.json();
+
+      setHandyman((prev) =>
+        prev.map((o) => (o.recordId === recordId ? { ...o, ...updatedHandyman } : o))
+      );
+
+      toast.success("Handyman record updated successfully!");
+      setSelectedHandyman(null);
+    } catch (err) {
+      toast.error(`Update failed: ${err.message}`);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  // --- Delete handyman record ---
+  const handleDelete = async (handyman) => {
+    if (!handyman?.recordId)
+      return toast.error("No record ID found for deletion");
+
+    setUpdating(true);
+    try {
+      const res = await fetch(`/api/handyman/${handyman.recordId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Failed to delete handyman");
+      }
+
+      setHandyman((prev) => prev.filter((o) => o.recordId !== handyman.recordId));
+      toast.success("Handyman deleted successfully!");
+    } catch (err) {
+      console.error("Delete failed:", err);
+      toast.error(`Delete failed: ${err.message}`);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  return (
+    <>
+      <AdminHeader title="Booking Management" />
+      <HandymanMetricSection handyman={handyman} />
+
+      <AdminHandymanTable
+        data={handyman}
+        onEdit={handleUpdateHandyman}
+        onDelete={handleDelete}
+        updating={updating}
+      />
+    </>
+  );
 }

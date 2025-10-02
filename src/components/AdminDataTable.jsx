@@ -11,8 +11,10 @@ import {
   DownloadIcon,
   ChevronLeft,
   ChevronRight,
+  Trash2,
 } from "lucide-react";
 import StatusUpdate from "./StatusUpdate";
+import AdminOrderDetails from "./AdminOrderDetails";
 
 const formatColumnLabel = (col) =>
   col.replace(/_/g, " ").replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -45,7 +47,16 @@ const getStatusStyle = (status) => {
 
 const DATE_KEYWORDS = ["date", "created", "updated", "timestamp"];
 
-export default function AdminDataTable({ data = [], columns = [], onEdit, onDelete, fieldOptions }) {
+export default function AdminDataTable({
+  data = [],
+  columns = [],
+  onRowClick,
+  onEdit,
+  onDelete,
+  fieldOptions,
+  dataName,
+  orderItems
+}) {
   const [tableData, setTableData] = useState(data);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -170,16 +181,23 @@ const handleUpdate = async ({ recordId, field, value }) => {
 
         <tbody>
           {currentData.map((row, rowIndex) => (
-            <tr key={row.recordId || rowIndex} className="hover:bg-gray-50 p-5 transition-colors cursor-pointer">
+            <tr
+              key={row.recordId || rowIndex}
+              className="hover:bg-gray-50 transition-colors cursor-pointer"
+              onClick={() => onRowClick?.(row)} // ✅ delegate back up
+            >
               {columns.map((col) => {
                 const lowerCol = col.toLowerCase();
                 const value = row[lowerCol] ?? "-";
 
                 return (
-                  <td key={col} className="p-5 border-b border-gray-200 text-left text-gray-900">
+                  <td key={col} className="min-w-xs xl:min-w-fit p-5 border-b border-gray-200 text-left text-gray-900">
                     {fieldOptions?.[lowerCol] ? (
                       <span
-                        onClick={() => openModal(row, lowerCol)}
+                        onClick={(e) => {
+                          e.stopPropagation();        {/* ✅ stop bubbling so row click won’t trigger */}
+                          openModal(row, lowerCol);
+                        }}
                         className={`px-5 py-3 rounded-full text-sm font-medium cursor-pointer ${
                           lowerCol === "status" ? getStatusStyle(value) : "bg-gray-100 text-gray-700 border border-gray-300"
                         }`}
@@ -199,7 +217,7 @@ const handleUpdate = async ({ recordId, field, value }) => {
                   <PenLine size={25} strokeWidth={1} />
                 </button>
                 <button onClick={(e) => { e.stopPropagation(); openDeleteModal(row); }} className="text-red-500 hover:text-red-800 hover:cursor-pointer">
-                  <DeleteIcon size={25} strokeWidth={1} />
+                  <Trash2 size={25} strokeWidth={1} />
                 </button>
               </td>
             </tr>
@@ -231,6 +249,9 @@ const handleUpdate = async ({ recordId, field, value }) => {
         />
       )}
 
+        {/* {dataName === "orders" && (
+        <AdminOrderDetails items={orderItems} />
+      )} */}
     </section>
   );
 }

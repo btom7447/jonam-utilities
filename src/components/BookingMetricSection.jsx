@@ -1,6 +1,6 @@
 "use client";
 
-import { PackageIcon, CheckCircleIcon, ClockIcon, TruckIcon, CalendarClockIcon, CalendarIcon, CalendarDaysIcon, CalendarCheck2Icon, CalendarCheckIcon, CalendarSyncIcon } from "lucide-react";
+import { CalendarClockIcon, CalendarDaysIcon,CalendarCheckIcon, CalendarSyncIcon } from "lucide-react";
 
 export default function BookingMetricSection({ bookings }) {
 
