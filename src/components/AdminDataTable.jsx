@@ -248,10 +248,6 @@ const handleUpdate = async ({ recordId, field, value }) => {
           mode={modal.type}
         />
       )}
-
-        {/* {dataName === "orders" && (
-        <AdminOrderDetails items={orderItems} />
-      )} */}
     </section>
   );
 }
