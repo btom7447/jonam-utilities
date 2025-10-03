@@ -65,10 +65,10 @@ export default function AdminLayout({ children }) {
   if (!authorized) return null;
 
   return (
-    <div className="fixed top-0 left-0 z-[5000] flex h-[100dvh] w-[100dvw] bg-blue-50">
+    <div className="fixed top-0 left-0 z-[2000] flex h-[100dvh] w-[100dvw] bg-blue-50">
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-gray-900 transform transition-transform duration-300 z-[6000]
+        className={`fixed top-0 left-0 h-full w-64 bg-gray-900 transform transition-transform duration-300 z-[2500]
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:relative`}
       >
         <AdminSidebar navItems={navItems} />

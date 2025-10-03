@@ -21,7 +21,7 @@ export default function AdminSidebar({ navItems }) {
     };
 
     return (
-        <aside className="adminSidebar w-full h-full bg-gray-900 px-10 py-5 flex flex-col justify-between items-center overflow-y-auto">
+        <aside className="adminSidebar w-full h-full bg-gray-900 border-r border-blue-500 px-10 py-5 flex flex-col justify-between items-center overflow-y-auto">
             <div className="flex flex-col items-center">
                 <Link href="/" className='flex items-center bg-white p-2 rounded-full'>
                     <Image
