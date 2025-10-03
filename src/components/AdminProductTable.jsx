@@ -11,13 +11,11 @@ import {
   DownloadIcon,
   ChevronLeft,
   ChevronRight,
-  PlusIcon,
-  Trash2,
 } from "lucide-react";
 import Image from "next/image";
 import AdminDataUpdate from "./AdminDataUpdate";
 
-export default function AdminProductTable({ data = [], onEdit, onDelete, updating, extraOptions = {} }) {
+export default function AdminProductTable({ data = [], onEdit, onDelete }) {
   const [tableData, setTableData] = useState(data);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,7 +59,7 @@ export default function AdminProductTable({ data = [], onEdit, onDelete, updatin
       </section>
     );
   }
-  // console.log("Products", data)
+  console.log("Products", data)
 
   return (
     <section className="mx-5 lg:mx-10 mb-10 bg-white rounded-xl border border-gray-200 overflow-x-auto relative">
@@ -75,19 +73,10 @@ export default function AdminProductTable({ data = [], onEdit, onDelete, updatin
             <th className="p-5 font-semibold">Discount</th>
             <th className="p-5 font-semibold">Quantity</th>
             <th className="p-5 font-semibold">Featured</th>
-            <th className="p-5 font-semibold flex gap-5 justify-end relative">
-              {/* Plus Button → Create New Product */}
-              <button
-                type="button"
-                onClick={() => setModal({ type: "create", row: {} })}
-                className="cursor-pointer"
-              >
-                <PlusIcon size={25} strokeWidth={1} />
-              </button>     
+            <th className="p-5 font-semibold text-right relative">
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="cursor-pointer"
               >
                 <EllipsisVertical size={25} strokeWidth={1} />
               </button>
@@ -218,7 +207,7 @@ export default function AdminProductTable({ data = [], onEdit, onDelete, updatin
                   }}
                   className="text-red-500 hover:text-red-800 hover:cursor-pointer"
                 >
-                  <Trash2 size={25} strokeWidth={1} />
+                  <DeleteIcon size={25} strokeWidth={1} />
                 </button>
               </td>
             </tr>
@@ -258,7 +247,6 @@ export default function AdminProductTable({ data = [], onEdit, onDelete, updatin
           onUpdate={handleUpdate}
           onDelete={onDelete}
           loading={false}
-          updating={updating}
           mode="update"
           formFields={[
             { name: "image", label: "Image", type: "file" },
@@ -266,48 +254,13 @@ export default function AdminProductTable({ data = [], onEdit, onDelete, updatin
             { name: "price", label: "Price", type: "number" },
             { name: "discount", label: "Discount", type: "number" },
             { name: "quantity", label: "Quantity", type: "number" },
-            { name: "featured", label: "Featured", type: "select", options: ["Yes", "No"] },
-            { name: "category", label: "Category", type: "select" },
-            { name: "brand", label: "Brand", type: "select" },
-            { name: "description", label: "Description", type: "textarea" },
-            { name: "product_number", label: "Product Number", type: "text" },
-            { name: "variants", label: "Variants", type: "text" },
-            { name: "product_colors", label: "Product Colors", type: "text" },
+            {
+              name: "featured",
+              label: "Featured",
+              type: "select",
+              options: ["Yes", "No"],
+            },
           ]}
-          categories={extraOptions?.categories || []}
-          brands={extraOptions?.brands || []}
-        />
-      )}
-
-      {/* Create Modal */}
-      {modal.type === "create" && (
-        <AdminDataUpdate
-          row={{}} // empty for new product
-          open={true}
-          onClose={closeModal}
-          onUpdate={async ({ values }) => {
-            await onEdit?.({ values, create: true });
-            closeModal();
-          }}
-          loading={false}
-          updating={updating}
-          mode="create"
-          formFields={[
-            { name: "image", label: "Image", type: "file" },
-            { name: "name", label: "Name", type: "text" },
-            { name: "price", label: "Price", type: "number" },
-            { name: "discount", label: "Discount", type: "number" },
-            { name: "quantity", label: "Quantity", type: "number" },
-            { name: "featured", label: "Featured", type: "select", options: ["Yes", "No"] },
-            { name: "category", label: "Category", type: "select" },
-            { name: "brand", label: "Brand", type: "select" },
-            { name: "description", label: "Description", type: "textarea" },
-            { name: "product_number", label: "Product Number", type: "text" },
-            { name: "variants", label: "Variants", type: "text" },
-            { name: "product_colors", label: "Product Colors", type: "text" },
-          ]}
-          categories={extraOptions?.categories || []}
-          brands={extraOptions?.brands || []}
         />
       )}
     </section>

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchProducts, createProduct } from "@/lib/airtable";
+import { fetchProducts } from "@/lib/airtable";
 
 export async function GET() {
   try {
@@ -8,15 +8,5 @@ export async function GET() {
   } catch (error) {
     console.error("API Error - /api/products:", error);
     return NextResponse.json([], { status: 200 }); 
-  }
-}
-
-export async function POST(req) {
-  try {
-    const body = await req.json();
-    const product = await createProduct(body);
-    return NextResponse.json(product, { status: 201 });
-  } catch (err) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

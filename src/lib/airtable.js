@@ -24,7 +24,7 @@ export async function fetchCategories() {
 
     const records = await base(categoriesTable).select().all();
     const categories = records.map(record => ({
-        recordId: record.id,
+        id: record.id,
         ...record.fields,
     }));
 
@@ -34,19 +34,18 @@ export async function fetchCategories() {
 
 // ✅ Fetch brands (with caching)
 export async function fetchBrands() {
-  const cached = getCachedData("brands");
-  if (cached) return cached;
+    const cached = getCachedData("brands");
+    if (cached) return cached;
 
-  const records = await base(brandsTable).select().all();
-  const brands = records.map(record => ({
-    recordId: record.id, // <- use Airtable recordId
-    ...record.fields,
-  }));
+    const records = await base(brandsTable).select().all();
+    const brands = records.map(record => ({
+        id: record.id,
+        ...record.fields,
+    }));
 
-  setCachedData("brands", brands);
-  return brands;
+    setCachedData("brands", brands);
+    return brands;
 }
-
 
 // ✅ Fetch all products (with caching)
 export async function fetchProducts() {
@@ -323,57 +322,6 @@ export const newsletter = async (newData) => {
     }
 };
 
-// Create Product
-export async function createProduct(fields) {
-  try {
-    const created = await base(productsTable).create([
-      {
-        fields,
-      },
-    ]);
-    return { recordId: created[0].id, ...created[0].fields };
-  } catch (error) {
-    console.error("Airtable createProduct error:", error);
-    throw error;
-  }
-}
-
-// Create Handyman
-export async function createHandyman(tableName, data) {
-  try {
-    console.log("Creating Airtable record:", { tableName, data });
-
-    const record = await base(tableName).create([
-      {
-        fields: data,
-      },
-    ]);
-
-    console.log("Airtable responded with:", record);
-
-    return { id: record[0].id, ...record[0].fields };
-  } catch (error) {
-    console.error("Airtable createHandyman error:", error);
-    throw error;
-  }
-}
-
-// Update Product
-export async function updateProduct(recordId, fields) {
-  try {
-    const updated = await base(productsTable).update([
-      {
-        id: recordId,
-        fields,
-      },
-    ]);
-    return { recordId: updated[0].id, ...updated[0].fields };
-  } catch (error) {
-    console.error("Airtable updateProduct error:", error);
-    throw error;
-  }
-}
-
 // Update Order Record
 export async function updateOrders(tableName, recordId, data) {
     try {
@@ -468,15 +416,4 @@ export async function deleteHandyman(tableName, recordId) {
         console.error("Error deleting handyman:", error);
         throw error;
     }
-}
-
-// Delete Product
-export async function deleteProduct(recordId) {
-  try {
-    const deleted = await base(productsTable).destroy(recordId);
-    return deleted; // contains id & deleted: true
-  } catch (error) {
-    console.error("Airtable deleteProduct error:", error);
-    throw error;
-  }
 }
