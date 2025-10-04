@@ -20,7 +20,7 @@ const ProfileModal = ({ closeModal }) => {
     };
 
     return (
-        <div className="pt-15 lg:pt-5 space-y-7 flex flex-col justify-center lg:justify-start items-center lg:items-start w-full shadow-lg text-white">
+        <div className="pt-15 lg:pt-5 space-y-7 flex flex-col justify-center lg:justify-start items-center lg:items-start w-full  text-white">
             <Link href="/profile" className={`group text-2xl hover:text-white transition-all duration-300 inline-block relative ${pathname === "/profile" ? "text-blue-500" : "text-gray-300"}`}>
                 <span className="inline-block group-hover:translate-x-4 transition-transform duration-200">
                     Profile
