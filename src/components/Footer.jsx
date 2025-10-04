@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react'
-import logo from "../../public/logo-trans.png";
 import {  Mail, SendHorizonal, } from 'lucide-react';
 import { toast } from 'react-toastify';
 
@@ -52,7 +51,7 @@ const Footer = () => {
             <div className='px-10 lg:p-20 bg-gray-900 '>
                 <div className='py-10 grid gap-10 grid-cols-1 md:grid-cols-2 xl:grid-cols-5 items-start'>
                     <Link href="/" className='flex items-center md:col-span-2 xl:col-span-1' >
-                        <Image src={logo} alt="Jonam Utilties logo" width={80} height={30} className='w-30 h-auto xl:w-40 xl:h-auto object-cover' unoptimized />
+                        <Image src={"/footer-logo.png"} alt="Jonam Utilties logo" width={80} height={30} className='w-30 h-auto xl:w-60 xl:h-auto object-cover' unoptimized />
                     </Link>
                     <div className='flex-col col-span-1'>
                         <h6 className='text-3xl font-semibold text-white capitalize mb-7'>Office</h6>

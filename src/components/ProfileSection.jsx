@@ -219,7 +219,7 @@ export default function ProfileSection() {
         <div className="flex flex-col items-center justify-start">
           <div className="relative w-40 h-40 lg:w-80 lg:h-80 rounded-full overflow-hidden border border-gray-200 shadow-sm">
             <img
-              src={profile.imageUrl || "/default-avatar.png"}
+              src={profile.imageUrl || "/avatar.jpg"}
               alt="Profile"
               className="w-full h-full object-cover object-top"
             />

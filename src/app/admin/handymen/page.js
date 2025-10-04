@@ -6,6 +6,7 @@ import AdminHeader from "@/components/AdminHeader";
 import { toast } from "react-toastify";
 import HandymanMetricSection from "@/components/HandymanMetricsSection";
 import AdminHandymanTable from "@/components/AdminHandymanTable";
+import { normalizePayload } from "@/lib/normalizePayload";
 
 export default function AdminHandymanPage() {
   const [handyman, setHandyman] = useState([]);
@@ -55,22 +56,14 @@ export default function AdminHandymanPage() {
   // --- Update handyman record ---
   const handleUpdateHandyman = async ({ recordId, values }) => {
     setUpdating(true);
+
     try {
-      if (!recordId) {
-        toast.error("RecordId is missing from payload");
-        return;
-      }
+      // Normalize payload
+      const payload = normalizePayload(values, {
+        numberFields: ["rating", "gigs"],
+        imageFields: ["image"],
+      });
 
-      const payload = {
-        ...values,
-        // ✅ Convert numbers
-        rating: values.rating ? parseInt(values.rating, 10) : undefined,
-        gigs: values.gigs ? parseInt(values.gigs, 10) : undefined,
-        // ✅ Format image(s)
-        image: formatImages(values.image),
-      };
-
-      // ✅ Normalize availability
       if (payload.availability) {
         const availabilityMap = {
           away: "away",
@@ -83,28 +76,45 @@ export default function AdminHandymanPage() {
         payload.availability = availabilityMap[clean] || clean;
       }
 
-      const res = await fetch(`/api/handyman/${recordId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      let updatedHandyman;
+      if (!recordId) {
+        // ✅ CREATE
+        const res = await fetch(`/api/handyman`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error((await res.json()).error);
+        updatedHandyman = await res.json();
 
-      if (!res.ok) throw new Error((await res.json()).error);
+        setHandyman((prev) => [...prev, updatedHandyman]);
+        toast.success("Handyman created successfully!");
+      } else {
+        // ✅ UPDATE
+        const res = await fetch(`/api/handyman/${recordId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error((await res.json()).error);
+        updatedHandyman = await res.json();
 
-      const updatedHandyman = await res.json();
+        setHandyman((prev) =>
+          prev.map((o) =>
+            o.recordId === recordId ? { ...o, ...updatedHandyman } : o
+          )
+        );
+        toast.success("Handyman updated successfully!");
+      }
 
-      setHandyman((prev) =>
-        prev.map((o) => (o.recordId === recordId ? { ...o, ...updatedHandyman } : o))
-      );
-
-      toast.success("Handyman record updated successfully!");
       setSelectedHandyman(null);
     } catch (err) {
-      toast.error(`Update failed: ${err.message}`);
+      toast.error(`Operation failed: ${err.message}`);
     } finally {
       setUpdating(false);
     }
   };
+
 
   // --- Delete handyman record ---
   const handleDelete = async (handyman) => {
@@ -131,6 +141,8 @@ export default function AdminHandymanPage() {
       setUpdating(false);
     }
   };
+  
+  console.log("Handyman data", handyman);
 
   return (
     <>

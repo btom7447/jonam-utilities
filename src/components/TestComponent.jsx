@@ -1,113 +1,49 @@
 "use client";
 
+import { XIcon } from "lucide-react";
 import { useState, useEffect } from "react";
-import { auth } from "../lib/firebase";
-import { onAuthStateChanged, updateProfile } from "firebase/auth";
-import {
-  loadOrCreateUserProfile,
-  updateUserProfile,
-} from "../lib/firestoreUser";
+import CustomSelect from "./CustomSelect";
 import { MoonLoader } from "react-spinners";
-import { toast } from "react-toastify";
-import { CameraIcon, ChevronDown, Pencil, Save, X } from "lucide-react";
+import Image from "next/image";
 
-const stateOptions = {
-  Abia: 3000,
-  Adamawa: 4500,
-  "Akwa Ibom": 3000,
-  Anambra: 2500,
-  Bauchi: 4000,
-  Bayelsa: 3000,
-  Benue: 3500,
-  Borno: 5000,
-  "Cross River": 3000,
-  Delta: 3000,
-  Ebonyi: 2800,
-  Edo: 2500,
-  Ekiti: 2500,
-  Enugu: 2700,
-  "FCT - Abuja": 2000,
-  Gombe: 4500,
-  Imo: 2600,
-  Jigawa: 5000,
-  Kaduna: 3800,
-  Kano: 4000,
-  Katsina: 5000,
-  Kebbi: 5000,
-  Kogi: 3000,
-  Kwara: 2800,
-  Lagos: 1500,
-  Nasarawa: 2500,
-  Niger: 3000,
-  Ogun: 2000,
-  Ondo: 2500,
-  Osun: 2300,
-  Oyo: 2200,
-  Plateau: 3600,
-  Rivers: 3200,
-  Sokoto: 5000,
-  Taraba: 4800,
-  Yobe: 5200,
-  Zamfara: 5000,
-};
-
-export default function ProfileSection() {
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    deliveryAddress: {
-      address: "",
-      state: "",
-      deliveryPrice: 0,
-    },
-    imageUrl: "",
-  });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+export default function AdminDataUpdate({
+  row,
+  fieldOptions,
+  open,
+  onClose,
+  onUpdate,
+  onDelete,
+  loading,
+  updating,
+  mode = "update",
+  formFields = [],
+}) {
+  const [values, setValues] = useState({});
+  const [imagePreview, setImagePreview] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [activeInput, setActiveInput] = useState(null);
-  const [selectedState, setSelectedState] = useState("");
 
-  // Load user & profile
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        try {
-          const data = await loadOrCreateUserProfile(currentUser);
-          setProfile({
-            name: data?.name || "",
-            email: data?.email || currentUser.email || "",
-            phone: data?.phone || "",
-            deliveryAddress: data?.deliveryAddress || {
-              address: "",
-              state: "",
-              deliveryPrice: 0,
-            },
-            imageUrl: data?.imageUrl || "",
-          });
-        } catch (error) {
-          console.error("Error loading profile:", error);
-          toast.error("Failed to load profile data");
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setUser(null);
-        setLoading(false);
-      }
-    });
+    if (row && mode === "update") {
+      const initialValues = {};
+      formFields.forEach((f) => {
+        initialValues[f.name] = row[f.name] ?? "";
+      });
+      setValues(initialValues);
 
-    return () => unsubscribe();
-  }, []);
+      if (row.image?.[0]?.url) setImagePreview(row.image[0].url);
+    }
+  }, [row, formFields, mode]);
 
-  // Handle profile image upload
-  const handleUpload = async (e) => {
+  if (!open || !row) return null;
+
+  const handleChange = (name, val) => {
+    setValues((prev) => ({ ...prev, [name]: val }));
+  };
+
+  const handleFileChange = async (e, name) => {
     const file = e.target.files[0];
-    if (!file || !user) return;
+    if (!file) return;
+
     setUploading(true);
 
     try {
@@ -118,247 +54,187 @@ export default function ProfileSection() {
         method: "POST",
         body: formData,
       });
+
       const data = await res.json();
 
       if (data.url) {
-        await updateUserProfile(user.uid, { imageUrl: data.url });
-        setProfile((prev) => ({ ...prev, imageUrl: data.url }));
-        toast.success("Profile picture updated!");
+        handleChange(name, [{ url: data.url }]); // ✅ Airtable array format
+        setImagePreview(data.url);
       } else {
-        toast.error("Upload failed. No URL returned.");
+        console.error("Upload failed:", data.error);
       }
-    } catch (error) {
-      console.error("Upload error:", error);
-      toast.error("Upload failed. Please try again.");
+    } catch (err) {
+      console.error("File upload error:", err);
     } finally {
       setUploading(false);
     }
   };
 
-  // Handle text input
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!onUpdate) return;
+    await onUpdate({
+      recordId: row.recordId,
+      values,
+    });
+    onClose();
   };
 
-  // Handle address inputs safely
-  const handleAddressChange = (e) => {
-    const { name, value } = e.target;
-    setProfile((prev) => ({
-      ...prev,
-      deliveryAddress: {
-        ...prev.deliveryAddress,
-        [name]: value,
-      },
-    }));
+  const handleDelete = async () => {
+    if (!onDelete) return;
+    await onDelete(row);
+    onClose();
   };
-
-  // Save changes
-  const saveProfile = async () => {
-    if (!user) return;
-    setSaving(true);
-    try {
-      await updateUserProfile(user.uid, {
-        name: profile.name,
-        phone: profile.phone,
-        deliveryAddress: profile.deliveryAddress,
-      });
-
-      if (profile.name !== user.displayName) {
-        await updateProfile(user, { displayName: profile.name });
-      }
-
-      setEditMode(false);
-      toast.success("Profile updated successfully!");
-    } catch (error) {
-      console.error("Error saving profile:", error);
-      toast.error("Error saving profile. Please try again.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // Loading state
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <MoonLoader color="#1d4ed8" size={40} />
-      </div>
-    );
-  }
 
   return (
-    <section className="w-full p-5 lg:p-10">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center md:text-left">
-        Profile Details
-      </h1>
-
-      <div className="bg-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {/* Left - Profile Image */}
-        <div className="flex flex-col items-center justify-center">
-          <div className="relative w-40 h-40 rounded-full overflow-hidden border border-gray-200 shadow-sm">
-            <img
-              src={profile.imageUrl || "/default-avatar.png"}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
-            {uploading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/70">
-                <MoonLoader size={20} color="#1d4ed8" />
-              </div>
-            )}
-          </div>
-
-          <label className="mt-5 cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
-            <CameraIcon size={18} strokeWidth={1.5} />
-            <span>Change Photo</span>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleUpload}
-              className="hidden"
-            />
-          </label>
+    <div className="fixed inset-0 z-[5000] flex items-center justify-center bg-black/60 p-5">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-5xl overflow-y-auto max-h-[90vh]">
+        <div className="flex justify-between items-center mb-5">
+          <h2 className="text-2xl capitalize font-semibold">
+            {mode === "delete"
+              ? "Confirm Deletion"
+              : mode === "create"
+              ? "Create Record"
+              : "Update Record"}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-red-500 hover:text-red-800 hover:cursor-pointer font-bold"
+          >
+            <XIcon size={25} strokeWidth={2} />
+          </button>
         </div>
 
-        {/* Right - Profile Info */}
-        <div className="lg:col-span-2 space-y-5 grid grid-cols-1 md:grid-cols-2 gap-10">
-          {[
-            { label: "Full Name", name: "name", type: "text" },
-            { label: "Email", name: "email", type: "email", disabled: true },
-            { label: "Phone", name: "phone", type: "text" },
-          ].map(({ label, name, type, disabled }) => (
-            <div key={name} className="relative group">
-              <label className="text-xl font-semibold text-gray-700">
-                {label}
-              </label>
-              <input
-                type={type}
-                name={name}
-                value={profile[name]}
-                onChange={handleInputChange}
-                disabled={disabled || !editMode}
-                onFocus={() => setActiveInput(name)}
-                onBlur={() => setActiveInput(null)}
-                className={`w-full py-5 border-b-1 border-gray-500 text-xl outline-none bg-transparent text-black transition-all ${
-                  editMode && !disabled
-                    ? ""
-                    : "border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed"
-                }`}
-              />
-              <span
-                className={`absolute left-0 bottom-0 h-0.5 transition-all duration-200 ${
-                  activeInput === name
-                    ? "w-full bg-blue-500"
-                    : "w-0 bg-gray-900"
-                } group-hover:w-full group-hover:bg-blue-500`}
-              ></span>
-            </div>
-          ))}
-
-          {/* State Dropdown */}
-          <div className="relative group">
-            <label className="text-xl font-semibold text-gray-700">State</label>
-            <button
-              type="button"
-              disabled={!editMode}
-              onClick={() =>
-                editMode &&
-                setActiveInput(activeInput === "state" ? null : "state")
-              }
-              className={`w-full flex justify-between items-center py-5 border-b-1 border-gray-500 text-xl bg-transparent ${
-                editMode ? "cursor-pointer" : "text-gray-400 cursor-not-allowed"
-              } ${selectedState ? "text-black" : "text-gray-500"}`}
-            >
-              {selectedState || "Choose State"}
-              <ChevronDown size={20} />
-            </button>
-
-            {activeInput === "state" && (
-              <ul className="stateOption absolute z-10 w-full max-h-80 overflow-y-auto bg-gray-900 border border-gray-900 mt-2">
-                {Object.keys(stateOptions).map((state) => (
-                  <li
-                    key={state}
-                    onClick={() => handleStateSelect(state)}
-                    className={`p-3 cursor-pointer text-xl text-white capitalize hover:bg-gray-700 ${
-                      selectedState === state ? "bg-blue-500" : ""
-                    }`}
-                  >
-                    {state}
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <span
-              className={`absolute left-0 bottom-0 h-0.5 transition-all duration-200 ${
-                activeInput === "state"
-                  ? "w-full bg-blue-500"
-                  : "w-0 bg-gray-900"
-              } group-hover:w-full group-hover:bg-blue-500`}
-            ></span>
-          </div>
-
-          {/* Address */}
-          <div className="relative group">
-            <label className="text-xl font-semibold text-gray-700">
-              Delivery Address
-            </label>
-            <textarea
-              name="address"
-              rows="3"
-              value={profile.deliveryAddress.address}
-              onChange={handleAddressChange}
-              disabled={!editMode}
-              onFocus={() => setActiveInput("address")}
-              onBlur={() => setActiveInput(null)}
-              className={`w-full py-5 text-xl outline-none bg-transparent text-black transition-all ${
-                editMode ? "" : "cursor-not-allowed text-gray-600"
-              }`}
-            />
-            <span
-              className={`absolute left-0 bottom-0 h-0.5 transition-all duration-200 ${
-                activeInput === "address"
-                  ? "w-full bg-blue-500"
-                  : "w-0 bg-gray-900"
-              } group-hover:w-full group-hover:bg-blue-500`}
-            ></span>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center gap-3 pt-4">
-            {!editMode ? (
+        {mode === "delete" ? (
+          <div className="space-y-10">
+            <p className="text-xl">
+              Are you sure you want to delete this record?
+            </p>
+            <div className="flex justify-end gap-3">
               <button
-                onClick={() => setEditMode(true)}
-                className="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-all"
+                onClick={onClose}
+                className="py-3 px-10 text-gray-500 cursor-pointer border border-gray-500 hover:bg-gray-500 hover:text-white"
               >
-                <Pencil size={16} /> Edit Profile
+                Cancel
               </button>
-            ) : (
-              <>
-                <button
-                  onClick={saveProfile}
-                  disabled={saving}
-                  className="inline-flex items-center gap-2 px-5 py-3 bg-green-600 text-white rounded-xl text-sm font-medium hover:bg-green-700 disabled:opacity-50 transition-all"
-                >
-                  <Save size={16} />
-                  {saving ? "Saving..." : "Save"}
-                </button>
-                <button
-                  onClick={async () => {
-                    setEditMode(false);
-                    const refreshed = await loadOrCreateUserProfile(user);
-                    setProfile(refreshed);
-                  }}
-                  className="inline-flex items-center gap-2 px-5 py-3 bg-gray-500 text-white rounded-xl text-sm font-medium hover:bg-gray-600 transition-all"
-                >
-                  <X size={16} /> Cancel
-                </button>
-              </>
-            )}
+              <button
+                onClick={handleDelete}
+                disabled={loading}
+                className={`py-3 px-10 text-xl flex items-center justify-center
+                  ${
+                    !loading
+                      ? "cursor-pointer bg-red-500 hover:bg-red-600"
+                      : "cursor-not-allowed bg-red-500"
+                  } 
+                  text-white transition-all duration-300`}
+              >
+                {loading ? <MoonLoader size={25} color="#fff" /> : "Delete"}
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              {formFields.map((field) => (
+                <div key={field.name} className="flex flex-col justify-end">
+                  {field.type === "select" ? (
+                    <CustomSelect
+                      label={field.label}
+                      options={
+                        field.options || fieldOptions?.[field.name] || []
+                      }
+                      value={values[field.name]}
+                      onChange={(val) => handleChange(field.name, val)}
+                    />
+                  ) : field.type === "textarea" ? (
+                    <>
+                      <label className="mb-3 text-xl font-semibold">
+                        {field.label}
+                      </label>
+                      <textarea
+                        value={values[field.name]}
+                        onChange={(e) =>
+                          handleChange(field.name, e.target.value)
+                        }
+                        className="border border-gray-700 p-5  h-32 resize-none focus:outline-none"
+                      />
+                    </>
+                  ) : field.type === "file" ? (
+                    <>
+                      {imagePreview && (
+                        <Image
+                          width={20}
+                          height={20}
+                          src={imagePreview}
+                          alt="preview"
+                          className="mb-3 w-30 h-30 object-cover"
+                          unoptimized
+                        />
+                      )}
+                      <label className="mb-3 text-xl font-semibold">
+                        {field.label}
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e, field.name)}
+                        disabled={uploading}
+                        className="border border-gray-700 p-5 focus:outline-none cursor-pointer"
+                      />
+                      {uploading && (
+                        <div className="py-10 flex items-center justify-center">
+                          <MoonLoader size={25} color="#fff" />
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <label className="mb-2 text-xl font-semibold">
+                        {field.label}
+                      </label>
+                      <input
+                        type={field.type || "text"}
+                        value={values[field.name]}
+                        onChange={(e) =>
+                          handleChange(field.name, e.target.value)
+                        }
+                        className="border border-gray-700 p-5 focus:outline-none"
+                      />
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end gap-3 mt-5">
+              <button
+                type="button"
+                onClick={onClose}
+                className="py-3 px-10 text-red-500 cursor-pointer border border-red-500 hover:bg-red-500 hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={updating || uploading} // ✅ disable while uploading
+                className={`py-3 px-10 text-xl flex items-center justify-center
+                  ${
+                    !updating && !uploading
+                      ? "bg-blue-500 hover:bg-brown cursor-pointer"
+                      : "bg-gray-500 cursor-not-allowed"
+                  } 
+                  text-white transition-all duration-300`}
+              >
+                {updating || uploading ? (
+                  <MoonLoader size={25} color="#fff" />
+                ) : (
+                  "Update"
+                )}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
-    </section>
+    </div>
   );
 }

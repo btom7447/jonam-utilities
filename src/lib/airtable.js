@@ -323,6 +323,43 @@ export const newsletter = async (newData) => {
     }
 };
 
+
+// Create handyman record for hiring Handyman
+// Create handyman record
+export const createHandyman = async (handymanData) => {
+  try {
+    const {
+      name,
+      profile,
+      certifications,
+      image = [],
+      rating,
+      availability,
+      gigs = 0, // new field
+    } = handymanData;
+
+    const created = await base(handymanTable).create([
+      {
+        fields: {
+          name,
+          profile,
+          certifications,
+          image, // expects array of { url }
+          rating,
+          availability,
+          gigs,
+        },
+      },
+    ]);
+
+    return { success: true, id: created[0].id };
+  } catch (error) {
+    console.error("Airtable handyman create error:", error);
+    return { success: false, error };
+  }
+};
+
+
 // Update Order Record
 export async function updateOrders(tableName, recordId, data) {
     try {

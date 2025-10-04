@@ -4,7 +4,7 @@ import { XIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import CustomSelect from "./CustomSelect";
 import { MoonLoader } from "react-spinners";
-import Image from "next/image";
+import ImageUploader from "./ImageUpload";
 
 export default function AdminDataUpdate({
   row,
@@ -19,9 +19,9 @@ export default function AdminDataUpdate({
   formFields = [],
 }) {
   const [values, setValues] = useState({});
-  const [imagePreview, setImagePreview] = useState("");
   const [uploading, setUploading] = useState(false);
 
+  // Initialize form values - same as your example
   useEffect(() => {
     if (row && mode === "update") {
       const initialValues = {};
@@ -29,8 +29,6 @@ export default function AdminDataUpdate({
         initialValues[f.name] = row[f.name] ?? "";
       });
       setValues(initialValues);
-
-      if (row.image?.[0]?.url) setImagePreview(row.image[0].url);
     }
   }, [row, formFields, mode]);
 
@@ -38,36 +36,6 @@ export default function AdminDataUpdate({
 
   const handleChange = (name, val) => {
     setValues((prev) => ({ ...prev, [name]: val }));
-  };
-
-  const handleFileChange = async (e, name) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (data.url) {
-        handleChange(name, [{ url: data.url }]); // ✅ Airtable array format
-        setImagePreview(data.url);
-      } else {
-        console.error("Upload failed:", data.error);
-      }
-    } catch (err) {
-      console.error("File upload error:", err);
-    } finally {
-      setUploading(false);
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -91,7 +59,11 @@ export default function AdminDataUpdate({
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-5xl overflow-y-auto max-h-[90vh]">
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-2xl capitalize font-semibold">
-            {mode === "delete" ? "Confirm Deletion" : "Update Record"}
+            {mode === "delete"
+              ? "Confirm Deletion"
+              : mode === "create"
+              ? "Create Record"
+              : "Update Record"}
           </h2>
           <button
             onClick={onClose}
@@ -103,7 +75,9 @@ export default function AdminDataUpdate({
 
         {mode === "delete" ? (
           <div className="space-y-10">
-            <p className="text-xl">Are you sure you want to delete this record?</p>
+            <p className="text-xl">
+              Are you sure you want to delete this record?
+            </p>
             <div className="flex justify-end gap-3">
               <button
                 onClick={onClose}
@@ -115,7 +89,11 @@ export default function AdminDataUpdate({
                 onClick={handleDelete}
                 disabled={loading}
                 className={`py-3 px-10 text-xl flex items-center justify-center
-                  ${!loading ? "cursor-pointer bg-red-500 hover:bg-red-600" : "cursor-not-allowed bg-red-500"} 
+                  ${
+                    !loading
+                      ? "cursor-pointer bg-red-500 hover:bg-red-600"
+                      : "cursor-not-allowed bg-red-500"
+                  } 
                   text-white transition-all duration-300`}
               >
                 {loading ? <MoonLoader size={25} color="#fff" /> : "Delete"}
@@ -130,52 +108,44 @@ export default function AdminDataUpdate({
                   {field.type === "select" ? (
                     <CustomSelect
                       label={field.label}
-                      options={field.options || fieldOptions?.[field.name] || []}
+                      options={
+                        field.options || fieldOptions?.[field.name] || []
+                      }
                       value={values[field.name]}
                       onChange={(val) => handleChange(field.name, val)}
                     />
                   ) : field.type === "textarea" ? (
                     <>
-                      <label className="mb-3 text-xl font-semibold">{field.label}</label>
+                      <label className="mb-3 text-xl font-semibold">
+                        {field.label}
+                      </label>
                       <textarea
                         value={values[field.name]}
-                        onChange={(e) => handleChange(field.name, e.target.value)}
-                        className="border border-gray-700 p-5  h-32 resize-none focus:outline-none"
+                        onChange={(e) =>
+                          handleChange(field.name, e.target.value)
+                        }
+                        className="border border-gray-700 p-5 h-32 resize-none focus:outline-none"
                       />
                     </>
                   ) : field.type === "file" ? (
-                    <>
-                      {imagePreview && (
-                        <Image
-                          width={20}
-                          height={20}
-                          src={imagePreview}
-                          alt="preview"
-                          className="mb-3 w-30 h-30 object-cover"
-                          unoptimized
-                        />
-                      )}
-                      <label className="mb-3 text-xl font-semibold">{field.label}</label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, field.name)}
-                        disabled={uploading}
-                        className="border border-gray-700 p-5 focus:outline-none cursor-pointer"
-                      />
-                      {uploading && (
-                        <div className="py-10 flex items-center justify-center">
-                          <MoonLoader size={25} color="#fff" />
-                        </div>
-                      )}
-                    </>
+                    // ✅ Using the new ImageUploader component
+                    <ImageUploader
+                      images={values[field.name] || []}
+                      setImages={(imgs) => handleChange(field.name, imgs)}
+                      label={field.label}
+                      multiple={field.multiple !== false}
+                    />
                   ) : (
                     <>
-                      <label className="mb-2 text-xl font-semibold">{field.label}</label>
+                      <label className="mb-2 text-xl font-semibold">
+                        {field.label}
+                      </label>
                       <input
                         type={field.type || "text"}
                         value={values[field.name]}
-                        onChange={(e) => handleChange(field.name, e.target.value)}
+                        onChange={(e) =>
+                          handleChange(field.name, e.target.value)
+                        }
                         className="border border-gray-700 p-5 focus:outline-none"
                       />
                     </>
@@ -194,13 +164,19 @@ export default function AdminDataUpdate({
               </button>
               <button
                 type="submit"
-                disabled={updating || uploading} // ✅ disable while uploading
+                disabled={updating || uploading}
                 className={`py-3 px-10 text-xl flex items-center justify-center
-                  ${!updating && !uploading ? "bg-blue-500 hover:bg-brown cursor-pointer" : "bg-gray-500 cursor-not-allowed"} 
+                  ${
+                    !updating && !uploading
+                      ? "bg-blue-500 hover:bg-brown cursor-pointer"
+                      : "bg-gray-500 cursor-not-allowed"
+                  } 
                   text-white transition-all duration-300`}
               >
                 {updating || uploading ? (
                   <MoonLoader size={25} color="#fff" />
+                ) : mode === "create" ? (
+                  "Create"
                 ) : (
                   "Update"
                 )}
