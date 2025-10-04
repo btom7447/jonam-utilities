@@ -39,12 +39,6 @@ const ProfileModal = ({ closeModal }) => {
                     <span className="block h-0.5 w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
                 </span>
             </Link>
-            <Link href="/support" className={`group text-2xl hover:text-white transition-all duration-300 inline-block relative ${pathname === "/support" ? "text-blue-500" : "text-gray-300"}`}>
-                <span className="inline-block group-hover:translate-x-4 transition-transform duration-200">
-                    Support
-                    <span className="block h-0.5 w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
-                </span>
-            </Link>
             <button type="button" onClick={handleLogout} className='text-2xl flex gap-2 items-center cursor-pointer hover:text-blue-500'>
                 <LogOutIcon size={20} />
                 Logout 

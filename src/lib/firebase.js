@@ -1,4 +1,5 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 import {
   getAuth,
   GoogleAuthProvider,
@@ -8,6 +9,7 @@ import {
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  updateProfile
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -30,6 +32,7 @@ if (!getApps().length) {
 
 // Auth & provider
 const auth = getAuth(app);
+const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
 // Session check
@@ -74,4 +77,4 @@ export function logout() {
   return signOut(auth);
 }
 
-export { auth, googleProvider };
+export { auth, googleProvider, db };

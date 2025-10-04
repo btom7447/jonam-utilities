@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
+import { NextResponse } from "next/server";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -6,48 +7,39 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const config = {
-  api: {
-    bodyParser: false, // let FormData handle this
-  },
-};
-
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
+export async function POST(req) {
   try {
-    const data = await new Promise((resolve, reject) => {
-      const busboy = require("busboy");
-      const bb = busboy({ headers: req.headers });
-      let fileBuffer = null;
+    const formData = await req.formData();
+    const file = formData.get("file");
 
-      bb.on("file", (_, file) => {
-        const chunks = [];
-        file.on("data", (chunk) => chunks.push(chunk));
-        file.on("end", () => {
-          fileBuffer = Buffer.concat(chunks);
-        });
-      });
+    if (!file) {
+      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    }
 
-      bb.on("finish", () => resolve(fileBuffer));
-      req.pipe(bb);
+    // Convert Blob to buffer
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Upload to Cloudinary
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream({ folder: "handymen" }, (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        })
+        .end(buffer);
     });
 
-    if (!data) return res.status(400).json({ error: "No file uploaded" });
-
-    const uploadRes = await cloudinary.uploader.upload_stream(
-      { folder: "handymen" },
-      (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ url: result.secure_url });
-      }
-    );
-
-    require("streamifier").createReadStream(data).pipe(uploadRes);
+    return NextResponse.json({ url: result.secure_url });
   } catch (error) {
     console.error("Cloudinary upload error:", error);
-    res.status(500).json({ error: "Upload failed" });
+    return NextResponse.json(
+      { error: "Upload failed", details: error.message },
+      { status: 500 }
+    );
   }
 }
+
+export const config = {
+  api: { bodyParser: false },
+};

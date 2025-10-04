@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/contexts/cartContext";
 import { useCheckout, STEP_INDEX } from "@/contexts/checkoutContext";
-import { ChevronDown, ChevronUp, DeleteIcon, TicketIcon, TicketSlash, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, TicketSlash, Trash2 } from "lucide-react";
 
 const CartTable = () => {
     const {
@@ -115,7 +115,7 @@ const CartTable = () => {
                                                     }
                                                     className="text-red-500 hover:text-red-800 cursor-pointer"
                                                 >
-                                                    <DeleteIcon size={25} />
+                                                    <Trash2 size={25} />
                                                 </button>
                                             </td>
                                         </tr>
