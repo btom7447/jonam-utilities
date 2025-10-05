@@ -28,20 +28,23 @@ export default function AdminProductUpdate({
       formFields.forEach((f) => {
         let val = row[f.name] ?? "";
 
-        // For linked selects
-        if ((f.name === "brand_link" || f.name === "category_link") && val) {
-          if (!Array.isArray(val)) val = [val];
-          val = val.map((v) =>
-            typeof v === "string"
-              ? fieldOptions[f.name]?.find((opt) => opt.value === v) || {
-                  label: v,
-                  value: v,
-                }
-              : v
-          );
+        // Single-select fields
+        if (f.name === "brand_link" || f.name === "category_link") {
+          if (val) {
+            // It's now single select
+            val =
+              typeof val === "string"
+                ? fieldOptions[f.name]?.find((opt) => opt.value === val) || {
+                    label: val,
+                    value: val,
+                  }
+                : val;
+          } else {
+            val = null;
+          }
         }
 
-        // For featured select
+        // Featured select
         if (f.name === "featured" && val !== undefined) {
           if (typeof val === "boolean")
             val = val
@@ -51,14 +54,21 @@ export default function AdminProductUpdate({
             val = { label: val, value: val.toLowerCase() };
         }
 
+        // Discount: convert decimal to whole number for display
+        if (f.name === "discount" && val != null) {
+          val = Math.round(val * 100); // 0.03 -> 3
+        }
+
         // Ensure file fields are arrays
         if (f.type === "file") val = Array.isArray(val) ? val : [];
 
         initialValues[f.name] = val;
       });
+
       setValues(initialValues);
     }
   }, [row, formFields, fieldOptions]);
+
 
   if (!open || !row) return null;
 
@@ -72,37 +82,28 @@ export default function AdminProductUpdate({
 
     const payload = { ...values };
 
-    // --- Normalize linked selects to array of recordIds ---
+    // Convert selects to single value
     ["brand_link", "category_link"].forEach((field) => {
-      if (payload[field]) {
-        if (Array.isArray(payload[field])) {
-          payload[field] = payload[field].map((v) => v.value || v);
-        } else if (payload[field].value) {
-          payload[field] = [payload[field].value];
-        } else {
-          payload[field] = [payload[field]];
-        }
-      } else {
-        payload[field] = [];
-      }
+      payload[field] = payload[field]?.value || null;
     });
 
-    // --- Normalize featured to string ---
+    // Featured to string
     if (payload.featured !== undefined) {
-      // Convert boolean or object to string "true"/"false"
       if (typeof payload.featured === "object") {
         payload.featured = payload.featured.value || "false";
-      } else if (typeof payload.featured === "boolean") {
-        payload.featured = payload.featured ? "true" : "false";
       } else {
         payload.featured = String(payload.featured).toLowerCase();
       }
     }
 
+    // Discount back to decimal for Airtable
+    if (payload.discount != null) {
+      payload.discount = Number(payload.discount) / 100; // 3 -> 0.03
+    }
+
     await onUpdate({ recordId: row.recordId, values: payload });
     onClose();
   };
-
 
   const handleDelete = async () => {
     if (!onDelete) return;

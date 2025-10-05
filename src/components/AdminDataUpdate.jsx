@@ -21,7 +21,7 @@ export default function AdminDataUpdate({
   const [values, setValues] = useState({});
   const [uploading, setUploading] = useState(false);
 
-  // Initialize form values - same as your example
+  // Initialize form values
   useEffect(() => {
     if (row && mode === "update") {
       const initialValues = {};
@@ -104,7 +104,12 @@ export default function AdminDataUpdate({
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               {formFields.map((field) => (
-                <div key={field.name} className="flex flex-col justify-end">
+                <div
+                  key={field.name}
+                  className={`flex flex-col justify-end ${
+                    field.type === "textarea" ? "col-span-2" : ""
+                  }`}
+                >
                   {field.type === "select" ? (
                     <CustomSelect
                       label={field.label}
@@ -128,7 +133,6 @@ export default function AdminDataUpdate({
                       />
                     </>
                   ) : field.type === "file" ? (
-                    // ✅ Using the new ImageUploader component
                     <ImageUploader
                       images={values[field.name] || []}
                       setImages={(imgs) => handleChange(field.name, imgs)}

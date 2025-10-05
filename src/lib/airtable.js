@@ -387,6 +387,8 @@ export const createProduct = async (productData) => {
           discount, 
           featured, 
           description, 
+          product_colors, 
+          variants,
           category_link, 
           brand_link, 
           images,
@@ -397,6 +399,42 @@ export const createProduct = async (productData) => {
     return { success: true, id: created[0].id };
   } catch (error) {
     console.error("Airtable product create error:", error);
+    return { success: false, error };
+  }
+};
+
+// Create projects record
+export const createProjects = async (projectData) => {
+  try {
+    const {
+      name,
+      client_name, 
+      description, 
+      client_review, 
+      client_rating, 
+      date, 
+      status,
+      images = [],
+    } = projectData;
+
+    const created = await base(projectsTable).create([
+      {
+        fields: {
+          name,
+          client_name,
+          description,
+          client_review,
+          client_rating,
+          date,
+          status,
+          images,
+        },
+      },
+    ]);
+
+    return { success: true, id: created[0].id };
+  } catch (error) {
+    console.error("Airtable project create error:", error);
     return { success: false, error };
   }
 };
@@ -464,6 +502,27 @@ export async function updateHandyman(tableName, recordId, data) {
     }
 }
 
+// Update Projeect Record
+export async function updateProjects(tableName, recordId, data) {
+    try {
+        console.log("Updating Airtable:", { tableName, recordId, data });
+
+        const record = await base(tableName).update([
+        {
+            id: recordId,
+            fields: data,
+        },
+        ]);
+
+        console.log("Airtable responded with:", record);
+
+        return { id: record[0].id, ...record[0].fields };
+    } catch (error) {
+        console.error("Airtable updateProjects error:", error);
+        throw error;
+    }
+}
+
 // Delete Order Record
 export async function deleteOrder(tableName, recordId) {
     try {
@@ -493,6 +552,17 @@ export async function deleteHandyman(tableName, recordId) {
         return deletedRecord; // contains id & deleted boolean
     } catch (error) {
         console.error("Error deleting handyman:", error);
+        throw error;
+    }
+}
+
+// Delete Project Record
+export async function deleteProject(tableName, recordId) {
+    try {
+        const deletedRecord = await base(tableName).destroy(recordId);
+        return deletedRecord; // contains id & deleted boolean
+    } catch (error) {
+        console.error("Error deleting project:", error);
         throw error;
     }
 }
