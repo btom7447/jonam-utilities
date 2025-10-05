@@ -34,18 +34,19 @@ export async function fetchCategories() {
 
 // ✅ Fetch brands (with caching)
 export async function fetchBrands() {
-    const cached = getCachedData("brands");
-    if (cached) return cached;
+  const cached = getCachedData("brands");
+  if (cached) return cached;
 
-    const records = await base(brandsTable).select().all();
-    const brands = records.map(record => ({
-        id: record.id,
-        ...record.fields,
-    }));
+  const records = await base(brandsTable).select().all();
+  const brands = records.map((record) => ({
+    recordId: record.id,
+    ...record.fields,
+  }));
 
-    setCachedData("brands", brands);
-    return brands;
+  setCachedData("brands", brands);
+  return brands;
 }
+
 
 // ✅ Fetch all products (with caching)
 export async function fetchProducts() {
@@ -324,7 +325,6 @@ export const newsletter = async (newData) => {
 };
 
 
-// Create handyman record for hiring Handyman
 // Create handyman record
 export const createHandyman = async (handymanData) => {
   try {
@@ -359,6 +359,47 @@ export const createHandyman = async (handymanData) => {
   }
 };
 
+// Create product record
+export const createProduct = async (productData) => {
+  try {
+    const {
+      name,
+      product_number, 
+      quantity, 
+      price, 
+      discount, 
+      featured, 
+      description, 
+      product_colors = [],
+      variants = [],
+      category_link = [], 
+      brand_link = [],
+      images = [],
+    } = productData;
+
+    const created = await base(productsTable).create([
+      {
+        fields: {
+          name,
+          product_number, 
+          quantity, 
+          price, 
+          discount, 
+          featured, 
+          description, 
+          category_link, 
+          brand_link, 
+          images,
+        },
+      },
+    ]);
+
+    return { success: true, id: created[0].id };
+  } catch (error) {
+    console.error("Airtable product create error:", error);
+    return { success: false, error };
+  }
+};
 
 // Update Order Record
 export async function updateOrders(tableName, recordId, data) {

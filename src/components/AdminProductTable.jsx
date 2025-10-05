@@ -11,11 +11,20 @@ import {
   DownloadIcon,
   ChevronLeft,
   ChevronRight,
+  PlusIcon,
+  Trash2,
 } from "lucide-react";
 import Image from "next/image";
-import AdminDataUpdate from "./AdminDataUpdate";
+import AdminProductUpdate from "./AdminProductUpdate";
 
-export default function AdminProductTable({ data = [], onEdit, onDelete }) {
+export default function AdminProductTable({
+  data = [],
+  brandOptions, 
+  categoryOptions,
+  onEdit,
+  onDelete,
+  updating,
+}) {
   const [tableData, setTableData] = useState(data);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,8 +36,11 @@ export default function AdminProductTable({ data = [], onEdit, onDelete }) {
   }, []);
 
   useEffect(() => {
-    setTableData(data); // sync with parent
+    // Sort alphabetically by name
+    const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+    setTableData(sortedData); // sync with parent
   }, [data]);
+
 
   const itemsPerPage = 10;
   const totalPages = Math.ceil(tableData.length / itemsPerPage);
@@ -36,16 +48,35 @@ export default function AdminProductTable({ data = [], onEdit, onDelete }) {
   const currentData = tableData.slice(startIdx, startIdx + itemsPerPage);
 
   const openUpdateModal = (row) => setModal({ type: "update", row });
-  const openDeleteModal = (row) => setModal({ type: "delete", row });
+  const openCreateModal = () =>
+    setModal({
+      type: "create",
+      row: {
+        recordId: null,
+        images: [],
+        name: "",
+        price: "",
+        discount: "",
+        quantity: "",
+        featured: "false",
+      },
+    });
   const closeModal = () => setModal({ type: null, row: null });
 
-  const handleUpdate = async ({ recordId, field, value }) => {
-    await onEdit?.({ recordId, [field]: value });
-    setTableData((prev) =>
-      prev.map((r) =>
-        r.recordId === recordId ? { ...r, [field]: value } : r
-      )
-    );
+  const handleUpdate = async ({ recordId, values }) => {
+    if (!values) return;
+    // normalize image field
+    if (values.images && typeof values.images === "string") {
+      values.images = [{ url: values.images }];
+    }
+
+    const payload = { ...values };
+
+    if (modal.type === "create") {
+      await onEdit?.({ recordId: null, values: payload });
+    } else {
+      await onEdit?.({ recordId, values: payload });
+    }
     closeModal();
   };
 
@@ -59,7 +90,6 @@ export default function AdminProductTable({ data = [], onEdit, onDelete }) {
       </section>
     );
   }
-  console.log("Products", data)
 
   return (
     <section className="mx-5 lg:mx-10 mb-10 bg-white rounded-xl border border-gray-200 overflow-x-auto relative">
@@ -74,12 +104,22 @@ export default function AdminProductTable({ data = [], onEdit, onDelete }) {
             <th className="p-5 font-semibold">Quantity</th>
             <th className="p-5 font-semibold">Featured</th>
             <th className="p-5 font-semibold text-right relative">
-              <button
-                type="button"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              >
-                <EllipsisVertical size={25} strokeWidth={1} />
-              </button>
+              <div className="flex items-center justify-end gap-5">
+                <button
+                  type="button"
+                  onClick={openCreateModal}
+                  className="text-white cursor-pointer"
+                >
+                  <PlusIcon size={25} strokeWidth={1} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="cursor-pointer"
+                >
+                  <EllipsisVertical size={25} strokeWidth={1} />
+                </button>
+              </div>
               {dropdownOpen && (
                 <ul className="absolute right-0 mt-5 w-fit flex flex-col items-center bg-white border border-gray-200 rounded-xl shadow-lg z-50">
                   <li
@@ -131,16 +171,13 @@ export default function AdminProductTable({ data = [], onEdit, onDelete }) {
               key={row.recordId || idx}
               className="hover:bg-gray-50 p-5 transition-colors cursor-pointer"
             >
-              {/* Product Id */}
               <td className="p-5 border-b border-gray-200 text-left">
                 {row.id}
               </td>
-
-              {/* Image */}
               <td className="p-5 border-b border-gray-200 text-left">
                 {row.images?.[0]?.url ? (
                   <Image
-                    src={`${row?.images[0]?.url}${timestamp}`}
+                    src={`${row.images[0].url}${timestamp}`}
                     alt={row.name}
                     width={48}
                     height={48}
@@ -153,43 +190,33 @@ export default function AdminProductTable({ data = [], onEdit, onDelete }) {
                   </div>
                 )}
               </td>
-
-              {/* Name */}
-              <td className="p-5 border-b border-gray-200 text-left text-gray-900">
+              <td className="p-5 border-b border-gray-200 text-left">
                 {row.name}
               </td>
-
-            {/* Price */}
-            <td className="p-5 border-b border-gray-200 text-left text-gray-700">
-                {typeof row?.price === "number"
-                    ? `₦${row.price.toLocaleString()}`
-                    : "N/A"}
-            </td>
-
-            {/* Discount */}
-            <td className="p-5 border-b border-gray-200 text-left text-gray-700">
-            {row.discount != null 
-                ? `${(row.discount * 100).toFixed(0)}%` 
-                : "—"}
-            </td>
-
-              {/* Quantity */}
-              <td className="p-5 border-b border-gray-200 text-left text-gray-700">
-                {row.quantity ?? "0"}
+              <td className="p-5 border-b border-gray-200 text-left">
+                {typeof row.price === "number"
+                  ? `₦${row.price.toLocaleString()}`
+                  : "N/A"}
               </td>
-
-              {/* Featured */}
+              <td className="p-5 border-b border-gray-200 text-left">
+                {row.discount != null
+                  ? `${(row.discount * 100).toFixed(0)}%`
+                  : "—"}
+              </td>
+              <td className="p-5 border-b border-gray-200 text-left">
+                {row.quantity ?? 0}
+              </td>
               <td className="p-5 border-b border-gray-200 text-left">
                 <span
                   className={`px-5 py-2 rounded-full text-sm font-medium ${
-                    row.featured  === "true" ? "bg-green-100 text-green-700 border border-green-300" : "bg-gray-100 text-gray-700 border border-gray-300"
+                    row.featured === "Yes"
+                      ? "bg-green-100 text-green-700 border border-green-300"
+                      : "bg-gray-100 text-gray-700 border border-gray-300"
                   }`}
                 >
                   {row.featured}
                 </span>
               </td>
-
-              {/* Actions */}
               <td className="p-5 border-b border-gray-200 text-right">
                 <button
                   onClick={(e) => {
@@ -203,11 +230,11 @@ export default function AdminProductTable({ data = [], onEdit, onDelete }) {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    openDeleteModal(row);
+                    onDelete?.(row);
                   }}
                   className="text-red-500 hover:text-red-800 hover:cursor-pointer"
                 >
-                  <DeleteIcon size={25} strokeWidth={1} />
+                  <Trash2 size={25} strokeWidth={1} />
                 </button>
               </td>
             </tr>
@@ -238,19 +265,31 @@ export default function AdminProductTable({ data = [], onEdit, onDelete }) {
         </button>
       </div>
 
-      {/* Update Modal */}
-      {modal.type === "update" && modal.row && (
-        <AdminDataUpdate
+      {/* Modal */}
+      {modal.row && (
+        <AdminProductUpdate
           row={modal.row}
+          // brandOptions={brandOptions}
+          // categoryOptions={categoryOptions}
           open={true}
           onClose={closeModal}
           onUpdate={handleUpdate}
           onDelete={onDelete}
           loading={false}
-          mode="update"
+          updating={updating}
+          mode={modal.type} // create or update
+          fieldOptions={{
+            brand_link: brandOptions,
+            category_link: categoryOptions,
+            featured: [
+              { label: "True", value: "true" },
+              { label: "False", value: "false" },
+            ],
+          }}
           formFields={[
-            { name: "image", label: "Image", type: "file" },
+            { name: "images", label: "Image", type: "file" },
             { name: "name", label: "Name", type: "text" },
+            { name: "product_number", label: "Product Number", type: "number" },
             { name: "price", label: "Price", type: "number" },
             { name: "discount", label: "Discount", type: "number" },
             { name: "quantity", label: "Quantity", type: "number" },
@@ -259,6 +298,25 @@ export default function AdminProductTable({ data = [], onEdit, onDelete }) {
               label: "Featured",
               type: "select",
               options: ["Yes", "No"],
+            },
+            { name: "variants", label: "Variants", type: "text" },
+            { name: "product_colors", label: "Product Colors", type: "text" },
+            {
+              name: "category_link",
+              label: "Cateogry",
+              type: "select",
+              options: ["Yes", "No"],
+            },
+            {
+              name: "brand_link",
+              label: "Brand",
+              type: "select",
+              options: ["Yes", "No"],
+            },
+            {
+              name: "description",
+              label: "Description",
+              type: "textarea",
             },
           ]}
         />
