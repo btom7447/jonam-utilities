@@ -39,7 +39,7 @@ export default function AdminLayout({ children }) {
     { href: "/admin/orders", label: "Orders", icon: Package,  title: "Order Management"  },
     { href: "/admin/products", label: "Products", icon: ShoppingCartIcon,  title: "Product Management"  },
     { href: "/admin/projects", label: "Projects", icon: FoldersIcon,  title: "Product Management"  },
-    { href: "/admin/services", label: "Services", icon: ZapIcon,  title: "Services Management" },
+    // { href: "/admin/services", label: "Services", icon: ZapIcon,  title: "Services Management" },
   ];
 
   useEffect(() => {

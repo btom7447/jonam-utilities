@@ -21,46 +21,59 @@ export default function AdminProductUpdate({
   const [values, setValues] = useState({});
   const [uploading, setUploading] = useState(false);
 
-  // Initialize form values
+  // ✅ Initialize form values from the row data
   useEffect(() => {
     if (row) {
       const initialValues = {};
+
       formFields.forEach((f) => {
         let val = row[f.name] ?? "";
 
-        // Single-select fields
+        // ✅ Handle linked fields (brand & category)
         if (f.name === "brand_link" || f.name === "category_link") {
-          if (val) {
-            // It's now single select
+          if (Array.isArray(val)) {
+            const first = val[0];
             val =
-              typeof val === "string"
-                ? fieldOptions[f.name]?.find((opt) => opt.value === val) || {
-                    label: val,
-                    value: val,
-                  }
-                : val;
+              fieldOptions[f.name]?.find((opt) => opt.value === first) ||
+              (first ? { label: first, value: first } : null);
+          } else if (typeof val === "string") {
+            val = fieldOptions[f.name]?.find((opt) => opt.value === val) || {
+              label: val,
+              value: val,
+            };
           } else {
             val = null;
           }
         }
 
-        // Featured select
+        // ✅ Handle featured select
         if (f.name === "featured" && val !== undefined) {
-          if (typeof val === "boolean")
+          if (typeof val === "boolean") {
             val = val
               ? { label: "True", value: "true" }
               : { label: "False", value: "false" };
-          else if (typeof val === "string")
+          } else if (typeof val === "string") {
             val = { label: val, value: val.toLowerCase() };
+          }
         }
 
-        // Discount: convert decimal to whole number for display
+        // ✅ Convert discount to whole number for display (e.g., 0.03 → 3)
         if (f.name === "discount" && val != null) {
-          val = Math.round(val * 100); // 0.03 -> 3
+          val = Math.round(val * 100);
         }
 
-        // Ensure file fields are arrays
-        if (f.type === "file") val = Array.isArray(val) ? val : [];
+        // ✅ Convert array fields to comma-separated text for display
+        if (
+          Array.isArray(val) &&
+          (f.name === "variants" || f.name === "product_colors")
+        ) {
+          val = val.join(", ");
+        }
+
+        // ✅ Ensure file fields are arrays
+        if (f.type === "file") {
+          val = Array.isArray(val) ? val : [];
+        }
 
         initialValues[f.name] = val;
       });
@@ -68,7 +81,6 @@ export default function AdminProductUpdate({
       setValues(initialValues);
     }
   }, [row, formFields, fieldOptions]);
-
 
   if (!open || !row) return null;
 
@@ -82,12 +94,12 @@ export default function AdminProductUpdate({
 
     const payload = { ...values };
 
-    // Convert selects to single value
+    // ✅ Convert selects to single values
     ["brand_link", "category_link"].forEach((field) => {
       payload[field] = payload[field]?.value || null;
     });
 
-    // Featured to string
+    // ✅ Featured → string
     if (payload.featured !== undefined) {
       if (typeof payload.featured === "object") {
         payload.featured = payload.featured.value || "false";
@@ -96,10 +108,20 @@ export default function AdminProductUpdate({
       }
     }
 
-    // Discount back to decimal for Airtable
+    // ✅ Discount → decimal for Airtable
     if (payload.discount != null) {
-      payload.discount = Number(payload.discount) / 100; // 3 -> 0.03
+      payload.discount = Number(payload.discount) / 100;
     }
+
+    // ✅ Convert variants/colors back to arrays
+    ["variants", "product_colors"].forEach((field) => {
+      if (payload[field] && typeof payload[field] === "string") {
+        payload[field] = payload[field]
+          .split(",")
+          .map((v) => v.trim())
+          .filter(Boolean);
+      }
+    });
 
     await onUpdate({ recordId: row.recordId, values: payload });
     onClose();
@@ -164,7 +186,7 @@ export default function AdminProductUpdate({
               {formFields.map((field) => {
                 const isFullSpan = field.name === "description";
 
-                // Single-select fields (brand, category, featured, or any select type)
+                // ✅ Select Fields
                 if (
                   field.type === "select" &&
                   (field.name === "brand_link" ||
@@ -189,7 +211,7 @@ export default function AdminProductUpdate({
                   );
                 }
 
-                // File Upload
+                // ✅ File Upload
                 if (field.type === "file") {
                   return (
                     <div
@@ -202,13 +224,13 @@ export default function AdminProductUpdate({
                         images={values[field.name]}
                         setImages={(imgs) => handleChange(field.name, imgs)}
                         label={field.label}
-                        multiple={true} // always allow multiple
+                        multiple={true}
                       />
                     </div>
                   );
                 }
 
-                // Textarea
+                // ✅ Textarea
                 if (field.type === "textarea") {
                   return (
                     <div
@@ -231,7 +253,7 @@ export default function AdminProductUpdate({
                   );
                 }
 
-                // Variants / Colors
+                // ✅ Variants & Colors
                 if (
                   field.name === "variants" ||
                   field.name === "product_colors"
@@ -259,7 +281,7 @@ export default function AdminProductUpdate({
                   );
                 }
 
-                // Default Input
+                // ✅ Default Input
                 return (
                   <div
                     key={field.name}
@@ -281,7 +303,7 @@ export default function AdminProductUpdate({
               })}
             </div>
 
-            {/* Form Buttons */}
+            {/* ✅ Form Buttons */}
             <div className="flex justify-end gap-3 mt-5">
               <button
                 type="button"

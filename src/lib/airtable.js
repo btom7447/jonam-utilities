@@ -502,7 +502,28 @@ export async function updateHandyman(tableName, recordId, data) {
     }
 }
 
-// Update Projeect Record
+// Update Product Record
+export async function updateProducts(tableName, recordId, data) {
+  try {
+    console.log("Updating Airtable Product:", { tableName, recordId, data });
+
+    const record = await base(tableName).update([
+      {
+        id: recordId,
+        fields: data,
+      },
+    ]);
+
+    console.log("Airtable responded with:", record);
+
+    return { id: record[0].id, ...record[0].fields };
+  } catch (error) {
+    console.error("Airtable updateProducts error:", error);
+    throw error;
+  }
+}
+
+// Update Project Record
 export async function updateProjects(tableName, recordId, data) {
     try {
         console.log("Updating Airtable:", { tableName, recordId, data });
@@ -565,4 +586,15 @@ export async function deleteProject(tableName, recordId) {
         console.error("Error deleting project:", error);
         throw error;
     }
+}
+
+// Delete Product Record
+export async function deleteProduct(tableName, recordId) {
+  try {
+    const deletedRecord = await base(tableName).destroy(recordId);
+    return deletedRecord; // contains id & deleted boolean
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw error;
+  }
 }

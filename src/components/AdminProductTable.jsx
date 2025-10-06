@@ -209,9 +209,9 @@ export default function AdminProductTable({
               <td className="p-5 border-b border-gray-200 text-left">
                 <span
                   className={`px-5 py-2 rounded-full text-sm font-medium ${
-                    row.featured === "Yes"
+                    row.featured === "true"
                       ? "bg-green-100 text-green-700 border border-green-300"
-                      : "bg-gray-100 text-gray-700 border border-gray-300"
+                      : "bg-yellow-100 text-yellow-700 border border-yellow-300"
                   }`}
                 >
                   {row.featured}

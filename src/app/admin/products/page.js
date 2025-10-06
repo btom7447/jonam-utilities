@@ -14,7 +14,6 @@ export default function AdminProductPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
 
   // --- Fetch product records ---
   useEffect(() => {
@@ -43,7 +42,6 @@ export default function AdminProductPage() {
         ]);
 
         const brandData = await brandRes.json();
-        console.log("Brand data", brandData)
         const categoryData = await categoryRes.json();
 
         setBrands(Array.isArray(brandData) ? brandData : []);
@@ -55,7 +53,7 @@ export default function AdminProductPage() {
 
     loadMeta();
   }, []);
-  
+
   // --- Loader ---
   if (loading) {
     return (
@@ -83,12 +81,12 @@ export default function AdminProductPage() {
     setUpdating(true);
 
     try {
-     const payload = normalizePayload(values, {
-       numberFields: ["price", "quantity", "product_number", "discount"],
-       imageFields: ["image", "images"], // both fields
-       selectFields: ["brand_link", "category_link", "featured"], // normalize selects
-     });
-
+      const payload = normalizePayload(values, {
+        numberFields: ["price", "quantity", "product_number", "discount"],
+        imageFields: ["images"],
+        selectFields: ["brand_link", "category_link", "featured"],
+        textArrayFields: ["variants", "product_colors"],
+      });
 
       if (payload.image) {
         payload.image = formatImages(payload.image);
@@ -124,8 +122,6 @@ export default function AdminProductPage() {
         );
         toast.success("Product updated successfully!");
       }
-
-      setSelectedProduct(null);
     } catch (err) {
       toast.error(`Operation failed: ${err.message}`);
     } finally {
@@ -167,11 +163,6 @@ export default function AdminProductPage() {
     label: c.caption,
     value: c.id,
   }));
-
-  console.log("Category options", categoryOptions)
-  console.log("brand options", brandOptions);
-  // console.log("Products", products)
-
 
   return (
     <>

@@ -13,8 +13,8 @@ export default function AdminHeader({ title }) {
                 <button type="button">
                     <BellIcon size={20} strokeWidth={1} />
                 </button>
-                <button type="button" className="rounded-full">
-                    <Image src={logo} alt="profile placeholder" width={30} height={30} className='w-15 h-15 rounded-full object-contain' unoptimized />
+                <button type="button" className="">
+                    <Image src={"/header-logo.png"} alt="profile placeholder" width={30} height={30} className='w-30 h-auto rounded-full object-contain' unoptimized />
                 </button>
             </div>
         </header>

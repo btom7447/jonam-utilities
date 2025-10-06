@@ -1,4 +1,3 @@
-// Normalize payloads dynamically for Airtable records
 export function normalizePayload(payload, config = {}) {
   const normalized = { ...payload };
 
@@ -12,7 +11,7 @@ export function normalizePayload(payload, config = {}) {
     });
   }
 
-  // --- Convert discount percentage (e.g. 5 -> 0.05) ---
+  // --- Convert discount percentage ---
   if (normalized.discount !== undefined && normalized.discount !== null) {
     const discount = parseFloat(normalized.discount);
     normalized.discount = discount > 1 ? discount / 100 : discount;
@@ -52,8 +51,16 @@ export function normalizePayload(payload, config = {}) {
         } else {
           normalized[field] = "false";
         }
+      } else if (["brand_link", "category_link"].includes(field)) {
+        // ✅ Airtable expects array of IDs for linked fields
+        if (typeof val === "string") {
+          normalized[field] = [val];
+        } else if (val?.value) {
+          normalized[field] = [val.value];
+        } else {
+          normalized[field] = [];
+        }
       } else {
-        // 👇 FIX: ensure select fields use only their `value` if object
         if (typeof val === "string") {
           normalized[field] = val;
         } else if (val && typeof val === "object") {
@@ -65,7 +72,19 @@ export function normalizePayload(payload, config = {}) {
     });
   }
 
-  // --- Normalize array fields (NEW + SAFE) ---
+  // --- Normalize text fields from arrays (for Airtable long text fields) ---
+  if (config.textArrayFields?.length) {
+    config.textArrayFields.forEach((field) => {
+      const val = normalized[field];
+      if (Array.isArray(val)) {
+        normalized[field] = val.join(", "); // join array into comma-separated string
+      } else if (typeof val !== "string") {
+        normalized[field] = "";
+      }
+    });
+  }
+
+  // --- Normalize array fields (safe default) ---
   if (config.arrayFields?.length) {
     config.arrayFields.forEach((field) => {
       const val = normalized[field];
