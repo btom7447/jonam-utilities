@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import {
   CloudOff,
-  DeleteIcon,
   EllipsisVertical,
   PenLine,
   PrinterIcon,
@@ -33,6 +32,12 @@ export default function AdminProjectsTable({
   useEffect(() => setTimestamp(`?t=${Date.now()}`), []);
   useEffect(() => setTableData(data), [data]);
 
+  useEffect(() => {
+    // Sort alphabetically by name
+    const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+    setTableData(sortedData); // sync with parent
+  }, [data]);
+
   const itemsPerPage = 10;
   const totalPages = Math.ceil(tableData.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
@@ -46,7 +51,7 @@ export default function AdminProjectsTable({
     setModal({
       type: "create",
       row: {
-        recordId: null,
+        _id: null,
         name: "",
         client_name: "",
         description: "",
@@ -59,17 +64,17 @@ export default function AdminProjectsTable({
     });
   };
 
-  const handleUpdate = async ({ recordId, field, value, values }) => {
+  const handleUpdate = async ({ _id, field, value, values }) => {
     const payload = values || { [field]: value };
 
     if (modal.type === "create") {
-      const created = await onEdit?.({ recordId: null, values: payload });
+      const created = await onEdit?.({ _id: null, values: payload });
       if (created) setTableData((prev) => [...prev, created]);
     } else {
-      const updated = await onEdit?.({ recordId, values: payload });
+      const updated = await onEdit?.({ _id, values: payload });
       if (updated) {
         setTableData((prev) =>
-          prev.map((r) => (r.recordId === recordId ? { ...r, ...updated } : r))
+          prev.map((r) => (r._id === _id ? { ...r, ...updated } : r))
         );
       }
     }
@@ -92,24 +97,19 @@ export default function AdminProjectsTable({
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-brown border-b border-gray-200 text-xl text-left text-white">
-            <th className="p-5 font-semibold">Id</th>
+            {/* ✅ New # column */}
+            <th className="p-5 font-semibold">#</th>
             <th className="p-5 font-semibold">Image</th>
             <th className="p-5 font-semibold">Name</th>
-            <th className="p-5 font-semibold">Client</th>
             <th className="p-5 font-semibold">Rating</th>
             <th className="p-5 font-semibold">Date</th>
             <th className="p-5 font-semibold">Status</th>
             <th className="p-5 font-semibold text-right relative">
               <div className="flex items-center justify-end gap-5">
-                <button
-                  type="button"
-                  onClick={openCreateModal}
-                  className="text-white cursor-pointer"
-                >
+                <button onClick={openCreateModal} className="text-white">
                   <PlusIcon size={25} strokeWidth={1} />
                 </button>
                 <button
-                  type="button"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="cursor-pointer"
                 >
@@ -164,10 +164,13 @@ export default function AdminProjectsTable({
         <tbody>
           {currentData.map((row, idx) => (
             <tr
-              key={row.recordId || idx}
+              key={row._id || idx}
               className="hover:bg-gray-50 p-5 transition-colors cursor-pointer"
             >
-              <td className="p-5 border-b border-gray-200">{row.id}</td>
+              {/* Auto numbering */}
+              <td className="p-5 border-b border-gray-200 text-left">
+                {(startIdx + idx + 1).toString().padStart(2, "0")}
+              </td>
 
               {/* Image */}
               <td className="p-5 border-b border-gray-200">
@@ -181,20 +184,23 @@ export default function AdminProjectsTable({
                     className="w-12 h-12 rounded-full object-cover border"
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center border text-gray-500">
-                    N/A
-                  </div>
+                  <Image
+                    src={"/fallback.jpg"}
+                    alt={row.name}
+                    width={48}
+                    height={48}
+                    unoptimized
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
                 )}
               </td>
 
               {/* Name */}
               <td className="p-5 border-b border-gray-200 text-gray-900">
-                {row.name}
-              </td>
-
-              {/* Client */}
-              <td className="p-5 border-b border-gray-200 text-gray-700">
-                {row.client_name || "N/A"}
+                <div>
+                  <p className="font-medium">{row.name}</p>
+                  <p className="text-sm text-gray-500">{row.client_name}</p>
+                </div>
               </td>
 
               {/* Rating */}
@@ -236,7 +242,7 @@ export default function AdminProjectsTable({
                     e.stopPropagation();
                     openUpdateModal(row);
                   }}
-                  className="text-blue-500 hover:text-blue-800 mr-5"
+                  className="text-blue-500 hover:text-blue-800 mr-5 cursor-pointer"
                 >
                   <PenLine size={25} strokeWidth={1} />
                 </button>
@@ -245,7 +251,7 @@ export default function AdminProjectsTable({
                     e.stopPropagation();
                     openDeleteModal(row);
                   }}
-                  className="text-red-500 hover:text-red-800"
+                  className="text-red-500 hover:text-red-800 cursor-pointer"
                 >
                   <Trash2 size={25} strokeWidth={1} />
                 </button>
@@ -260,7 +266,6 @@ export default function AdminProjectsTable({
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="flex items-center justify-center gap-1 px-3 py-2 cursor-pointer hover:text-gray-700 disabled:opacity-50"
         >
           <ChevronLeft size={30} strokeWidth={1} />
         </button>
@@ -272,7 +277,6 @@ export default function AdminProjectsTable({
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
           disabled={currentPage === totalPages}
-          className="flex items-center justify-center gap-1 px-3 py-2 cursor-pointer hover:text-gray-700 disabled:opacity-50"
         >
           <ChevronRight size={30} strokeWidth={1} />
         </button>
@@ -286,7 +290,6 @@ export default function AdminProjectsTable({
           onClose={closeModal}
           onUpdate={handleUpdate}
           onDelete={onDelete}
-          loading={false}
           updating={updating}
           mode={modal.type}
           formFields={[
@@ -295,12 +298,6 @@ export default function AdminProjectsTable({
             { name: "client_name", label: "Client Name", type: "text" },
             { name: "client_rating", label: "Client Rating", type: "number" },
             { name: "date", label: "Date", type: "date" },
-            {
-              name: "featured",
-              label: "Feature",
-              type: "select",
-              options: ["false", "true"],
-            },
             {
               name: "status",
               label: "Status",

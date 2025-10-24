@@ -33,13 +33,14 @@ const QuoteForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
   
-    const payload = {
-      full_name: formData.name,
-      email_address: formData.email,
-      phone_number: formData.phone,
-      service_type: selectedService,
-      description: formData.message,
-    };
+   const payload = {
+     full_name: formData.name.trim(),
+     email_address: formData.email.trim(),
+     phone_number: formData.phone.trim(),
+     service_type: selectedService.trim(),
+     description: formData.message.trim(),
+   };
+
   
     try {
       const res = await fetch("/api/request-quote", {
@@ -51,9 +52,15 @@ const QuoteForm = () => {
       const result = await res.json();
       if (res.ok) {
         toast.success("Request sent!");
-  
-        // reset form
-        setFormData({ name: "", phone: "", email: "", message: "", });
+
+        // reset form properly
+        setFormData({
+          name: "",
+          phone: "",
+          email: "",
+          message: "",
+          address: "",
+        });
         setSelectedService("");
       } else {
         console.error(result.error);

@@ -6,13 +6,11 @@ import AdminHeader from "@/components/AdminHeader";
 import { toast } from "react-toastify";
 import HandymanMetricSection from "@/components/HandymanMetricsSection";
 import AdminHandymanTable from "@/components/AdminHandymanTable";
-import { normalizePayload } from "@/lib/normalizePayload";
 
 export default function AdminHandymanPage() {
   const [handyman, setHandyman] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-  const [selectedHandyman, setSelectedHandyman] = useState(null);
 
   // --- Fetch handyman records ---
   useEffect(() => {
@@ -20,18 +18,20 @@ export default function AdminHandymanPage() {
       try {
         const res = await fetch("/api/handyman");
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to fetch handymen");
+
         setHandyman(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error fetching handyman:", err);
-        setHandyman([]);
+        toast.error("Failed to load handyman data");
       } finally {
         setLoading(false);
       }
     }
+
     loadData();
   }, []);
 
-  // --- Loader ---
   if (loading) {
     return (
       <div className="flex justify-center items-center w-full h-screen py-20">
@@ -40,115 +40,67 @@ export default function AdminHandymanPage() {
     );
   }
 
-  // --- Helper: normalize image(s) for Airtable ---
-  const formatImages = (images) => {
-    if (!images) return [];
-    if (typeof images === "string") return [{ url: images }];
-    if (Array.isArray(images)) {
-      return images.map((img) =>
-        typeof img === "string" ? { url: img } : { url: img.url }
-      );
-    }
-    if (images.url) return [{ url: images.url }];
-    return [];
-  };
-
-  // --- Update handyman record ---
-  const handleUpdateHandyman = async ({ recordId, values }) => {
+  // --- CREATE or UPDATE handyman record ---
+  const handleUpdateHandyman = async ({ _id, values }) => {
     setUpdating(true);
 
     try {
-      // Normalize payload
-      const payload = normalizePayload(values, {
-        numberFields: ["rating", "gigs"],
-        imageFields: ["image"],
+      const isNew = !_id;
+      const method = isNew ? "POST" : "PATCH";
+      const url = isNew ? `/api/handyman` : `/api/handyman/${_id}`;
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
       });
 
-      if (payload.availability) {
-        const availabilityMap = {
-          away: "away",
-          available: "available",
-          busy: "busy",
-        };
-        const clean = payload.availability
-          .replace(/^"+|"+$/g, "")
-          .toLowerCase();
-        payload.availability = availabilityMap[clean] || clean;
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Operation failed");
 
-      let updatedHandyman;
-      if (!recordId) {
-        // ✅ CREATE
-        const res = await fetch(`/api/handyman`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error((await res.json()).error);
-        updatedHandyman = await res.json();
-
-        setHandyman((prev) => [...prev, updatedHandyman]);
+      if (isNew) {
+        setHandyman((prev) => [...prev, data]);
         toast.success("Handyman created successfully!");
       } else {
-        // ✅ UPDATE
-        const res = await fetch(`/api/handyman/${recordId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error((await res.json()).error);
-        updatedHandyman = await res.json();
-
         setHandyman((prev) =>
-          prev.map((o) =>
-            o.recordId === recordId ? { ...o, ...updatedHandyman } : o
-          )
+          prev.map((o) => (o._id === _id ? { ...o, ...data } : o))
         );
         toast.success("Handyman updated successfully!");
       }
-
-      setSelectedHandyman(null);
     } catch (err) {
-      toast.error(`Operation failed: ${err.message}`);
+      console.error("Error updating handyman:", err);
+      toast.error(err.message);
     } finally {
       setUpdating(false);
     }
   };
 
-
   // --- Delete handyman record ---
-  const handleDelete = async (handyman) => {
-    if (!handyman?.recordId)
-      return toast.error("No record ID found for deletion");
+  const handleDelete = async (handymanItem) => {
+    if (!handymanItem?._id) return toast.error("No ID found for deletion");
 
     setUpdating(true);
     try {
-      const res = await fetch(`/api/handyman/${handyman.recordId}`, {
+      const res = await fetch(`/api/handyman/${handymanItem._id}`, {
         method: "DELETE",
       });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete handyman");
 
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || "Failed to delete handyman");
-      }
-
-      setHandyman((prev) => prev.filter((o) => o.recordId !== handyman.recordId));
+      setHandyman((prev) => prev.filter((o) => o._id !== handymanItem._id));
       toast.success("Handyman deleted successfully!");
     } catch (err) {
       console.error("Delete failed:", err);
-      toast.error(`Delete failed: ${err.message}`);
+      toast.error(err.message);
     } finally {
       setUpdating(false);
     }
   };
-  
-  console.log("Handyman data", handyman);
 
   return (
     <>
-      <AdminHeader title="Booking Management" />
+      <AdminHeader title="Handyman Management" />
       <HandymanMetricSection handyman={handyman} />
-
       <AdminHandymanTable
         data={handyman}
         onEdit={handleUpdateHandyman}

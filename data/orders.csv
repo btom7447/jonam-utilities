@@ -1,0 +1,7 @@
+﻿id,status,order_total,customer_name,customer_number,customer_email,payment_option,delivery_state,delivery_price,order_date,customer_orders,order_items_id
+33,confirmed,₦193000,Benjamin Tom,+23434876624,tombenjamin7447@gmail.com,paystack,Akwa Ibom,₦3000,"September 9, 2025 12:05pm","28,29,30","28, 29, 30"
+34,transit,₦853200,Adebayo Moses,+234915567836,mosesadebayo@gmail.com,paystack,Osun State,₦0,"October 2, 2025 3:34pm","24,25","24, 25"
+42,confirmed,₦9200,Ekemini John Tom,09155674236,tomekemini7447@gmail.com,paystack,Akwa Ibom,₦3000,"October 4, 2025 8:22pm","32,33","32, 33"
+43,pending,₦3200,Benjamin Tom,09155674236,tombenjamin7447@gmail.com,paystack,Abia,₦3000,"October 11, 2025 8:28pm",34,34
+44,pending,₦3200,Benjamin Tom,09155674236,tombenjamin7447@gmail.com,paystack,Abia,₦3000,"October 11, 2025 8:31pm",35,35
+45,pending,₦66700,Ekemini John Tom,09155674236,tomekemini7447@gmail.com,paystack,Abia,₦3000,"October 12, 2025 7:26pm",36,36

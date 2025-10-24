@@ -52,68 +52,71 @@ const BrandsSection = () => {
         );
     }
 
-    console.log("Brands Data", brands)
-
     return (
-        <section className="flex flex-col-reverse lg:flex-row items-center justify-center gap-10 bg-white px-5 md:px-20 py-20">
-            {brands.length === 0 ? (
-                <ErrorFetching />
-            ) : (
-                <>
-                    {/* Carousel container */}
-                    <div className="w-full lg:w-[70%]">
-                        <Splide
-                            options={{
-                                type: "loop",
-                                perPage: 4,
-                                perMove: 1,
-                                gap: "20px",
-                                autoplay: true,
-                                interval: 2000,
-                                arrows: false,
-                                pagination: false,
-                                breakpoints: {
-                                    1440: { perPage: 4 },
-                                    1024: { perPage: 3 },
-                                    768: { perPage: 2 },
-                                    640: { perPage: 1 },
-                                },
-                            }}
-                            className="w-full"
-                        >
-                            {brands
-                                .filter((brand) => Array.isArray(brand.image) && brand.image.length > 0)
-                                .map((brand) => (
-                                    <SplideSlide key={brand.id}>
-                                        <div
-                                            onClick={() => handleNavigate(brand)}  
-                                            className="flex justify-center items-center cursor-pointer"
-                                        >
-                                            {brand.image?.[0]?.url && (
-                                                <Image
-                                                    src={`${brand.image[0].url}${timestamp}`}
-                                                    alt={`${brand.name} logo`}
-                                                    width={150}
-                                                    height={80}
-                                                    className="w-150 h-40 object-contain transition-opacity duration-300 opacity-50 hover:opacity-100"
-                                                    unoptimized
-                                                />
-                                            )}
-                                        </div>
-                                    </SplideSlide>
-                                ))}
-                        </Splide>
-                    </div>
+      <section className="flex flex-col-reverse lg:flex-row items-center justify-center gap-10 bg-white px-5 md:px-20 py-20">
+        {brands.length === 0 ? (
+          <ErrorFetching />
+        ) : (
+          <>
+            {/* Carousel container */}
+            <div className="w-full lg:w-[70%]">
+              <Splide
+                options={{
+                  type: "loop",
+                  perPage: 4,
+                  perMove: 1,
+                  gap: "20px",
+                  autoplay: true,
+                  interval: 2000,
+                  arrows: false,
+                  pagination: false,
+                  breakpoints: {
+                    1440: { perPage: 4 },
+                    1024: { perPage: 3 },
+                    768: { perPage: 2 },
+                    640: { perPage: 1 },
+                  },
+                }}
+                className="w-full"
+              >
+                {brands
+                  .filter(
+                    (brand) =>
+                      Array.isArray(brand.image) &&
+                      brand.image.length > 0 &&
+                      brand.status === "publish"
+                  )
+                  .map((brand) => (
+                    <SplideSlide key={brand.id}>
+                      <div
+                        onClick={() => handleNavigate(brand)}
+                        className="flex justify-center items-center cursor-pointer"
+                      >
+                        {brand.image?.[0]?.url && (
+                          <Image
+                            src={`${brand.image[0].url}${timestamp}`}
+                            alt={`${brand.name} logo`}
+                            width={150}
+                            height={80}
+                            className="w-150 h-40 object-contain transition-opacity duration-300 opacity-50 hover:opacity-100"
+                            unoptimized
+                          />
+                        )}
+                      </div>
+                    </SplideSlide>
+                  ))}
+              </Splide>
+            </div>
 
-                    {/* Text container */}
-                    <div className="w-full lg:w-[30%] text-center lg:text-left">
-                        <h4 className="text-3xl lg:text-5xl font-semibold">
-                            We Work with the best brands
-                        </h4>
-                    </div>
-                </>
-            )}
-        </section>
+            {/* Text container */}
+            <div className="w-full lg:w-[30%] text-center lg:text-left">
+              <h4 className="text-3xl lg:text-5xl font-semibold">
+                We Work with the best brands
+              </h4>
+            </div>
+          </>
+        )}
+      </section>
     );
 };
 

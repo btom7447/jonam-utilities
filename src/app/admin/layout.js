@@ -16,6 +16,7 @@ import {
   XIcon,
   ShoppingCartIcon,
   FoldersIcon,
+  MailIcon,
 } from "lucide-react";
 import Footer from "@/components/Footer";
 
@@ -33,12 +34,49 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
 
   const navItems = [
-    { href: "/admin", label: "Dashboard", icon: HouseIcon, title: "Dashboard Overview" },
-    { href: "/admin/bookings", label: "Bookings", icon: CalendarIcon, title: "Bookings Management" },
-    { href: "/admin/handymen", label: "Handymen", icon: HardHatIcon,  title: "Handyman Management" },
-    { href: "/admin/orders", label: "Orders", icon: Package,  title: "Order Management"  },
-    { href: "/admin/products", label: "Products", icon: ShoppingCartIcon,  title: "Product Management"  },
-    { href: "/admin/projects", label: "Projects", icon: FoldersIcon,  title: "Product Management"  },
+    {
+      href: "/admin",
+      label: "Dashboard",
+      icon: HouseIcon,
+      title: "Dashboard Overview",
+    },
+    {
+      href: "/admin/bookings",
+      label: "Bookings",
+      icon: CalendarIcon,
+      title: "Bookings Management",
+    },
+    {
+      href: "/admin/handymen",
+      label: "Handymen",
+      icon: HardHatIcon,
+      title: "Handyman Management",
+    },
+    {
+      href: "/admin/orders",
+      label: "Orders",
+      icon: Package,
+      title: "Order Management",
+    },
+    {
+      href: "/admin/products",
+      label: "Products",
+      icon: ShoppingCartIcon,
+      title: "Product Management",
+    },
+    {
+      href: "/admin/projects",
+      label: "Projects",
+      icon: FoldersIcon,
+      title: "Product Management",
+    },
+    {
+      href: "/admin/quotes",
+      label: "Communications",
+      icon: MailIcon,
+      title: "Quotes Management",
+    },
+
     // { href: "/admin/services", label: "Services", icon: ZapIcon,  title: "Services Management" },
   ];
 

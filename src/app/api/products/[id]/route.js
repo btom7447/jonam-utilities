@@ -1,65 +1,83 @@
 import { NextResponse } from "next/server";
-import { updateProducts, deleteProduct } from "@/lib/airtable";
+import connectDB from "@/lib/mongodb";
+import Product from "@/models/Product";
+import mongoose from "mongoose";
 
-export async function PATCH(req, { params }) {
-  const { id } = params;
-
+// ✅ GET one product by _id
+export async function GET(req, { params }) {
   try {
-    const body = await req.json();
-    console.log("🟡 PATCH request body:", JSON.stringify(body, null, 2));
+    await connectDB();
+    const { id } = params;
 
-    if (!body || Object.keys(body).length === 0) {
+    if (!mongoose.Types.ObjectId.isValid(id))
       return NextResponse.json(
-        { error: "No fields provided to update" },
+        { error: "Invalid product ID" },
         { status: 400 }
       );
-    }
 
-    // ✅ Update the product record in Airtable
-    const updatedProduct = await updateProducts(
-      process.env.AIRTABLE_PRODUCTS_NAME,
-      id,
-      body
-    );
+    const product = await Product.findById(id);
+    if (!product)
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
 
-    return NextResponse.json(updatedProduct);
+    return NextResponse.json(product, { status: 200 });
   } catch (error) {
-    console.error("🔴 Error updating product:", error);
-
-    // Airtable sometimes nests message under error.response or error.message
-    const errorMessage =
-      error?.response?.data?.error?.message ||
-      error?.error?.message ||
-      error?.message ||
-      "Unknown Airtable error";
-
-    console.error("🔍 Airtable detailed error:", errorMessage);
-
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    console.error("Error fetching product:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch product" },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(req, { params }) {
-  const { id } = params;
+// ✅ PUT update product by _id
+export async function PUT(request, { params }) {
+  try {
+    await connectDB();
+    const data = await request.json();
 
-  if (!id) {
+    // 🧩 Defensive fixes — make sure IDs are strings, not arrays
+    if (Array.isArray(data.category_link)) {
+      data.category_link = data.category_link[0];
+    }
+    if (Array.isArray(data.brand_link)) {
+      data.brand_link = data.brand_link[0];
+    }
+
+    // 🧠 Perform update using _id
+    const product = await Product.findByIdAndUpdate(params.id, data, {
+      new: true,
+    });
+
+    if (!product)
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+
+    return NextResponse.json(product);
+  } catch (error) {
+    console.error("Update error:", error);
     return NextResponse.json(
-      { error: "Record ID is required" },
-      { status: 400 }
+      { error: `Failed to update product: ${error.message}` },
+      { status: 500 }
     );
   }
+}
 
+// ✅ DELETE product by _id
+export async function DELETE(req, { params }) {
   try {
-    const deleted = await deleteProduct(process.env.AIRTABLE_PRODUCTS_NAME, id);
-    return NextResponse.json({ success: true, deleted });
-  } catch (err) {
-    console.error("🔴 Failed to delete product:", err);
-    const errorMessage =
-      err?.response?.data?.error?.message ||
-      err?.error?.message ||
-      err?.message ||
-      "Unknown Airtable error";
+    await connectDB();
+    const { id } = params;
 
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    const deleted = await Product.findByIdAndDelete(id);
+    if (!deleted) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("Delete error:", error);
+    return NextResponse.json(
+      { error: "Failed to delete product" },
+      { status: 500 }
+    );
   }
 }

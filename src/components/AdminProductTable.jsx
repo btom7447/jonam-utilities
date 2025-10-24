@@ -41,7 +41,6 @@ export default function AdminProductTable({
     setTableData(sortedData); // sync with parent
   }, [data]);
 
-
   const itemsPerPage = 10;
   const totalPages = Math.ceil(tableData.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
@@ -52,7 +51,7 @@ export default function AdminProductTable({
     setModal({
       type: "create",
       row: {
-        recordId: null,
+        _id: null,
         images: [],
         name: "",
         price: "",
@@ -63,9 +62,8 @@ export default function AdminProductTable({
     });
   const closeModal = () => setModal({ type: null, row: null });
 
-  const handleUpdate = async ({ recordId, values }) => {
+  const handleUpdate = async ({ _id, values }) => {
     if (!values) return;
-    // normalize image field
     if (values.images && typeof values.images === "string") {
       values.images = [{ url: values.images }];
     }
@@ -73,12 +71,13 @@ export default function AdminProductTable({
     const payload = { ...values };
 
     if (modal.type === "create") {
-      await onEdit?.({ recordId: null, values: payload });
+      await onEdit?.({ _id: null, values: payload });
     } else {
-      await onEdit?.({ recordId, values: payload });
+      await onEdit?.({ _id: modal.row._id, values: payload });
     }
     closeModal();
   };
+
 
   if (!tableData || tableData.length === 0) {
     return (
@@ -96,7 +95,7 @@ export default function AdminProductTable({
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-brown border-b border-gray-200 text-xl text-left text-white">
-            <th className="p-5 font-semibold">Id</th>
+            <th className="p-5 font-semibold">#</th>
             <th className="p-5 font-semibold">Image</th>
             <th className="p-5 font-semibold">Name</th>
             <th className="p-5 font-semibold">Price</th>
@@ -168,12 +167,14 @@ export default function AdminProductTable({
         <tbody>
           {currentData.map((row, idx) => (
             <tr
-              key={row.recordId || idx}
+              key={row._id || idx}
               className="hover:bg-gray-50 p-5 transition-colors cursor-pointer"
             >
+              {/* Auto numbering */}
               <td className="p-5 border-b border-gray-200 text-left">
-                {row.id}
+                {(startIdx + idx + 1).toString().padStart(2, "0")}
               </td>
+
               <td className="p-5 border-b border-gray-200 text-left">
                 {row.images?.[0]?.url ? (
                   <Image
@@ -190,33 +191,40 @@ export default function AdminProductTable({
                   </div>
                 )}
               </td>
+
               <td className="p-5 border-b border-gray-200 text-left">
-                {row.name}
+                <div>
+                  <p className="font-medium">{row.name}</p>
+                  <p className="text-sm text-gray-500">{row.category}</p>
+                  <p className="text-sm text-gray-500">{row.brand}</p>
+                </div>
               </td>
+
               <td className="p-5 border-b border-gray-200 text-left">
-                {typeof row.price === "number"
-                  ? `₦${row.price.toLocaleString()}`
-                  : "N/A"}
+                {row.price ? `₦${Number(row.price).toLocaleString()}` : "N/A"}
               </td>
+
+              {/* Just display discount value + % */}
               <td className="p-5 border-b border-gray-200 text-left">
-                {row.discount != null
-                  ? `${(row.discount * 100).toFixed(0)}%`
-                  : "—"}
+                {row.discount ? `${row.discount}%` : "—"}
               </td>
+
               <td className="p-5 border-b border-gray-200 text-left">
                 {row.quantity ?? 0}
               </td>
+
               <td className="p-5 border-b border-gray-200 text-left">
                 <span
                   className={`px-5 py-2 rounded-full text-sm font-medium ${
-                    row.featured === "true"
+                    row.featured === true || row.featured === "true"
                       ? "bg-green-100 text-green-700 border border-green-300"
-                      : "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                      : "bg-gray-100 text-gray-700 border border-gray-300"
                   }`}
                 >
-                  {row.featured}
+                  {row.featured ? "Featured" : "Standard"}
                 </span>
               </td>
+
               <td className="p-5 border-b border-gray-200 text-right">
                 <button
                   onClick={(e) => {

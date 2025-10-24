@@ -1,46 +1,50 @@
 import { NextResponse } from "next/server";
-import { createProduct, fetchProducts } from "@/lib/airtable";
+import connectDB from "@/lib/mongodb";
+import Product from "@/models/Product";
 
+// ✅ GET all products
 export async function GET() {
   try {
-    const products = await fetchProducts();
-    return NextResponse.json(products || []);
+    await connectDB();
+    const products = await Product.find().sort({ createdAt: -1 });
+    return NextResponse.json(products, { status: 200 });
   } catch (error) {
-    console.error("API Error - /api/products:", error);
-    return NextResponse.json([], { status: 200 }); 
+    console.error("Error fetching products:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch products" },
+      { status: 500 }
+    );
   }
 }
 
-
+// ✅ POST create new product
 export async function POST(req) {
   try {
-    const body = await req.json();
+    await connectDB();
+    const data = await req.json();
 
-    // Validate minimal required fields
-    if (!body.name || !body.price) {
-      return NextResponse.json(
-        { success: false, error: "Name and price are required" },
-        { status: 400 }
-      );
+    // ✅ Convert arrays to single ObjectIds
+    if (Array.isArray(data.brand_link)) {
+      data.brand_link = data.brand_link[0];
+    }
+    if (Array.isArray(data.category_link)) {
+      data.category_link = data.category_link[0];
     }
 
-    const result = await createProduct(body);
-
-    if (!result.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: result.error.message || "Failed to create product",
-        },
-        { status: 500 }
-      );
+    // ✅ Convert comma-separated strings to arrays
+    if (typeof data.variants === "string") {
+      data.variants = data.variants.split(",").map((v) => v.trim());
+    }
+    if (typeof data.product_colors === "string") {
+      data.product_colors = data.product_colors.split(",").map((v) => v.trim());
     }
 
-    return NextResponse.json({ success: true, id: result.id });
+    const product = await Product.create(data);
+    return NextResponse.json(product, { status: 201 });
   } catch (error) {
-    console.error("Products API POST error:", error);
+    console.error("Error creating product:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Server error" },
+      { error: `Failed to create product: ${error.message}` },
       { status: 500 }
     );
   }

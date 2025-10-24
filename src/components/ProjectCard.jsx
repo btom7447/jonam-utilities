@@ -25,8 +25,7 @@ const ProjectCard = ({ data }) => {
                     />
                 {/* )} */}
             </div>
-            <Link href={`/projects/${data.recordId}`} className='mt-5 block text-2xl font-semibold text-black text-center capitalize hover:text-blue-500'>{data?.name}</Link>
-
+            <Link href={`/projects/${data._id}`} className='mt-5 block text-2xl font-semibold text-black text-center capitalize hover:text-blue-500'>{data?.name}</Link>
         </div>
     )
 }

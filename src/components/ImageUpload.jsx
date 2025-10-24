@@ -93,7 +93,7 @@ export default function ImageUploader({
                   src={image.url}
                   alt={`Preview ${index + 1}`}
                   className="mb-3 w-30 h-30 object-cover rounded-lg border"
-                  unoptimized={image.url.includes("cloudinary")}
+                  unoptimized={image.url?.includes("cloudinary")}
                 />
                 <button
                   type="button"

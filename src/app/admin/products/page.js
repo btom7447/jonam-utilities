@@ -54,7 +54,6 @@ export default function AdminProductPage() {
     loadMeta();
   }, []);
 
-  // --- Loader ---
   if (loading) {
     return (
       <div className="flex justify-center items-center w-full h-screen py-20">
@@ -63,7 +62,6 @@ export default function AdminProductPage() {
     );
   }
 
-  // --- Helper: normalize image(s) ---
   const formatImages = (images) => {
     if (!images) return [];
     if (typeof images === "string") return [{ url: images }];
@@ -77,74 +75,99 @@ export default function AdminProductPage() {
   };
 
   // --- Create / Update Product ---
-  const handleUpdateProduct = async ({ recordId, values }) => {
-    setUpdating(true);
+ const handleUpdateProduct = async ({ _id, values }) => {
+   setUpdating(true);
 
-    try {
-      const payload = normalizePayload(values, {
-        numberFields: ["price", "quantity", "product_number", "discount"],
-        imageFields: ["images"],
-        selectFields: ["brand_link", "category_link", "featured"],
-        textArrayFields: ["variants", "product_colors"],
-      });
+   try {
+     const payload = normalizePayload(values, {
+       numberFields: ["price", "quantity", "product_number", "discount"],
+       imageFields: ["images"],
+       selectFields: ["brand_link", "category_link", "featured"],
+       textArrayFields: ["variants", "product_colors"],
+     });
 
-      if (payload.image) {
-        payload.image = formatImages(payload.image);
-      }
+     // --- convert image(s) format ---
+     if (payload.image) {
+       payload.image = formatImages(payload.image);
+     }
 
-      let updatedProduct;
-      if (!recordId) {
-        // CREATE
-        const res = await fetch("/api/products", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error((await res.json()).error);
-        updatedProduct = await res.json();
+     // ✅ convert featured string to boolean
+     payload.featured =
+       payload.featured === true ||
+       payload.featured === "true" ||
+       payload.featured === "1";
 
-        setProducts((prev) => [...prev, updatedProduct]);
-        toast.success("Product created successfully!");
-      } else {
-        // UPDATE
-        const res = await fetch(`/api/products/${recordId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error((await res.json()).error);
-        updatedProduct = await res.json();
+     // ✅ ensure discount is a number (not divided by 100)
+     if (payload.discount != null) {
+       payload.discount = Number(payload.discount);
+     }
 
-        setProducts((prev) =>
-          prev.map((p) =>
-            p.recordId === recordId ? { ...p, ...updatedProduct } : p
-          )
-        );
-        toast.success("Product updated successfully!");
-      }
-    } catch (err) {
-      toast.error(`Operation failed: ${err.message}`);
-    } finally {
-      setUpdating(false);
-    }
-  };
+     // ✅ attach brand and category readable names
+     // ✅ attach brand and category readable names
+     const brandId = Array.isArray(payload.brand_link)
+       ? payload.brand_link[0]
+       : payload.brand_link;
+     const categoryId = Array.isArray(payload.category_link)
+       ? payload.category_link[0]
+       : payload.category_link;
+
+     const brand = brands.find((b) => b._id === brandId)?.name || "";
+     const category =
+       categories.find((c) => c._id === categoryId)?.caption || "";
+
+     payload.brand = brand;
+     payload.category = category;
+
+     // --- CREATE or UPDATE request ---
+     let updatedProduct;
+     if (!_id) {
+       // CREATE
+       const res = await fetch("/api/products", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify(payload),
+       });
+       if (!res.ok) throw new Error((await res.json()).error);
+       updatedProduct = await res.json();
+
+       setProducts((prev) => [...prev, updatedProduct]);
+       toast.success("Product created successfully!");
+     } else {
+       // UPDATE
+       const res = await fetch(`/api/products/${_id}`, {
+         method: "PUT",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify(payload),
+       });
+       if (!res.ok) throw new Error((await res.json()).error);
+       updatedProduct = await res.json();
+
+       setProducts((prev) =>
+         prev.map((p) => (p._id === _id ? { ...p, ...updatedProduct } : p))
+       );
+       toast.success("Product updated successfully!");
+     }
+   } catch (err) {
+     toast.error(`Operation failed: ${err.message}`);
+   } finally {
+     setUpdating(false);
+   }
+ };
 
   // --- Delete Product ---
   const handleDelete = async (product) => {
-    if (!product?.recordId)
-      return toast.error("No record ID found for deletion");
+    if (!product?._id) return toast.error("No product ID found for deletion");
 
     setUpdating(true);
     try {
-      const res = await fetch(`/api/products/${product.recordId}`, {
+      const res = await fetch(`/api/products/${product._id}`, {
         method: "DELETE",
       });
+
       if (!res.ok)
         throw new Error((await res.json()).error || "Failed to delete product");
 
-      setProducts((prev) =>
-        prev.filter((p) => p.recordId !== product.recordId)
-      );
+      setProducts((prev) => prev.filter((p) => p._id !== product._id));
       toast.success("Product deleted successfully!");
     } catch (err) {
       console.error("Delete failed:", err);
@@ -154,14 +177,14 @@ export default function AdminProductPage() {
     }
   };
 
-  // --- Brand & Category Options ----
   const brandOptions = brands.map((b) => ({
     label: b.name,
-    value: b.recordId,
+    value: b._id,
   }));
+
   const categoryOptions = categories.map((c) => ({
     label: c.caption,
-    value: c.id,
+    value: c._id,
   }));
 
   return (

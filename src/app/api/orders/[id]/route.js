@@ -1,52 +1,64 @@
 import { NextResponse } from "next/server";
-import { updateOrders, deleteOrder } from "@/lib/airtable";
+import connectDB from "@/lib/mongodb";
+import Order from "@/models/Order";
 
-export async function PATCH(req, { params }) {
-    const { id } = params; // Airtable recordId
-    // console.log("PATCH /api/orders/:id called with recordId:", id);
-
-    try {
-        const body = await req.json();
-        console.log("PATCH request body:", body);
-
-            // Enforce only status update
-            if (!body.status) {
-            return NextResponse.json(
-                { error: "Status is required" },
-                { status: 400 }
-            );
-        }
-
-        const updatedOrder = await updateOrders(
-            process.env.AIRTABLE_ORDERS_NAME,
-            id,
-            { status: body.status } // raw fields, updateOrders will wrap into { fields: ... }
-        );
-
-        console.log("Order after Airtable update:", updatedOrder);
-
-        return NextResponse.json(updatedOrder);
-    } catch (error) {
-        console.error("Error updating order:", error);
-        return NextResponse.json(
-            { error: "Failed to update order" },
-            { status: 500 }
-        );
+export async function GET(_, { params }) {
+  try {
+    await connectDB();
+    const order = await Order.findOne({ id: Number(params.id) }).populate(
+      "order_items_id"
+    );
+    if (!order) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
+    return NextResponse.json(order, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching order:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch order" },
+      { status: 500 }
+    );
+  }
 }
 
-export async function DELETE(req, { params }) {
-    const { id } = params;
-
-    if (!id) {
-        return NextResponse.json({ error: "Record ID is required" }, { status: 400 });
+export async function PUT(req, { params }) {
+  try {
+    await connectDB();
+    const data = await req.json();
+    const updated = await Order.findOneAndUpdate(
+      { id: Number(params.id) },
+      data,
+      { new: true }
+    );
+    if (!updated) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
+    return NextResponse.json(updated, { status: 200 });
+  } catch (error) {
+    console.error("Error updating order:", error);
+    return NextResponse.json(
+      { error: "Failed to update order" },
+      { status: 500 }
+    );
+  }
+}
 
-    try {
-        const deleted = await deleteOrder(process.env.AIRTABLE_ORDERS_NAME, id);
-        return NextResponse.json({ success: true, deleted });
-    } catch (err) {
-        console.error("Failed to delete order:", err);
-        return NextResponse.json({ error: "Failed to delete order" }, { status: 500 });
+export async function DELETE(_, { params }) {
+  try {
+    await connectDB();
+    const deleted = await Order.findOneAndDelete({ id: Number(params.id) });
+    if (!deleted) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
+    return NextResponse.json(
+      { message: "Order deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    return NextResponse.json(
+      { error: "Failed to delete order" },
+      { status: 500 }
+    );
+  }
 }

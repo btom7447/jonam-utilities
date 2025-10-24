@@ -38,7 +38,7 @@ export default function BookingMetricSection({ bookings }) {
         },
         {
             title: "Active Bookings",
-            value: completedBookings,
+            value: activeBookings,
             icon: CalendarSyncIcon,
         },
         {
@@ -48,7 +48,7 @@ export default function BookingMetricSection({ bookings }) {
         },
         {
             title: "Completed Bookings",
-            value: activeBookings,
+            value: completedBookings,
             icon: CalendarCheckIcon,
         },
      ];

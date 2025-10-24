@@ -1,45 +1,31 @@
 import { NextResponse } from "next/server";
-import { fetchHandyman, createHandyman } from "@/lib/airtable";
+import connectDB from "@/lib/mongodb";
+import Handyman from "@/models/Handyman";
 
 export async function GET() {
   try {
-    const handyman = await fetchHandyman();
-    return NextResponse.json(handyman || []);
+    await connectDB();
+    const handymen = await Handyman.find();
+    return NextResponse.json(handymen);
   } catch (error) {
-    console.error("API Error - /api/handyman:", error);
-    return NextResponse.json([], { status: 200 }); 
+    console.error("GET /handyman error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch handymen" },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(req) {
   try {
+    await connectDB();
     const body = await req.json();
-
-    // Validate minimal required fields
-    if (!body.name || !body.profile) {
-      return NextResponse.json(
-        { success: false, error: "Name and profile are required" },
-        { status: 400 }
-      );
-    }
-
-    const result = await createHandyman(body);
-
-    if (!result.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: result.error.message || "Failed to create handyman",
-        },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true, id: result.id });
+    const handyman = await Handyman.create(body);
+    return NextResponse.json(handyman, { status: 201 });
   } catch (error) {
-    console.error("Handyman API POST error:", error);
+    console.error("POST /handyman error:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Server error" },
+      { error: "Failed to create handyman" },
       { status: 500 }
     );
   }

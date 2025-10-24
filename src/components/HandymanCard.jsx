@@ -21,7 +21,7 @@ const HandymanCard = ({ data }) => {
             <div className='w-full flex items-center justify-center bg-white'>
                 {data?.image?.[0]?.url && (
                     <Link
-                        href={`/handyman/${data?.recordId}`}
+                        href={`/handyman/${data?._id}`}
                         className='w-full text-2xl font-semibold text-black capitalize hover:text-blue-500'
                     >
                         <Image
@@ -38,7 +38,7 @@ const HandymanCard = ({ data }) => {
             </div>
             <div className='mt-5 w-full'>
                 <Link
-                    href={`/handyman/${data?.recordId}`}
+                    href={`/handyman/${data?._id}`}
                     className='w-full text-2xl font-semibold text-black capitalize hover:text-blue-500'
                 >
                     {data?.name ?? "Untitled Product"}

@@ -43,87 +43,88 @@ const ShopDisplay = ({ products = [], isOpen, setIsOpen }) => {
     };
 
     return (
-        <section className="col-span-1 xl:col-span-2 w-full">
-            {/* Showing text and sort dropdown */}
-            <div className="flex justify-between items-center mb-10">
-                <div className="w-full flex flex-col xl:flex-row justify-between items-start gap-5">
-                    <p className="text-lg font-medium text-gray-700">
-                        Showing {startIndex + 1}–{endIndex} of {products.length} products
-                    </p>
+      <section className="col-span-1 xl:col-span-2 w-full">
+        {/* Showing text and sort dropdown */}
+        <div className="flex justify-between items-center mb-10">
+          <div className="w-full flex flex-col xl:flex-row justify-between items-start gap-5">
+            <p className="text-lg font-medium text-gray-700">
+              Showing {startIndex + 1}–{endIndex} of {products.length} products
+            </p>
 
-                    <CustomSelect
-                        label="Sort by"
-                        options={sortOptions}
-                        value={sortLabel}
-                        onChange={handleSortChange}
-                    />
-                </div>
+            <CustomSelect
+              label="Sort by"
+              options={sortOptions}
+              value={sortLabel}
+              onChange={handleSortChange}
+            />
+          </div>
 
-                {/* Toggle button for mobile */}
+          {/* Toggle button for mobile */}
+          <button
+            className="xl:hidden text-black"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <ListFilter size={30} />
+          </button>
+        </div>
+
+        {/* Grid layout */}
+        {currentItems.length === 0 ? (
+          <NoFiltered />
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-10">
+            {currentItems.map((product) => (
+              <ProductCard key={product._id} data={product} />
+            ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-20 gap-2 items-center">
+            {currentPage > 1 && (
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                className="p-3 w-15 h-15 flex justify-center items-center bg-gray-900 text-white border border-brown hover:bg-brown hover:text-white hover:border-brown cursor-pointer"
+              >
+                <ChevronLeft size={20} />
+              </button>
+            )}
+
+            {/* Dynamically render up to 5 pagination buttons */}
+            {Array.from({ length: totalPages }, (_, index) => index + 1)
+              .filter((page) => {
+                if (totalPages <= 5) return true;
+                if (currentPage <= 3) return page <= 5;
+                if (currentPage >= totalPages - 2)
+                  return page >= totalPages - 4;
+                return Math.abs(currentPage - page) <= 2;
+              })
+              .map((page) => (
                 <button
-                    className="xl:hidden text-black"
-                    onClick={() => setIsOpen(!isOpen)}
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`p-3 w-15 h-15 flex justify-center items-center border text-xl text-center font-semibold cursor-pointer ${
+                    currentPage === page
+                      ? "bg-blue-500 text-white border-blue-500 hover:opacity-80"
+                      : "bg-white text-blue-500 border-blue-500 hover:bg-blue-50"
+                  }`}
                 >
-                    <ListFilter size={30} />
+                  {page}
                 </button>
-            </div>
+              ))}
 
-            {/* Grid layout */}
-            {currentItems.length === 0 ? (
-                <NoFiltered />
-            ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-10">
-                    {currentItems.map((product) => (
-                        <ProductCard key={product.id} data={product} />
-                    ))}
-                </div>
+            {currentPage < totalPages && (
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                className="p-3 w-15 h-15 flex justify-center items-center bg-gray-900 text-white border border-gray-900 hover:bg-brown hover:text-white hover:border-brown cursor-pointer"
+              >
+                <ChevronRight size={20} />
+              </button>
             )}
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="flex justify-center mt-20 gap-2 items-center">
-                    {currentPage > 1 && (
-                        <button
-                            onClick={() => goToPage(currentPage - 1)}
-                            className="p-3 w-15 h-15 flex justify-center items-center bg-gray-900 text-white border border-brown hover:bg-brown hover:text-white hover:border-brown cursor-pointer"
-                        >
-                            <ChevronLeft size={20} />
-                        </button>
-                    )}
-
-                    {/* Dynamically render up to 5 pagination buttons */}
-                    {Array.from({ length: totalPages }, (_, index) => index + 1)
-                        .filter(page => {
-                            if (totalPages <= 5) return true;
-                            if (currentPage <= 3) return page <= 5;
-                            if (currentPage >= totalPages - 2) return page >= totalPages - 4;
-                            return Math.abs(currentPage - page) <= 2;
-                        })
-                    .map(page => (
-                        <button
-                            key={page}
-                            onClick={() => goToPage(page)}
-                            className={`p-3 w-15 h-15 flex justify-center items-center border text-xl text-center font-semibold cursor-pointer ${
-                                currentPage === page
-                                ? "bg-blue-500 text-white border-blue-500 hover:opacity-80"
-                                : "bg-white text-blue-500 border-blue-500 hover:bg-blue-50"
-                            }`}
-                        >
-                            {page}
-                        </button>
-                    ))}
-
-                    {currentPage < totalPages && (
-                        <button
-                            onClick={() => goToPage(currentPage + 1)}
-                            className="p-3 w-15 h-15 flex justify-center items-center bg-gray-900 text-white border border-gray-900 hover:bg-brown hover:text-white hover:border-brown cursor-pointer"
-                        >
-                            <ChevronRight size={20} />
-                        </button>
-                    )}
-                </div>
-            )}
-        </section>
+          </div>
+        )}
+      </section>
     );
 };
 export default ShopDisplay;

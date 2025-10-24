@@ -110,7 +110,7 @@ export default function AdminProductUpdate({
 
     // ✅ Discount → decimal for Airtable
     if (payload.discount != null) {
-      payload.discount = Number(payload.discount) / 100;
+      payload.discount = Number(payload.discount);
     }
 
     // ✅ Convert variants/colors back to arrays

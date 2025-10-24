@@ -50,59 +50,60 @@ const HireForm = ({ data }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!user) {
-      toast.info("Please log in to book a handyman.");
-      return;
-    }
+  if (!user) {
+    toast.info("Please log in to book a handyman.");
+    return;
+  }
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    const payload = {
-      handyman: [data.recordId],
-      customer_name: formData.name,
-      customer_email: formData.email,
-      customer_number: formData.phone,
-      customer_address: formData.address,
-      service_type: selectedService,
-      booking_date: selectedDate,
-      additional_notes: formData.message,
-    };
-
-    try {
-      const res = await fetch("/api/book-handyman", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await res.json();
-      if (res.ok) {
-        toast.success("Booking created successfully!");
-
-        // reset form
-        setFormData({
-          name: "",
-          phone: "",
-          email: user.email || "",
-          message: "",
-          address: "",
-        });
-        setSelectedDate(null);
-        setSelectedService("");
-      } else {
-        console.error(result.error);
-        toast.error("Failed to create booking");
-      }
-    } catch (error) {
-      console.error("Booking error:", error);
-      toast.error("Something went wrong");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const payload = {
+    handyman: data._id, // ✅ MongoDB ObjectId
+    handyman_name: data.name,
+    handyman_image: data.image?.[0]?.url || "",
+    customer_name: formData.name,
+    customer_email: formData.email,
+    customer_number: formData.phone,
+    customer_address: formData.address,
+    service_type: selectedService,
+    booking_date: selectedDate,
+    additional_notes: formData.message,
   };
+
+  try {
+    const res = await fetch("/api/book-handyman", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      toast.success("Booking created successfully!");
+      setFormData({
+        name: "",
+        phone: "",
+        email: user.email || "",
+        message: "",
+        address: "",
+      });
+      setSelectedDate(null);
+      setSelectedService("");
+    } else {
+      console.error(result.error);
+      toast.error("Failed to create booking");
+    }
+  } catch (error) {
+    console.error("Booking error:", error);
+    toast.error("Something went wrong");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   const fields = [
     { label: "Name", name: "name", type: "text", autoComplete: "name" },

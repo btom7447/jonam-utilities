@@ -1,52 +1,43 @@
 import { NextResponse } from "next/server";
-import { updateBookings, deleteBooking } from "@/lib/airtable";
+import connectDB from "@/lib/mongodb";
+import Booking from "@/models/Booking";
+
+export async function GET(req, { params }) {
+  try {
+    await connectDB();
+    const booking = await Booking.findById(params.id).populate("handyman");
+    if (!booking)
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(booking);
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
 
 export async function PATCH(req, { params }) {
-    const { id } = params; // Airtable recordId
-    // console.log("PATCH /api/orders/:id called with recordId:", id);
-
-    try {
-        const body = await req.json();
-        console.log("PATCH request body:", body);
-
-            // Enforce only status update
-            if (!body.status) {
-            return NextResponse.json(
-                { error: "Status is required" },
-                { status: 400 }
-            );
-        }
-
-        const updatedBooking = await updateBookings(
-            process.env.AIRTABLE_BOOKINGS_NAME,
-            id,
-            { status: body.status } // raw fields, updateOrders will wrap into { fields: ... }
-        );
-
-        console.log("Booking after Airtable update:", updatedBooking);
-
-        return NextResponse.json(updatedBooking);
-    } catch (error) {
-        console.error("Error updating booking:", error);
-        return NextResponse.json(
-            { error: "Failed to update booking" },
-            { status: 500 }
-        );
-    }
+  try {
+    await connectDB();
+    const body = await req.json();
+    const updated = await Booking.findByIdAndUpdate(params.id, body, {
+      new: true,
+    });
+    if (!updated)
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(updated);
+  } catch (err) {
+    console.error("Error updating booking:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
 }
 
 export async function DELETE(req, { params }) {
-    const { id } = params;
-
-    if (!id) {
-        return NextResponse.json({ error: "Record ID is required" }, { status: 400 });
-    }
-
-    try {
-        const deleted = await deleteBooking(process.env.AIRTABLE_BOOKINGS_NAME, id);
-        return NextResponse.json({ success: true, deleted });
-    } catch (err) {
-        console.error("Failed to delete booking:", err);
-        return NextResponse.json({ error: "Failed to delete booking" }, { status: 500 });
-    }
+  try {
+    await connectDB();
+    const deleted = await Booking.findByIdAndDelete(params.id);
+    if (!deleted)
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
 }

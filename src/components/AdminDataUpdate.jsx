@@ -23,14 +23,23 @@ export default function AdminDataUpdate({
 
   // Initialize form values
   useEffect(() => {
-    if (row && mode === "update") {
+    if (row) {
       const initialValues = {};
       formFields.forEach((f) => {
-        initialValues[f.name] = row[f.name] ?? "";
+        let val = row[f.name] ?? "";
+        if (f.type === "date" && val) {
+          // Convert "Thu Oct 09 2025 01:00:00 GMT+0100..." → "2025-10-09"
+          const d = new Date(val);
+          if (!isNaN(d)) {
+            val = d.toISOString().split("T")[0];
+          }
+        }
+        initialValues[f.name] = val;
       });
       setValues(initialValues);
     }
   }, [row, formFields, mode]);
+
 
   if (!open || !row) return null;
 
@@ -38,15 +47,16 @@ export default function AdminDataUpdate({
     setValues((prev) => ({ ...prev, [name]: val }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!onUpdate) return;
-    await onUpdate({
-      recordId: row.recordId,
-      values,
-    });
-    onClose();
-  };
+ const handleSubmit = async (e) => {
+   e.preventDefault();
+   if (!onUpdate) return;
+   await onUpdate({
+     _id: row._id, // <-- use _id here
+     values,
+   });
+   onClose();
+ };
+
 
   const handleDelete = async () => {
     if (!onDelete) return;
@@ -116,7 +126,7 @@ export default function AdminDataUpdate({
                       options={
                         field.options || fieldOptions?.[field.name] || []
                       }
-                      value={values[field.name]}
+                      value={values[field.name] ?? ""} // <-- ensure it's never undefined
                       onChange={(val) => handleChange(field.name, val)}
                     />
                   ) : field.type === "textarea" ? (

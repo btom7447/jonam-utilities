@@ -28,8 +28,10 @@ const CustomSelect = ({
 
   const isSelected = (option) => {
     if (!option) return false;
-    return value && getValue(value) === getValue(option);
+    if (!value) return false; // <-- prevents undefined.includes()
+    return getValue(value) === getValue(option);
   };
+
 
   return (
     <div className="relative min-w-40 max-w-160">

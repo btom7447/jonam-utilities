@@ -11,26 +11,31 @@ const CategorySection = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        async function loadData() {
-            try {
-                const res = await fetch("/api/categories");
-                const data = await res.json();
-                if (!Array.isArray(data)) {
-                    console.error("Categories not array:", data);
-                    setCategories([]);
-                } else {
-                    setCategories(data);
-                }
-            } catch (err) {
-                console.error("Error fetching categories:", err);
-            } finally {
-                setLoading(false);
-            }
-        }
+     useEffect(() => {
+       async function loadData() {
+         try {
+           const res = await fetch("/api/categories");
+           const data = await res.json();
+           if (!Array.isArray(data)) {
+             console.error("Categories not array:", data);
+             setCategories([]);
+           } else {
+             // Filter only published categories
+             const publishedCategories = data.filter(
+               (cat) => cat.status === "publish"
+             );
+             setCategories(publishedCategories);
+           }
+         } catch (err) {
+           console.error("Error fetching categories:", err);
+           setCategories([]);
+         } finally {
+           setLoading(false);
+         }
+       }
 
-        loadData();
-    }, []);
+       loadData();
+     }, []);
 
     useEffect(() => {
         const timeout = setTimeout(() => {

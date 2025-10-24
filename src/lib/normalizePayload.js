@@ -11,12 +11,6 @@ export function normalizePayload(payload, config = {}) {
     });
   }
 
-  // --- Convert discount percentage ---
-  if (normalized.discount !== undefined && normalized.discount !== null) {
-    const discount = parseFloat(normalized.discount);
-    normalized.discount = discount > 1 ? discount / 100 : discount;
-  }
-
   // --- Normalize image fields ---
   if (config.imageFields?.length) {
     config.imageFields.forEach((field) => {

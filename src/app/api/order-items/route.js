@@ -1,48 +1,41 @@
 import { NextResponse } from "next/server";
-import { getOrderItems, createRecord } from "@/lib/airtable";
+import connectDB from "@/lib/mongodb";
+import OrderItem from "@/models/OrderItem";
 
-export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const ids = searchParams.get("ids")?.split(",").map((id) => id.trim());
-
-  if (!ids?.length) {
-    return NextResponse.json({ error: "No ids provided" }, { status: 400 });
-  }
-
+export async function GET() {
   try {
-    const items = await getOrderItems(ids);
-    return NextResponse.json(items);
-  } catch (err) {
-    console.error("Error fetching order items:", err);
-
-    // ✅ Pass Airtable’s error details directly
+    await connectDB();
+    const items = await OrderItem.find();
+    return NextResponse.json(items, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching order items:", error);
     return NextResponse.json(
-      { 
-        error: err.message || "Unknown error",
-        details: err, // includes Airtable’s error object
-      },
+      { error: "Failed to fetch order items" },
       { status: 500 }
     );
   }
 }
 
-// ✅ POST /api/order-items  ← handles creating order items after checkout
 export async function POST(req) {
   try {
-    const body = await req.json();
+    await connectDB();
+    const data = await req.json();
 
-    // Expecting { product: ["recXXX"], orders_link: ["recYYY"], ... }
-    if (!body?.product || !body?.orders_link) {
-      return NextResponse.json({ error: "Missing product or order link" }, { status: 400 });
+    // Prevent duplicate IDs
+    const existing = await OrderItem.findOne({ id: data.id });
+    if (existing) {
+      return NextResponse.json(
+        { message: "Order item already exists" },
+        { status: 400 }
+      );
     }
 
-    const newItem = await createRecord(process.env.AIRTABLE_ORDER_ITEMS_NAME, body);
-
+    const newItem = await OrderItem.create(data);
     return NextResponse.json(newItem, { status: 201 });
   } catch (error) {
     console.error("Error creating order item:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to create order item" },
+      { error: "Failed to create order item" },
       { status: 500 }
     );
   }
