@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import connectDB from "@/lib/mongodb";
-import connectDB from "@/lib/mongodb";
 import Newsletter from "@/models/Newsletter";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
