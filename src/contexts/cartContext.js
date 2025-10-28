@@ -97,12 +97,16 @@ export const CartProvider = ({ children }) => {
     const getCartCount = () => cartItems.length;
 
     const getTotalPrice = () =>
-        cartItems.reduce((total, item) => {
-            const price = item.discount
-                ? Math.round(item.price * (1 - item.discount))
-                : item.price;
-            return total + price * item.quantity;
-        }, 0);
+    cartItems.reduce((total, item) => {
+        let discount = 0;
+        if (item.discount) {
+        discount = item.discount > 1 ? item.discount / 100 : item.discount; // normalize
+        }
+
+        const price = Math.round(item.price * (1 - discount));
+        return total + price * item.quantity;
+    }, 0);
+
 
     return (
         <CartContext.Provider

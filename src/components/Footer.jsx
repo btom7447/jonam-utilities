@@ -188,7 +188,14 @@ const Footer = () => {
             <p className="text-white text-md">
               Jonam Utilities &copy; {currentYear}. All Rights Reserverd.
             </p>
-            <p className="text-white text-md">By Kmini Technologies</p>
+            <a
+              href="https://kmini-tech.netlify.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm lg:text-md text-white hover:text-blue-500"
+            >
+              By Kmini Technologies
+            </a>
           </div>
         </div>
       </footer>

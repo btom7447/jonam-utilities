@@ -9,6 +9,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const ProductCard = ({ data }) => {
+  console.log("Product Data", data)
   const router = useRouter();
   const { addToCart } = useCart();
   const { saveProduct, removeSavedProduct, isSaved } = useWishlist();
@@ -52,14 +53,11 @@ const ProductCard = ({ data }) => {
   const name = data?.name ?? "Untitled Product";
   const price = Number(data?.price) || 0;
   const discount = data?.discount ? parseFloat(data.discount) || 0 : 0;
+  const normalizedDiscount = discount > 1 ? discount / 100 : discount;
 
-  // ✅ Calculate discounted price
-  let discountPercent = null;
-  let finalPrice = price;
-  if (discount > 0 && discount < 1) {
-    discountPercent = Math.round(discount * 100);
-    finalPrice = Math.round(price * (1 - discount));
-  }
+  let discountPercent = Math.round(normalizedDiscount * 100);
+  let finalPrice = Math.round(price * (1 - normalizedDiscount));
+
 
   // ✅ Enrich product with first color/variant
   const enrichedProduct = {

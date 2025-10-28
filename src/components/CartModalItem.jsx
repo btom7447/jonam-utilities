@@ -11,9 +11,11 @@ const CartModalItem = ({ item, removeFromCart }) => {
     let discountPercent = null;
     let finalPrice = item.price;
 
-    if (typeof item.discount === "number" && item.discount > 0 && item.discount < 1) {
-        discountPercent = Math.round(item.discount * 100); // e.g. 0.03 -> 3%
-        finalPrice = Math.round(item.price * (1 - item.discount));
+    if (typeof item.discount === "number" && item.discount > 0) {
+      const normalizedDiscount =
+        item.discount > 1 ? item.discount / 100 : item.discount;
+      discountPercent = Math.round(normalizedDiscount * 100);
+      finalPrice = Math.round(item.price * (1 - normalizedDiscount));
     }
 
     useEffect(() => {
