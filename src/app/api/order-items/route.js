@@ -2,10 +2,21 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import OrderItem from "@/models/OrderItem";
 
-export async function GET() {
+export async function GET(req) {
   try {
     await connectDB();
-    const items = await OrderItem.find();
+
+    const { searchParams } = new URL(req.url);
+    const idsParam = searchParams.get("ids");
+
+    if (!idsParam) {
+      return NextResponse.json({ error: "No IDs provided" }, { status: 400 });
+    }
+
+    const idsArray = idsParam.split(",").map((id) => id.trim());
+
+    const items = await OrderItem.find({ _id: { $in: idsArray } });
+
     return NextResponse.json(items, { status: 200 });
   } catch (error) {
     console.error("❌ Error fetching order items:", error);

@@ -66,7 +66,7 @@ export default function AdminDataUpdate({
 
   return (
     <div className="fixed inset-0 z-[5000] flex items-center justify-center bg-black/60 p-5">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-5xl overflow-y-auto max-h-[90vh]">
+      <div className="bg-white rounded-xl shadow-lg p-8 pb-20 w-full max-w-5xl overflow-y-auto max-h-[90vh]">
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-2xl capitalize font-semibold">
             {mode === "delete"

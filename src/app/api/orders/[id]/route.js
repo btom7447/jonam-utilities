@@ -107,28 +107,42 @@ export async function PATCH(req, { params }) {
   try {
     await connectDB();
     const { id } = params;
-    const { order_items_id } = await req.json();
+    const data = await req.json();
 
-    if (!Array.isArray(order_items_id) || order_items_id.length === 0) {
+    const existingOrder = await Order.findById(id);
+    if (!existingOrder) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    // ✅ Update only allowed fields
+    if (data.status !== undefined) {
+      existingOrder.status = data.status;
+    }
+
+    if (Array.isArray(data.order_items_id)) {
+      existingOrder.order_items_id = data.order_items_id;
+    }
+
+    // ❌ Reject if no valid fields are provided
+    if (
+      data.status === undefined &&
+      !Array.isArray(data.order_items_id)
+    ) {
       return NextResponse.json(
-        { error: "Invalid or empty order_items_id array" },
+        { error: "No valid fields provided for update" },
         { status: 400 }
       );
     }
 
-    const updatedOrder = await Order.findByIdAndUpdate(
-      id,
-      { $set: { order_items_id } },
-      { new: true }
-    ).populate("order_items_id");
+    await existingOrder.save();
 
-    if (!updatedOrder) {
-      return NextResponse.json({ error: "Order not found" }, { status: 404 });
-    }
-
+    const updatedOrder = await Order.findById(id).populate("order_items_id");
     return NextResponse.json(updatedOrder, { status: 200 });
   } catch (error) {
     console.error("❌ Error patching order:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message || "Failed to patch order" },
+      { status: 500 }
+    );
   }
 }

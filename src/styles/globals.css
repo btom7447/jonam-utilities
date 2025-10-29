@@ -115,6 +115,10 @@ h1, h2, h3, h4, h5, h6 {
   text-align: left !important;
 }
 
+.customSelect {
+  z-index: 100000 !important;
+}
+
 /* * {
   outline: red solid 1px;
 } */

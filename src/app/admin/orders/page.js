@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import OrderMetricSection from "@/components/OrderMetricSection";
-import { DotLoader } from "react-spinners";
+import { DotLoader, MoonLoader } from "react-spinners";
 import AdminHeader from "@/components/AdminHeader";
-import AdminDataTable from "@/components/AdminDataTable";
 import { toast } from "react-toastify";
+import AdminOrderTable from "@/components/AdminOrderTable";
 import AdminOrderDetails from "@/components/AdminOrderDetails";
 
 export default function AdminOrderPage() {
@@ -14,9 +13,10 @@ export default function AdminOrderPage() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [itemsLoading, setItemsLoading] = useState(false); // 👈 new state
 
   useEffect(() => {
-    async function loadData() {
+    async function loadOrders() {
       try {
         const res = await fetch("/api/orders");
         const data = await res.json();
@@ -28,56 +28,50 @@ export default function AdminOrderPage() {
         setLoading(false);
       }
     }
-    loadData();
+    loadOrders();
   }, []);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center w-full h-screen py-20">
-        <DotLoader size={80} color="#8b4513" />
-      </div>
-    );
-  }
 
   const handleRowClick = async (order) => {
     setSelectedOrder(order);
-    if (!order?.customer_orders?.length) {
+    if (!order?.order_items_id?.length) {
       setOrderItems([]);
       return;
     }
 
+    setItemsLoading(true);
     try {
-      const res = await fetch(`/api/order-items?ids=${order.customer_orders.join(",")}`);
+      // Ensure we send only string IDs
+      const ids = order.order_items_id.map((id) =>
+        typeof id === "object" ? id._id : id
+      );
+
+      const res = await fetch(`/api/order-items?ids=${ids.join(",")}`);
       const data = await res.json();
       setOrderItems(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Failed to fetch order items:", err);
       setOrderItems([]);
+    } finally {
+      setItemsLoading(false);
     }
   };
 
-  const handleUpdateOrder = async ({ recordId, values }) => {
+
+  const handleUpdateOrder = async ({ _id, values }) => {
     setUpdating(true);
     try {
-      const res = await fetch(`/api/orders/${recordId}`, {
+      const res = await fetch(`/api/orders/${_id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-
       if (!res.ok) throw new Error("Failed to update order");
       const updatedOrder = await res.json();
 
-      setOrders((prev) =>
-        prev.map((o) =>
-          o.recordId === recordId ? { ...o, ...updatedOrder.fields } : o
-        )
-      );
-
-      toast.success("Order status updated successfully!");
-      setSelectedOrder(null);
+      setOrders((prev) => prev.map((o) => (o._id === _id ? updatedOrder : o)));
+      toast.success("Order updated successfully!");
     } catch (err) {
-      console.error("Error updating order:", err);
+      console.error("Update failed:", err);
       toast.error(`Update failed: ${err.message}`);
     } finally {
       setUpdating(false);
@@ -85,14 +79,14 @@ export default function AdminOrderPage() {
   };
 
   const handleDelete = async (order) => {
-    if (!order?.recordId) return toast.error("No record ID found for deletion");
+    if (!order?._id) return toast.error("Missing order ID");
     setUpdating(true);
 
     try {
-      const res = await fetch(`/api/orders/${order.recordId}`, { method: "DELETE" });
+      const res = await fetch(`/api/orders/${order._id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete order");
 
-      setOrders((prev) => prev.filter((o) => o.recordId !== order.recordId));
+      setOrders((prev) => prev.filter((o) => o._id !== order._id));
       toast.success("Order deleted successfully!");
     } catch (err) {
       console.error("Delete failed:", err);
@@ -102,43 +96,33 @@ export default function AdminOrderPage() {
     }
   };
 
-  const fieldOptions = {
-    status: [
-      { value: "pending", label: "Pending" },
-      { value: "confirmed", label: "Confirmed" },
-      { value: "completed", label: "Completed" },
-      { value: "transit", label: "In Transit" },
-      { value: "cancelled", label: "Cancelled" },
-    ],
-  };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-screen py-20">
+        <DotLoader size={80} color="#8b4513" />
+      </div>
+    );
+  }
 
-  console.log("Orders", orders);
-  console.log("Order Items", orderItems)
   return (
     <>
-      <AdminHeader title="Order Management" />
-      <OrderMetricSection orders={orders} />
+      <AdminHeader title="Orders Management" />
 
-      <AdminDataTable
+      <AdminOrderTable
         data={orders}
-        columns={[
-          "ID",
-          "Customer_Name",
-          "Customer_Number",
-          "Payment_Option",
-          "Order_Date",
-          "Order_Total",
-          "Status",
-        ]}
+        onEdit={handleUpdateOrder}
         onDelete={handleDelete}
         onRowClick={handleRowClick}
-        onEdit={handleUpdateOrder}
-        fieldOptions={fieldOptions}
-        dataName="orders"
-        orderItems={orderItems}
+        updating={updating}
       />
 
-      <AdminOrderDetails items={orderItems} order={selectedOrder} />
+      {itemsLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <MoonLoader size={50} color="#8b4513" />
+        </div>
+      ) : (
+        <AdminOrderDetails items={orderItems} order={selectedOrder} itemsLoading={itemsLoading} />
+      )}
     </>
   );
 }

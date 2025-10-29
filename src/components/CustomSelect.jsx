@@ -51,7 +51,7 @@ const CustomSelect = ({
       </button>
 
       {isOpen && (
-        <ul className="absolute z-50 w-full bg-gray-900 border border-gray-900 max-h-64 overflow-y-auto">
+        <ul className="customSelect absolute z-[50000] w-full bg-gray-900 border border-gray-900 max-h-64 overflow-y-auto">
           {options.map((option) => (
             <li
               key={getValue(option) || Math.random()} // fallback unique key
