@@ -2,16 +2,19 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import OrderItem from "@/models/OrderItem";
 
-export async function GET(_, { params }) {
+export async function GET(req, { params }) {
   try {
     await connectDB();
-    const item = await OrderItem.findOne({ id: Number(params.id) });
-    if (!item) {
+
+    // Fetch a specific order item from "order-items"
+    const item = await OrderItem.findById(params.id);
+
+    if (!item)
       return NextResponse.json(
         { error: "Order item not found" },
         { status: 404 }
       );
-    }
+
     return NextResponse.json(item, { status: 200 });
   } catch (error) {
     console.error("Error fetching order item:", error);
@@ -25,18 +28,19 @@ export async function GET(_, { params }) {
 export async function PUT(req, { params }) {
   try {
     await connectDB();
-    const data = await req.json();
-    const updated = await OrderItem.findOneAndUpdate(
-      { id: Number(params.id) },
-      data,
-      { new: true }
-    );
-    if (!updated) {
+    const updateData = await req.json();
+
+    // Update a specific order item in "order-items"
+    const updated = await OrderItem.findByIdAndUpdate(params.id, updateData, {
+      new: true,
+    });
+
+    if (!updated)
       return NextResponse.json(
         { error: "Order item not found" },
         { status: 404 }
       );
-    }
+
     return NextResponse.json(updated, { status: 200 });
   } catch (error) {
     console.error("Error updating order item:", error);
@@ -47,16 +51,13 @@ export async function PUT(req, { params }) {
   }
 }
 
-export async function DELETE(_, { params }) {
+export async function DELETE(req, { params }) {
   try {
     await connectDB();
-    const deleted = await OrderItem.findOneAndDelete({ id: Number(params.id) });
-    if (!deleted) {
-      return NextResponse.json(
-        { error: "Order item not found" },
-        { status: 404 }
-      );
-    }
+
+    // Delete from the "order-items" collection
+    await OrderItem.findByIdAndDelete(params.id);
+
     return NextResponse.json(
       { message: "Order item deleted successfully" },
       { status: 200 }

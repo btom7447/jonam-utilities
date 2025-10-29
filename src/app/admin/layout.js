@@ -17,6 +17,7 @@ import {
   ShoppingCartIcon,
   FoldersIcon,
   MailIcon,
+  TruckIcon,
 } from "lucide-react";
 import Footer from "@/components/Footer";
 
@@ -51,6 +52,12 @@ export default function AdminLayout({ children }) {
       label: "Handymen",
       icon: HardHatIcon,
       title: "Handyman Management",
+    },
+    {
+      href: "/admin/logistics",
+      label: "Logistics",
+      icon: TruckIcon,
+      title: "Logistics Management",
     },
     {
       href: "/admin/orders",

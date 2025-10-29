@@ -1,43 +1,29 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const OrderItemSchema = new mongoose.Schema(
-  {
-    id: {
-      type: Number,
-      required: true,
-      unique: true,
+const OrderItemSchema = new Schema({
+  product: { type: Number, required: true },
+  product_number: { type: String, required: true },
+  product_name: { type: String, required: true },
+  price: { type: Number, required: true },
+  discount: { type: Number, default: 0 },
+  quantity: { type: Number, default: 0 },
+  product_images: [
+    {
+      name: { type: String },
+      url: { type: String, required: true },
     },
-    product: {
-      type: Number, // references Product ID
-      required: true,
-    },
-    unit_price: {
-      type: String,
-      required: true,
-    },
-    discount: {
-      type: String,
-    },
-    product_number: {
-      type: String,
-    },
-    product_name: {
-      type: String,
-      required: true,
-    },
-    product_images: {
-      type: [String],
-    },
-    product_category: {
-      type: String,
-    },
-    orders_link: {
-      type: Number, // reference to Order ID
-      required: true,
-    },
+  ],
+  category: { type: String },
+  brand: { type: String },
+  unit_price: { type: Number, required: true },
+  product_category: { type: String },
+  orders_link: {
+    type: Schema.Types.ObjectId,
+    ref: "Order", // ✅ match model name of the parent
+    required: true,
   },
-  { timestamps: true }
-);
+});
 
+// ✅ Use "OrderItem" as model name, but force the collection name to "order-items"
 export default mongoose.models.OrderItem ||
-  mongoose.model("OrderItem", OrderItemSchema);
+  mongoose.model("OrderItem", OrderItemSchema, "order-items");

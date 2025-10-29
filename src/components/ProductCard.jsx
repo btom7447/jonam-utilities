@@ -119,7 +119,22 @@ const ProductCard = ({ data }) => {
           {/* Add to cart */}
           <button
             type="button"
-            onClick={() => addToCart(enrichedProduct)}
+            onClick={() => {
+              const productForCart = {
+                _id: data._id, // MongoDB ID
+                name: data.name ?? "Untitled Product",
+                product_number: data.product_number ?? "",
+                price: Number(data.price) || 0,
+                discount: data.discount ?? 0,
+                quantity: 1,
+                selectedColor: colorList[0] || null,
+                selectedVariant: variantList[0] || null,
+                images: data.images ?? [],
+                category_link: data.category_link ?? "",
+                category: data.category ?? "",
+              };
+              addToCart(productForCart);
+            }}
             className="p-3 rounded-full bg-white text-gray-700 cursor-pointer hover:text-blue-500 hover:-translate-y-3 transition-transform"
           >
             <ShoppingCart size={20} />

@@ -46,7 +46,7 @@ const CartModalItem = ({ item, removeFromCart }) => {
             </div>
             <button 
                 type="button" 
-                onClick={() => removeFromCart(item.id, item.selectedColor, item.selectedVariant)}
+                onClick={() => removeFromCart(item._id, item.selectedColor, item.selectedVariant)}
                 aria-label="Remove item from cart"
                 className="cursor-pointer text-gray-400 hover:text-white"
             >
