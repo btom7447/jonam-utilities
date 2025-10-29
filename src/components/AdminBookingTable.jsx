@@ -117,7 +117,7 @@ export default function AdminBookingTable({
                 </button>
                 <button
                   onClick={() => onDelete(row)}
-                  className="text-red-500 hover:text-red-800 cursor-pointer"
+                  className="text-red-500 hover:text-red-800 cursor-pointer hidden"
                 >
                   <Trash2 size={22} strokeWidth={1.5} />
                 </button>

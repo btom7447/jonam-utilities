@@ -18,6 +18,7 @@ import {
   FoldersIcon,
   MailIcon,
   TruckIcon,
+  UsersIcon,
 } from "lucide-react";
 import Footer from "@/components/Footer";
 
@@ -54,6 +55,18 @@ export default function AdminLayout({ children }) {
       title: "Handyman Management",
     },
     {
+      href: "/admin/quotes",
+      label: "Communications",
+      icon: MailIcon,
+      title: "Quotes Management",
+    },
+    {
+      href: "/admin/products",
+      label: "Products",
+      icon: ShoppingCartIcon,
+      title: "Product Management",
+    },
+    {
       href: "/admin/logistics",
       label: "Logistics",
       icon: TruckIcon,
@@ -66,22 +79,16 @@ export default function AdminLayout({ children }) {
       title: "Order Management",
     },
     {
-      href: "/admin/products",
-      label: "Products",
-      icon: ShoppingCartIcon,
-      title: "Product Management",
-    },
-    {
       href: "/admin/projects",
       label: "Projects",
       icon: FoldersIcon,
       title: "Product Management",
     },
     {
-      href: "/admin/quotes",
-      label: "Communications",
-      icon: MailIcon,
-      title: "Quotes Management",
+      href: "/admin/staffs",
+      label: "Staffs",
+      icon: UsersIcon,
+      title: "Staffs Management",
     },
 
     // { href: "/admin/services", label: "Services", icon: ZapIcon,  title: "Services Management" },

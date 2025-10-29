@@ -124,7 +124,7 @@ export default function AdminContactTable({
                 </button>
                 <button
                   onClick={() => onDelete(row)}
-                  className="text-red-500 hover:text-red-800 cursor-pointer"
+                  className="text-red-500 hover:text-red-800 cursor-pointer hidden"
                 >
                   <Trash2 size={20} strokeWidth={1.5} />
                 </button>

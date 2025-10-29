@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Booking from "@/models/Booking";
+import Handyman from "@/models/Handyman";
 
 // ✅ GET all bookings
 export async function GET() {
@@ -11,13 +12,14 @@ export async function GET() {
       .sort({ createdAt: -1 });
     return NextResponse.json(bookings, { status: 200 });
   } catch (error) {
-    console.error("Error fetching bookings:", error);
+    console.error("Error fetching bookings:", error.message, error.stack);
     return NextResponse.json(
-      { error: "Failed to fetch bookings" },
+      { error: "Failed to fetch bookings", details: error.message },
       { status: 500 }
     );
   }
 }
+
 
 // ✅ CREATE booking
 export async function POST(req) {
