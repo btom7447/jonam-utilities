@@ -2,7 +2,7 @@ import { LogOutIcon, SearchIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react'
-import { logout } from '@/lib/firebase';
+import { logout } from 'src/lib/firebase';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 

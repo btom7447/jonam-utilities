@@ -3,10 +3,7 @@
 import { useState, useEffect } from "react";
 import { auth } from "../lib/firebase";
 import { onAuthStateChanged, updateProfile } from "firebase/auth";
-import {
-  loadOrCreateUserProfile,
-  updateUserProfile,
-} from "../lib/firestoreUser";
+import { loadOrCreateUserProfile, updateUserProfile } from "../lib/firestoreUser";
 import { MoonLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { CameraIcon, ChevronDown, Pencil, Save, X } from "lucide-react";

@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { logout } from "@/lib/firebase";
+import { logout } from "src/lib/firebase";
 import {
   LogOutIcon,
   ListIcon,
@@ -19,7 +19,7 @@ import {
 import { toast } from "react-toastify";
 import { useState, useEffect, useRef } from "react";
 
-export default function AdminSidebar({ navItems }) {
+export default function AdminSidebar({ navItems, isSuperAdmin }) {
   const pathname = usePathname();
   const [inventoryOpen, setInventoryOpen] = useState(false);
   const [communicationsOpen, setCommunicationsOpen] = useState(false);
@@ -34,6 +34,11 @@ export default function AdminSidebar({ navItems }) {
       toast.error("Failed to logout. Please try again.");
     }
   };
+
+  // Filter out “Staffs” for non-super-admins
+  const filteredNavItems = navItems.filter(
+    (item) => isSuperAdmin || item.label !== "Staffs"
+  );
 
   // Automatically open accordions if on nested path
   useEffect(() => {
@@ -76,7 +81,8 @@ export default function AdminSidebar({ navItems }) {
 
       <nav className="w-full mt-10">
         <ul className="space-y-5 w-full">
-          {navItems.map(({ href, label, icon: Icon }) => {
+          +{" "}
+          {filteredNavItems.map(({ href, label, icon: Icon }) => {
             // INVENTORY ACCORDION
             if (label === "Products") {
               const active = ["/categories", "/brands", "/products"].includes(

@@ -1,13 +1,13 @@
 import { DM_Sans } from "next/font/google";
 import "../styles/globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { CartProvider } from "@/contexts/cartContext";
-import { WishlistProvider } from "@/contexts/wishlistContext";
+import Header from "src/components/Header";
+import Footer from "src/components/Footer";
+import { CartProvider } from "src/contexts/cartContext";
+import { WishlistProvider } from "src/contexts/wishlistContext";
 import { ToastContainer } from "react-toastify";
 import 'leaflet/dist/leaflet.css';
-import { CheckoutProvider } from "@/contexts/checkoutContext";
-import { OrderProvider } from "@/contexts/orderContext";
+import { CheckoutProvider } from "src/contexts/checkoutContext";
+import { OrderProvider } from "src/contexts/orderContext";
 import Script from "next/script";
 
 const dmSans = DM_Sans({

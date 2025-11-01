@@ -3,8 +3,8 @@
 import React from "react";
 import WishlistModalItem from "./WishlistModalItem";
 import { useRouter } from "next/navigation";
-import { useWishlist } from "@/contexts/wishlistContext";
-import { useCart } from "@/contexts/cartContext";
+import { useWishlist } from "src/contexts/wishlistContext";
+import { useCart } from "src/contexts/cartContext";
 
 const WishlistModal = ({ closeModal }) => {
     const { savedItems, removeSavedProduct, clearWishlist } = useWishlist();

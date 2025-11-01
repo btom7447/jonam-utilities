@@ -21,6 +21,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
     "firebase": "^11.10.0",
+    "firebase-admin": "^13.5.0",
     "formidable": "^3.5.4",
     "framer-motion": "^12.23.6",
     "html2canvas": "^1.4.1",
@@ -39,6 +40,7 @@
     "react-leaflet": "^5.0.0",
     "react-spinner": "^0.2.7",
     "react-spinners": "^0.17.0",
+    "react-switch": "^7.1.0",
     "react-toastify": "^11.0.5"
   },
   "devDependencies": {
