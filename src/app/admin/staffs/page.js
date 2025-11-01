@@ -2,8 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { DotLoader } from "react-spinners";
+<<<<<<< HEAD
 import AdminHeader from "src/components/AdminHeader";
 import AdminStaffsTable from "src/components/AdminStaffTable";
+=======
+import AdminHeader from "@/components/AdminHeader";
+import AdminStaffsTable from "@/components/AdminStaffsTable";
+>>>>>>> 32ddb45 (role display on admin)
 import { toast } from "react-toastify";
 
 export default function AdminStaffsPage() {
@@ -16,9 +21,15 @@ export default function AdminStaffsPage() {
     async function fetchUsers() {
       try {
         const res = await fetch("/api/users");
+<<<<<<< HEAD
 const data = await res.json();
 console.log("Fetched users:", data); // <== Add this
 setUsers(Array.isArray(data) ? data : []);
+=======
+        const data = await res.json();
+        console.log("Fetched users:", data); // <== Add this
+        setUsers(Array.isArray(data) ? data : []);
+>>>>>>> 32ddb45 (role display on admin)
 
       } catch (err) {
         console.error("Failed to fetch users:", err);

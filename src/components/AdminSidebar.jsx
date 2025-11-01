@@ -81,7 +81,10 @@ export default function AdminSidebar({ navItems, isSuperAdmin }) {
 
       <nav className="w-full mt-10">
         <ul className="space-y-5 w-full">
+<<<<<<< HEAD
           +{" "}
+=======
+>>>>>>> 32ddb45 (role display on admin)
           {filteredNavItems.map(({ href, label, icon: Icon }) => {
             // INVENTORY ACCORDION
             if (label === "Products") {
