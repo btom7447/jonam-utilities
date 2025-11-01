@@ -4,7 +4,7 @@ import { MailIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { onAuthStateChanged } from "firebase/auth";
-import { signInWithGoogle, auth } from "src/lib/firebase";
+import { auth, signInWithGoogle } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 
 

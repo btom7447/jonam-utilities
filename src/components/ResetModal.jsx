@@ -1,6 +1,6 @@
 "use client";
 
-import { resetPassword } from "src/lib/firebase";
+import { resetPassword } from "@/lib/firebase";
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";

@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { logout } from "src/lib/firebase";
+import { logout } from "@/lib/firebase";
 import {
   LogOutIcon,
   ListIcon,
@@ -81,16 +81,6 @@ export default function AdminSidebar({ navItems, isSuperAdmin }) {
 
       <nav className="w-full mt-10">
         <ul className="space-y-5 w-full">
-<<<<<<< HEAD
-<<<<<<< HEAD
-          +{" "}
-=======
->>>>>>> 32ddb45 (role display on admin)
-=======
-=======
-          +{" "}
->>>>>>> 84cb04f05b3943f29ffe92f9b8f419a730b55602
->>>>>>> 3224781 (Resolve merge conflicts for admin and API routes)
           {filteredNavItems.map(({ href, label, icon: Icon }) => {
             // INVENTORY ACCORDION
             if (label === "Products") {

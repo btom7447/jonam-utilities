@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 import { MoonLoader } from "react-spinners";
-import { registerWithEmail, auth } from "src/lib/firebase";
-import { loadOrCreateUserProfile } from "src/lib/firestoreUser";
+import { registerWithEmail, auth } from "@/lib/firebase";
+import { loadOrCreateUserProfile } from "@/lib/firestoreUser";
 import { updateProfile } from "firebase/auth";
 
 const SignupModal = ({ setView, onClose }) => {

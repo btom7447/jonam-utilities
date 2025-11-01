@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useCart } from "src/contexts/cartContext";
+import { useCart } from "@/contexts/cartContext";
 import CartModalItem from "./CartModalItem";
 import { useRouter } from "next/navigation";
 

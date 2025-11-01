@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth } from "src/lib/firebase";
+import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import AdminSidebar from "src/components/AdminSidebar";
+import AdminSidebar from "@/components/AdminSidebar";
 import { MoonLoader } from "react-spinners";
-import { loadOrCreateUserProfile } from "src/lib/firestoreUser";
-import Footer from "src/components/Footer";
+import { loadOrCreateUserProfile } from "@/lib/firestoreUser";
+import Footer from "@/components/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {

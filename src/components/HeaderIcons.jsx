@@ -8,14 +8,14 @@ import {
   UserIcon,
   XIcon
 } from 'lucide-react';
-import { useCart } from 'src/contexts/cartContext';
-import { useWishlist } from 'src/contexts/wishlistContext';
+import { useCart } from '@/contexts/cartContext';
+import { useWishlist } from '@/contexts/wishlistContext';
+import { getUserSession } from '@/lib/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 import CartModal from './CartModal';
 import WishlistModal from './WishlistModal';
 import ProfileModal from './ProfileModal';
 import AuthModal from './AuthModal';
-import { getUserSession } from 'src/lib/firebase';
 
 const HeaderIcons = ({ hamburgerIsOpen }) => {
     const { getCartCount } = useCart();

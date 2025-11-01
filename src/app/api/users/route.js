@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { adminDb } from "src/lib/firebaseAdmin";
+import { adminDb } from "@/lib/firebaseAdmin";
 
 // --- GET all staff/super-admin users ---
 export async function GET() {
