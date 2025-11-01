@@ -77,9 +77,9 @@ const Footer = () => {
               </p>
               <a
                 className="text-xl lg:text-2xl font-light text-gray-200 mb-5 border-b-1 border-white hover:text-blue-500"
-                href="mailto:info@jonam.com"
+                href="mailto:info@jonam.ng"
               >
-                info@jonam.com
+                info@jonam.ng
               </a>
               <br />
               <br />
