@@ -3,12 +3,21 @@
 import { useEffect, useState } from "react";
 import { DotLoader } from "react-spinners";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import AdminHeader from "src/components/AdminHeader";
 import AdminStaffsTable from "src/components/AdminStaffTable";
 =======
 import AdminHeader from "@/components/AdminHeader";
 import AdminStaffsTable from "@/components/AdminStaffsTable";
 >>>>>>> 32ddb45 (role display on admin)
+=======
+import AdminHeader from "@/components/AdminHeader";
+import AdminStaffsTable from "@/components/AdminStaffsTable";
+=======
+import AdminHeader from "src/components/AdminHeader";
+import AdminStaffsTable from "src/components/AdminStaffTable";
+>>>>>>> 84cb04f05b3943f29ffe92f9b8f419a730b55602
+>>>>>>> 3224781 (Resolve merge conflicts for admin and API routes)
 import { toast } from "react-toastify";
 
 export default function AdminStaffsPage() {
@@ -22,6 +31,7 @@ export default function AdminStaffsPage() {
       try {
         const res = await fetch("/api/users");
 <<<<<<< HEAD
+<<<<<<< HEAD
 const data = await res.json();
 console.log("Fetched users:", data); // <== Add this
 setUsers(Array.isArray(data) ? data : []);
@@ -30,6 +40,16 @@ setUsers(Array.isArray(data) ? data : []);
         console.log("Fetched users:", data); // <== Add this
         setUsers(Array.isArray(data) ? data : []);
 >>>>>>> 32ddb45 (role display on admin)
+=======
+        const data = await res.json();
+        console.log("Fetched users:", data); // <== Add this
+        setUsers(Array.isArray(data) ? data : []);
+=======
+const data = await res.json();
+console.log("Fetched users:", data); // <== Add this
+setUsers(Array.isArray(data) ? data : []);
+>>>>>>> 84cb04f05b3943f29ffe92f9b8f419a730b55602
+>>>>>>> 3224781 (Resolve merge conflicts for admin and API routes)
 
       } catch (err) {
         console.error("Failed to fetch users:", err);
