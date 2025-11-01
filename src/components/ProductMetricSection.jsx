@@ -7,7 +7,7 @@ export default function ProductMetricSection({ product }) {
     const productLength = product.length;
 
     // Count orders by status
-    const featuredProducts = product.filter(o => o.featured === "true").length;
+    const featuredProducts = product.filter(o => o.featured === true).length;
     const discountProducts = product.filter(o => o.discount).length;
     const lowProducts = product.filter(o => o.quantity !== null && o.quantity <= 20).length;
 

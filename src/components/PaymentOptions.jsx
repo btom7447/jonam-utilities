@@ -28,7 +28,7 @@ const PaymentOptions = ({
     setSelected(option);
   };
 
-  const isDeliveryAvailable = ["Osun", "Lagos"].includes(deliveryState);
+  const isDeliveryAvailable = ["Osun", "Lagos", "Oyo"].includes(deliveryState);
 
 const handlePlaceOrder = async () => {
   if (!isFormValid) {

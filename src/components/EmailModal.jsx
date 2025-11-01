@@ -120,7 +120,7 @@ const EmailModal = ({ setView, onClose }) => {
           disabled={loading}
           className={`flex items-center justify-center mt-10 mb-10 py-5 px-10 text-xl bg-blue-500 text-white hover:bg-brown cursor-pointer ${loading ? "opacity-70 cursor-not-allowed": ""} `}
         >
-          {loading ? <MoonLoader size={25} color="#fff" /> : "Sign up"}                
+          {loading ? <MoonLoader size={25} color="#fff" /> : "Sign in"}                
         </button>
       </form>
       <button className="mb-5 w-full text-center text-blue-500 hover:text-brown cursor-pointer" onClick={() => setView("reset")}>

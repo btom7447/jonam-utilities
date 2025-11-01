@@ -13,7 +13,7 @@ const OrderSchema = new mongoose.Schema(
     customer_email: { type: String, required: true },
     payment_option: {
       type: String,
-      enum: ["paystack", "cash_on_delivery"],
+      enum: ["paystack", "delivery"],
       required: true,
     },
     delivery_state: { type: String, required: true },

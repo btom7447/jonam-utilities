@@ -4,6 +4,10 @@ import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { MoonLoader } from "react-spinners";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { loadOrCreateUserProfile } from "@/lib/firestoreUser";
 
 const serviceOptions = [
   "installation",
@@ -23,6 +27,33 @@ const QuoteForm = () => {
     message: "",
     address: "",
   });
+  
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        try {
+          const data = await loadOrCreateUserProfile(currentUser);
+          setFormData((prev) => ({
+            ...prev,
+            name: data?.name || "",
+            phone: data?.phone || "",
+            email: data?.email || currentUser.email || "",
+          }));
+          if (data?.deliveryAddress?.state) {
+            setSelectedState(data.deliveryAddress.state);
+          }
+        } catch (error) {
+          console.error("Error loading user info:", error);
+        }
+      } else {
+        setFormData({ name: "", phone: "", email: "", message: "" });
+        setSelectedState("");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;

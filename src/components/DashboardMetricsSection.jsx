@@ -4,7 +4,7 @@ export default function DashboardMetricsSection({ completedOrders, totalProducts
     
     const metrics = [
         {
-            title: "Completed Orders",
+            title: "Pending Orders",
             value: completedOrders,
             icon: CheckCircleIcon,
         },

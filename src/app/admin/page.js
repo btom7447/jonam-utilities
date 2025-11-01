@@ -94,9 +94,9 @@ export default function AdminPage() {
 
     const totalProducts = products.length;
     const totalHandymen = handyman.length;
-    const completedOrders = orders.filter(o => o.status === "completed").length;
+    const completedOrders = orders.filter(o => o.status === "pending").length;
     const pendingBookings = bookings.filter(book => book.status === "pending").length;
-    const featuredProducts = products.filter((item) => item.featured === "true").slice(0, 4);
+    const featuredProducts = products.filter((item) => item.featured === true).slice(0, 4);
     console.log("featured", featuredProducts)
 
     return (

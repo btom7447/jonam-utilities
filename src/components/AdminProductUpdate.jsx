@@ -57,11 +57,6 @@ export default function AdminProductUpdate({
           }
         }
 
-        // ✅ Convert discount to whole number for display (e.g., 0.03 → 3)
-        if (f.name === "discount" && val != null) {
-          val = Math.round(val * 100);
-        }
-
         // ✅ Convert array fields to comma-separated text for display
         if (
           Array.isArray(val) &&

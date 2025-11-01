@@ -27,6 +27,7 @@ const ADMIN_EMAILS = [
   "joshuaobasi236@gmail.com",
   "tomekemini7447@gmail.com",
   "tombenjamin7447@gmail.com",
+  "chukwuchinemerem950@gmail.com"
 ];
 
 export default function AdminLayout({ children }) {

@@ -31,9 +31,9 @@ export default function AdminCategoriesTable({
   useEffect(() => setTimestamp(`?t=${Date.now()}`), []);
   useEffect(() => setTableData(data), [data]);
 
-useEffect(() => {
+  useEffect(() => {
     // Sort alphabetically by name
-    const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+    const sortedData = [...data].sort((a, b) => a.caption.localeCompare(b.caption));
     setTableData(sortedData); // sync with parent
   }, [data]);
 

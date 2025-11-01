@@ -103,7 +103,6 @@ export default function AdminProductPage() {
      }
 
      // ✅ attach brand and category readable names
-     // ✅ attach brand and category readable names
      const brandId = Array.isArray(payload.brand_link)
        ? payload.brand_link[0]
        : payload.brand_link;

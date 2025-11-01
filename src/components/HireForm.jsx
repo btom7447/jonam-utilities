@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { MoonLoader } from "react-spinners";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { loadOrCreateUserProfile } from "@/lib/firestoreUser";
 
 const serviceOptions = ["installation", "maintenance", "repair", "upgrade"];
 
@@ -23,93 +24,113 @@ const HireForm = ({ data }) => {
     name: "",
     phone: "",
     email: "",
-    message: "",
     address: "",
+    message: "",
   });
 
-  // ✅ Detect Auth and Pre-fill email
+  // ✅ Detect Auth and Auto-fill fields
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        setFormData((prev) => ({
-          ...prev,
-          email: currentUser.email || "",
-        }));
+        try {
+          const data = await loadOrCreateUserProfile(currentUser);
+          setFormData((prev) => ({
+            ...prev,
+            name: data?.name || "",
+            phone: data?.phone || "",
+            email: data?.email || currentUser.email || "",
+            address:
+              data?.deliveryAddress?.street ||
+              data?.deliveryAddress?.formatted ||
+              data?.deliveryAddress?.address ||
+              "",
+          }));
+        } catch (error) {
+          console.error("Error loading user info:", error);
+        }
       } else {
         setUser(null);
-        setFormData((prev) => ({ ...prev, email: "" }));
+        setFormData({
+          name: "",
+          phone: "",
+          email: "",
+          address: "",
+          message: "",
+        });
       }
     });
     return () => unsubscribe();
   }, []);
 
+  // ✅ Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === "email" && user) return; // prevent editing if logged in
+    if (name === "email" && user) return; // prevent editing email if logged in
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  // ✅ Handle submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!user) {
-    toast.info("Please log in to book a handyman.");
-    return;
-  }
+    if (!user) {
+      toast.info("Please log in to book a handyman.");
+      return;
+    }
 
-  setIsSubmitting(true);
+    setIsSubmitting(true);
 
-  const payload = {
-    handyman: data._id, // ✅ MongoDB ObjectId
-    handyman_name: data.name,
-    handyman_image: data.image?.[0]?.url || "",
-    customer_name: formData.name,
-    customer_email: formData.email,
-    customer_number: formData.phone,
-    customer_address: formData.address,
-    service_type: selectedService,
-    booking_date: selectedDate,
-    additional_notes: formData.message,
+    const payload = {
+      handyman: data._id, // MongoDB ObjectId
+      handyman_name: data.name,
+      handyman_image: data.image?.[0]?.url || "",
+      customer_name: formData.name.trim(),
+      customer_email: formData.email.trim(),
+      customer_number: formData.phone.trim(),
+      customer_address: formData.address.trim(),
+      service_type: selectedService.trim(),
+      booking_date: selectedDate,
+      additional_notes: formData.message.trim(),
+    };
+
+    try {
+      const res = await fetch("/api/book-handyman", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await res.json();
+      if (res.ok) {
+        toast.success("Booking created successfully!");
+        setFormData({
+          name: "",
+          phone: "",
+          email: user.email || "",
+          address: "",
+          message: "",
+        });
+        setSelectedDate(null);
+        setSelectedService("");
+      } else {
+        console.error(result.error);
+        toast.error("Failed to create booking");
+      }
+    } catch (error) {
+      console.error("Booking error:", error);
+      toast.error("Something went wrong");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  try {
-    const res = await fetch("/api/book-handyman", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await res.json();
-    if (res.ok) {
-      toast.success("Booking created successfully!");
-      setFormData({
-        name: "",
-        phone: "",
-        email: user.email || "",
-        message: "",
-        address: "",
-      });
-      setSelectedDate(null);
-      setSelectedService("");
-    } else {
-      console.error(result.error);
-      toast.error("Failed to create booking");
-    }
-  } catch (error) {
-    console.error("Booking error:", error);
-    toast.error("Something went wrong");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-
+  // ✅ Input fields
   const fields = [
-    { label: "Name", name: "name", type: "text", autoComplete: "name" },
-    { label: "Phone", name: "phone", type: "tel", autoComplete: "tel" },
+    { label: "Full Name", name: "name", type: "text", autoComplete: "name" },
+    { label: "Phone Number", name: "phone", type: "tel", autoComplete: "tel" },
     {
-      label: "Email",
+      label: "Email Address",
       name: "email",
       type: "email",
       autoComplete: "email",
@@ -123,15 +144,16 @@ const handleSubmit = async (e) => {
     },
   ];
 
+  // ✅ Form readiness
   const isFormReady =
     formData.name.trim() &&
     formData.phone.trim() &&
     formData.email.trim() &&
-    formData.address?.trim() &&
+    formData.address.trim() &&
     selectedService.trim() &&
     selectedDate;
 
-  // 🚫 If no user, show login message
+  // 🚫 Require login
   if (!user) {
     return (
       <div className="w-full flex flex-col items-center justify-center py-20">
@@ -176,24 +198,22 @@ const handleSubmit = async (e) => {
           />
           <span
             className={`absolute left-0 bottom-0 h-0.5 
-                transition-all duration-200
-                ${
-                  activeInput === name
-                    ? "w-full bg-blue-500"
-                    : "w-0 bg-gray-900"
-                } 
-                group-hover:w-full group-hover:bg-blue-500`}
+              transition-all duration-200
+              ${
+                activeInput === name ? "w-full bg-blue-500" : "w-0 bg-gray-900"
+              } 
+              group-hover:w-full group-hover:bg-blue-500`}
           ></span>
         </div>
       ))}
 
-      {/* Custom Service Dropdown */}
+      {/* Service Dropdown */}
       <div className="relative group">
         <button
           type="button"
           onClick={() => setActiveServiceDropdown(!activeServiceDropdown)}
           className={`w-full flex justify-between items-center py-5 border-b-1 border-gray-500 text-xl bg-transparent cursor-pointer ${
-            selectedService ? "text-black" : "text-gray-500"
+            selectedService ? "text-black capitalize" : "text-gray-500"
           }`}
         >
           {selectedService || "Select a Service"}
@@ -207,7 +227,6 @@ const handleSubmit = async (e) => {
                 key={option}
                 onClick={() => {
                   setSelectedService(option);
-                  setActiveInput(null);
                   setActiveServiceDropdown(false);
                 }}
                 className={`p-3 cursor-pointer text-xl text-white capitalize hover:bg-gray-700 ${
@@ -255,16 +274,17 @@ const handleSubmit = async (e) => {
         ></span>
       </div>
 
+      {/* Submit Button */}
       <button
         type="submit"
         disabled={!isFormReady || isSubmitting}
         className={`lg:col-span-2 py-7 px-10 text-xl flex items-center justify-center
-            ${
-              isFormReady && !isSubmitting
-                ? "bg-blue-500 hover:bg-brown cursor-pointer"
-                : "bg-gray-500 cursor-not-allowed"
-            } 
-            text-white transition-all duration-300`}
+          ${
+            isFormReady && !isSubmitting
+              ? "bg-blue-500 hover:bg-brown cursor-pointer"
+              : "bg-gray-500 cursor-not-allowed"
+          } 
+          text-white transition-all duration-300`}
       >
         {isSubmitting ? <MoonLoader size={25} color="#fff" /> : "Book Handyman"}
       </button>
