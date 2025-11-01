@@ -31,40 +31,21 @@ export default function UserOrdersPage() {
 
             const allOrders = await res.json();
 
-            // ✅ Step 2: Filter orders by user's email
+            // filter user orders
             const userOrders = allOrders.filter(
-                (o) =>
-                    o.customer_email?.toLowerCase() === currentUser.email?.toLowerCase()
+              (o) =>
+                o.customer_email?.toLowerCase() ===
+                currentUser.email?.toLowerCase()
             );
 
-            if (userOrders.length === 0) {
-                setOrders([]);
-                setLoading(false);
-                return;
-            }
-
-            // ✅ Step 3: Collect all customer_order IDs
-            const allIds = userOrders
-            .flatMap((order) => order.customer_orders)
-            .filter(Boolean);
-
-            // ✅ Step 4: Fetch order items for those IDs
-            const itemsRes = await fetch(
-                `/api/order-items?ids=${allIds.join(",")}`
-            );
-            if (!itemsRes.ok) throw new Error("Failed to fetch order items");
-
-            const allItems = await itemsRes.json();
-
-            // ✅ Step 5: Pair each order with its related items
-            const mergedData = userOrders.map((order) => {
-                const items = allItems.filter((item) =>
-                    order.customer_orders?.includes(item.recordId)
-                );
-                return { order_meta: order, order_items: items };
-            });
+            // no second fetch needed — `order_items_id` is already populated
+            const mergedData = userOrders.map((order) => ({
+              order_meta: order,
+              order_items: order.order_items_id || [],
+            }));
 
             setOrders(mergedData);
+
             } catch (error) {
                 console.error("Error fetching user orders:", error);
                 toast.error("Failed to load your orders.");
@@ -108,16 +89,16 @@ export default function UserOrdersPage() {
     // ✅ Render merged order + items
     return (
       <section className="p-5 lg:p-10 space-y-10">
-        <h2 className="text-3xl font-semibold text-gray-900 mb-5">
-          My Orders
-        </h2>
-        {orders.map((entry) => (
-          <UserOrderDetails
-            key={entry.order_meta.recordId || entry.order_meta.id}
-            order={entry.order_meta}
-            items={entry.order_items}
-          />
-        ))}
+        <h2 className="text-3xl font-semibold text-gray-900 mb-5">My Orders</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {orders.map((entry) => (
+            <UserOrderDetails
+              key={entry.order_meta.recordId || entry.order_meta.id}
+              order={entry.order_meta}
+              items={entry.order_items}
+            />
+          ))}
+        </div>
       </section>
     );
 }

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const HandymanSchema = new mongoose.Schema(
   {
-    id: { type: Number, required: true, unique: true },
+    // id: { type: Number, required: true, unique: true },
     name: { type: String, required: true },
     profile: { type: String },
     certifications: { type: String },

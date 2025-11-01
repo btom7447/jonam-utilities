@@ -13,7 +13,7 @@ export default function DashboardFeaturedProducts({ featuredProducts }) {
   return (
     <section className="bg-white rounded-xl p-10 border-1 border-gray-200 w-full h-full flex flex-col">
       <h3 className="text-2xl font-semibold mb-5">Featured Products</h3>
-      <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
+      <div className="grid gap-5 grid-cols-1 2xl:grid-cols-2">
         {featuredProducts.map((product) => {
           const price = product?.price ?? 0;
           const discount = product?.discount ?? 0;

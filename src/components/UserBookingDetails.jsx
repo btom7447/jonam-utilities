@@ -17,7 +17,7 @@ export default function UserBookingDetails({ booking }) {
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b border-gray-100 pb-4 mb-6">
         <div>
           <h2 className="text-xl font-bold mb-1">
-            Booking #{booking?.id || booking?.recordId || "N/A"}
+            Booking #{booking?._id || "N/A"}
           </h2>
           <p className="text-gray-600 flex items-center gap-2">
             <CalendarDays size={18} />

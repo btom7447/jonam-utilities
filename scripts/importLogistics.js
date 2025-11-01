@@ -1,9 +1,13 @@
+// scripts/importLogistics.js
+import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
-import connectDB from "../lib/mongodb.js";
-import Logistics from "../models/Logistics.js";
 
 dotenv.config();
 
+const MONGO_URI = process.env.MONGODB_URI;
+const DB_NAME = "jonam";
+
+// ✅ Your stateOptions object
 const stateOptions = {
   Abia: 3000,
   Adamawa: 4500,
@@ -44,24 +48,35 @@ const stateOptions = {
   Zamfara: 5000,
 };
 
-async function seed() {
+async function importLogistics() {
+  const client = new MongoClient(MONGO_URI);
   try {
-    await connectDB();
+    await client.connect();
+    console.log("🧩 Connected to MongoDB");
 
-    const data = Object.entries(stateOptions).map(([state, price]) => ({
+    const db = client.db(DB_NAME);
+    const logistics = db.collection("logistics");
+
+    // Convert stateOptions into array of objects
+    const logisticsData = Object.entries(stateOptions).map(([state, price]) => ({
       state,
       price,
+      createdAt: new Date(),
     }));
 
-    await Logistics.deleteMany(); // Clear existing data
-    await Logistics.insertMany(data);
+    // Clear old records first (optional)
+    await logistics.deleteMany({});
+    console.log("🧹 Cleared old logistics data");
 
-    console.log("✅ Logistics data imported successfully!");
-    process.exit();
+    // Insert new data
+    await logistics.insertMany(logisticsData);
+    console.log(`✅ Imported ${logisticsData.length} logistics records`);
   } catch (err) {
-    console.error("❌ Error importing logistics:", err);
-    process.exit(1);
+    console.error("❌ Error importing logistics data:", err);
+  } finally {
+    await client.close();
+    console.log("🔒 MongoDB connection closed");
   }
 }
 
-seed();
+importLogistics();

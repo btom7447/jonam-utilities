@@ -8,9 +8,16 @@ export async function GET() {
     console.log("📡 Connecting to MongoDB for GET /api/orders...");
     await connectDB();
 
-    const orders = await Order.find().populate("order_items_id");
+    // ✅ Fetch orders and populate their items efficiently
+    const orders = await Order.find()
+      .populate({
+        path: "order_items_id",
+        model: OrderItem,
+      })
+      .sort({ createdAt: -1 }); // optional: newest first
 
-    console.log(`✅ Retrieved ${orders.length} orders`);
+    console.log(`✅ Retrieved ${orders.length} orders with populated items`);
+
     return NextResponse.json(orders, { status: 200 });
   } catch (error) {
     console.error("❌ Error fetching orders:", error);

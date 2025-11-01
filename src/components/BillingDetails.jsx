@@ -6,47 +6,6 @@ import { auth } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { loadOrCreateUserProfile } from "../lib/firestoreUser";
 
-// Delivery prices by state
-const stateOptions = {
-  Abia: 3000,
-  Adamawa: 4500,
-  "Akwa Ibom": 3000,
-  Anambra: 2500,
-  Bauchi: 4000,
-  Bayelsa: 3000,
-  Benue: 3500,
-  Borno: 5000,
-  "Cross River": 3000,
-  Delta: 3000,
-  Ebonyi: 2800,
-  Edo: 2500,
-  Ekiti: 2500,
-  Enugu: 2700,
-  "FCT - Abuja": 2000,
-  Gombe: 4500,
-  Imo: 2600,
-  Jigawa: 5000,
-  Kaduna: 3800,
-  Kano: 4000,
-  Katsina: 5000,
-  Kebbi: 5000,
-  Kogi: 3000,
-  Kwara: 2800,
-  Lagos: 1500,
-  Nasarawa: 2500,
-  Niger: 3000,
-  Ogun: 2000,
-  Ondo: 2500,
-  Osun: 2300,
-  Oyo: 2200,
-  Plateau: 3600,
-  Rivers: 3200,
-  Sokoto: 5000,
-  Taraba: 4800,
-  Yobe: 5200,
-  Zamfara: 5000,
-};
-
 export default function BillingDetails({
   getTotalPrice,
   setDeliveryPrice,
@@ -56,35 +15,76 @@ export default function BillingDetails({
   setBillingDetails,
 }) {
   const [activeInput, setActiveInput] = useState(null);
+  const [stateOptions, setStateOptions] = useState([]);
   const [selectedState, setSelectedState] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  // 🔹 Fetch logistics (state + price)
+  useEffect(() => {
+    const fetchLogistics = async () => {
+      try {
+        const res = await fetch("/api/logistics");
+        if (!res.ok) throw new Error("Failed to fetch logistics data");
+        const data = await res.json();
+
+        // Format for easier access
+        const formatted = data.map((item) => ({
+          label: item.state,
+          value: item.state,
+          price: item.price,
+        }));
+
+        setStateOptions(formatted);
+      } catch (err) {
+        console.error("Error fetching logistics:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLogistics();
+  }, []);
 
   // 🔹 Auto-populate from Firebase profile
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        try {
-          const data = await loadOrCreateUserProfile(currentUser);
-          setBillingDetails({
-            name: data?.name || "",
-            phone: data?.phone || "",
-            email: data?.email || currentUser.email || "",
-            address: data?.deliveryAddress?.address || "",
-            state: data?.deliveryAddress?.state || "",
-          });
+      if (!currentUser) return;
 
-          if (data?.deliveryAddress?.state) {
-            setSelectedState(data.deliveryAddress.state);
-            setDeliveryState(data.deliveryAddress.state);
-            setDeliveryPrice(stateOptions[data.deliveryAddress.state] || 0);
-          }
-        } catch (error) {
-          console.error("Error loading user billing info:", error);
+      try {
+        const data = await loadOrCreateUserProfile(currentUser);
+        const state = data?.deliveryAddress?.state || "";
+
+        setBillingDetails({
+          name: data?.name || "",
+          phone: data?.phone || "",
+          email: data?.email || currentUser.email || "",
+          address: data?.deliveryAddress?.address || "",
+          state,
+        });
+
+        // Wait until logistics is loaded before setting delivery info
+        if (state) {
+          const interval = setInterval(() => {
+            if (stateOptions.length > 0) {
+              const found = stateOptions.find(
+                (opt) => opt.value.toLowerCase() === state.toLowerCase()
+              );
+              if (found) {
+                setSelectedState(found.value);
+                setDeliveryState(found.value);
+                setDeliveryPrice(found.price);
+              }
+              clearInterval(interval);
+            }
+          }, 200);
         }
+      } catch (error) {
+        console.error("Error loading user billing info:", error);
       }
     });
 
     return () => unsubscribe();
-  }, [setBillingDetails, setDeliveryPrice, setDeliveryState]);
+  }, [stateOptions, setBillingDetails, setDeliveryPrice, setDeliveryState]);
 
   const fields = [
     { label: "Name", name: "name", type: "text" },
@@ -94,11 +94,14 @@ export default function BillingDetails({
   ];
 
   const handleStateSelect = (state) => {
-    setSelectedState(state);
-    setDeliveryState(state);
+    const match = stateOptions.find((opt) => opt.value === state);
+    if (!match) return;
+
+    setSelectedState(match.value);
+    setDeliveryState(match.value);
+    setDeliveryPrice(match.price);
+    setBillingDetails((prev) => ({ ...prev, state: match.value }));
     setActiveInput(null);
-    setDeliveryPrice(stateOptions[state]);
-    setBillingDetails((prev) => ({ ...prev, state }));
   };
 
   return (
@@ -124,16 +127,12 @@ export default function BillingDetails({
                   [name]: e.target.value,
                 }))
               }
-              className="w-full text-xl py-5 border-b-1 outline-none bg-transparent border-gray-500 text-black transition-all duration-300"
+              className="w-full text-xl py-5 border-b border-gray-500 outline-none bg-transparent text-black transition-all duration-300"
             />
             <span
-              className={`absolute left-0 bottom-0 h-0.5 transition-all duration-200
-                ${
-                  activeInput === name
-                    ? "w-full bg-blue-500"
-                    : "w-0 bg-gray-900"
-                } 
-                group-hover:w-full group-hover:bg-blue-500`}
+              className={`absolute left-0 bottom-0 h-0.5 transition-all duration-200 ${
+                activeInput === name ? "w-full bg-blue-500" : "w-0 bg-gray-900"
+              } group-hover:w-full group-hover:bg-blue-500`}
             ></span>
           </div>
         ))}
@@ -145,37 +144,34 @@ export default function BillingDetails({
             onClick={() =>
               setActiveInput(activeInput === "state" ? null : "state")
             }
-            className={`w-full flex justify-between items-center py-5 border-b-1 border-gray-500 text-xl bg-transparent cursor-pointer ${
+            disabled={loading}
+            className={`w-full flex justify-between items-center py-5 border-b border-gray-500 text-xl bg-transparent cursor-pointer ${
               selectedState ? "text-black" : "text-gray-500"
             }`}
           >
-            {selectedState || "Choose State"}
+            {loading ? "Loading states..." : selectedState || "Choose State"}
             <ChevronDown size={20} />
           </button>
 
-          {activeInput === "state" && (
+          {activeInput === "state" && !loading && (
             <ul className="absolute z-10 w-full max-h-80 overflow-y-auto bg-gray-900 border border-gray-900 mt-2">
-              {Object.keys(stateOptions).map((state) => (
+              {stateOptions.map(({ label }) => (
                 <li
-                  key={state}
-                  onClick={() => handleStateSelect(state)}
+                  key={label}
+                  onClick={() => handleStateSelect(label)}
                   className={`p-3 cursor-pointer text-xl text-white capitalize hover:bg-gray-700 ${
-                    selectedState === state ? "bg-blue-500" : ""
+                    selectedState === label ? "bg-blue-500" : ""
                   }`}
                 >
-                  {state}
+                  {label}
                 </li>
               ))}
             </ul>
           )}
           <span
-            className={`absolute left-0 bottom-0 h-0.5 transition-all duration-200
-              ${
-                activeInput === "state"
-                  ? "w-full bg-blue-500"
-                  : "w-0 bg-gray-900"
-              } 
-              group-hover:w-full group-hover:bg-blue-500`}
+            className={`absolute left-0 bottom-0 h-0.5 transition-all duration-200 ${
+              activeInput === "state" ? "w-full bg-blue-500" : "w-0 bg-gray-900"
+            } group-hover:w-full group-hover:bg-blue-500`}
           ></span>
         </div>
       </form>
