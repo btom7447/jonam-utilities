@@ -1,6 +1,7 @@
 // app/api/admin/users/route.js
 import { NextResponse } from "next/server";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
+import { getAdmin } from "@/lib/firebaseAdmin";
 
 async function verifySuperAdmin(req) {
   try {

@@ -60,7 +60,7 @@ const CheckoutPage = () => {
                         cartItems={cartItems} 
                         getTotalPrice={getTotalPrice} 
                     />
-                    <PaymentOptions 
+                    <PaymentOptions
                         clearCart={clearCart} 
                         deliveryState={deliveryState}
                         isFormValid={isFormValid}

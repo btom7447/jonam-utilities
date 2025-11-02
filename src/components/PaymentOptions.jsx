@@ -9,16 +9,16 @@ import { toast } from "react-toastify";
 import { MoonLoader } from "react-spinners";
 import { sendOrderEmail } from "@/lib/sendOrderEmail";
 
-export default function PaymentOptions({
-  clearCart,
-  deliveryState,
-  isFormValid,
-  cartItems,
-  billingDetails,
-  deliveryOption,
-  deliveryPrice,
-  grandTotal,
-  }) {
+const PaymentOptions = ({
+    clearCart,
+    deliveryState,
+    isFormValid,
+    cartItems,
+    billingDetails,
+    deliveryOption,
+    deliveryPrice,
+    grandTotal
+}) => {
   const { setStep, resetSteps } = useCheckout();
   const { placeOrder } = useOrder();
   const [selected, setSelected] = useState("paystack");
@@ -88,21 +88,21 @@ const handlePlaceOrder = async () => {
         setLoading(false);
       },
     });
- } else {
-  // Cash on delivery fallback
-  try {
-    const result = await placeOrder({
-      cartItems,
-      billingDetails,
-      deliveryState,
-      deliveryOption,
-      deliveryPrice,
-      paymentOption: "delivery",
-      grandTotal,
-    });
+  } else {
+    // Cash on delivery fallback
+    try {
+      const result = await placeOrder({
+        cartItems,
+        billingDetails,
+        deliveryState,
+        deliveryOption,
+        deliveryPrice,
+        paymentOption: "delivery",
+        grandTotal,
+      });
 
       if (result.success) {
-        toast.success("Order placed with Cash on Delivery.", {
+        toast.success("Order placed.", {
           onClose: () => {
             clearCart();
             resetSteps();
@@ -119,6 +119,7 @@ const handlePlaceOrder = async () => {
       setLoading(false);
     }
   }
+};
 
 
   return (
@@ -203,4 +204,5 @@ const handlePlaceOrder = async () => {
     </div>
   );
 };
-}
+
+export default PaymentOptions;
