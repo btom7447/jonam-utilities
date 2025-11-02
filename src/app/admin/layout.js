@@ -43,41 +43,46 @@ export default function AdminLayout({ children }) {
     { href: "/admin/staffs", label: "Staffs", icon: UsersIcon },
   ];
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        toast.warning(
-          "Please sign in with your Jonam account to access admin."
-        );
+ useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      toast.warning("Please sign in with your Jonam account to access admin.");
+      router.replace("/");
+      return;
+    }
+
+    const email = user.email?.toLowerCase() || "";
+    const isJonamStaff = email.endsWith("@jonam.ng");
+
+    if (!isJonamStaff) {
+      toast.error("Access denied. Only Jonam staff can access the admin panel.");
+      router.replace("/");
+      return;
+    }
+
+    try {
+      const profile = await loadOrCreateUserProfile(user);
+
+      // Check access
+      if (profile.role !== "super-admin" && !profile.access) {
+        toast.error("Your admin access has been disabled.");
         router.replace("/");
         return;
       }
 
-      const email = user.email?.toLowerCase() || "";
-      const isJonamStaff = email.endsWith("@jonam.ng");
+      setUserProfile(profile);
+      setAuthorized(true);
+    } catch (error) {
+      console.error("Failed to load user profile:", error);
+      toast.error("Could not load your profile data.");
+    } finally {
+      setLoading(false);
+    }
+  });
 
-      if (!isJonamStaff) {
-        toast.error(
-          "Access denied. Only Jonam staff can access the admin panel."
-        );
-        router.replace("/");
-        return;
-      }
+  return () => unsubscribe();
+}, [router]);
 
-      try {
-        const profile = await loadOrCreateUserProfile(user);
-        setUserProfile(profile);
-        setAuthorized(true);
-      } catch (error) {
-        console.error("Failed to load user profile:", error);
-        toast.error("Could not load your profile data.");
-      } finally {
-        setLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [router]);
 
   if (loading) {
     return (

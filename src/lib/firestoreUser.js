@@ -3,7 +3,7 @@ import { db } from "./firebase";
 
 /**
  * Loads or creates a user profile in Firestore.
- * Keeps field names consistent with ProfileSection expectations.
+ * Ensures consistent field names and default access for new users.
  */
 export async function loadOrCreateUserProfile(user) {
   if (!user?.uid) throw new Error("User is not authenticated");
@@ -18,11 +18,11 @@ export async function loadOrCreateUserProfile(user) {
   if (snap.exists()) {
     const existing = snap.data();
 
-    // 🔧 Fix: keep "name" field consistent
     const updatedData = {
       name: user.displayName || existing.name || "",
       email: user.email || existing.email || "",
       role: existing.role || role,
+      access: typeof existing.access === "boolean" ? existing.access : false, // ensure access is boolean
       updatedAt: new Date(),
     };
 
@@ -31,7 +31,7 @@ export async function loadOrCreateUserProfile(user) {
     return { ...existing, ...updatedData };
   }
 
-  // 🔧 New profile always uses "name"
+  // New user profile
   const newProfile = {
     name: user.displayName || "",
     email: user.email || "",
@@ -43,13 +43,13 @@ export async function loadOrCreateUserProfile(user) {
     },
     imageUrl: user.photoURL || "",
     role,
+    access: false, // default false for new users
     createdAt: new Date(),
   };
 
   await setDoc(userRef, newProfile);
   return newProfile;
 }
-
 
 /**
  * Updates an existing user profile in Firestore.
@@ -60,13 +60,13 @@ export async function updateUserProfile(uid, updates = {}) {
 
   const userRef = doc(db, "users", uid);
 
-  // Normalize field names (in case we get displayName instead of name)
+  // Normalize fields
   const normalizedUpdates = {
     ...updates,
     updatedAt: new Date(),
   };
 
-  // If deliveryAddress is provided, make sure it’s fully structured
+  // Ensure deliveryAddress is fully structured
   if (normalizedUpdates.deliveryAddress) {
     normalizedUpdates.deliveryAddress = {
       address: normalizedUpdates.deliveryAddress.address || "",

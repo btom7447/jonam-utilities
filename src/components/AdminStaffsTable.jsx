@@ -60,7 +60,7 @@ export default function AdminStaffsTable({
                   alt={user.name}
                   width={48}
                   height={48}
-                  className="w-12 h-12 rounded-full object-cover border"
+                  className="w-12 h-12 rounded-full object-cover border object-top"
                   unoptimized
                 />
               </td>
@@ -78,8 +78,10 @@ export default function AdminStaffsTable({
 
               <td className="p-5 border-b border-gray-200 text-right">
                 <Switch
-                  checked={user.role === "staff" || user.role === "super-admin"}
-                  onChange={() => onToggleRole(user.id, user.role)}
+                  checked={user.access}
+                  onChange={() =>
+                    onToggleAccess(user.id, user.access, user.role)
+                  }
                   disabled={user.role === "super-admin" || updating}
                   onColor="#2563EB"
                   uncheckedIcon={false}
