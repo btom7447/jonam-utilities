@@ -23,8 +23,8 @@ export const OrderProvider = ({ children }) => {
     grandTotal,
   }) => {
     try {
-      console.log("🛒 Raw cart items:", JSON.parse(JSON.stringify(cartItems)));
-      console.log("📋 Billing details:", billingDetails);
+      // console.log("🛒 Raw cart items:", JSON.parse(JSON.stringify(cartItems)));
+      // console.log("📋 Billing details:", billingDetails);
 
       // 1️⃣ Create order first
       const orderFields = {

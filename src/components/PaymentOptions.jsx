@@ -9,16 +9,16 @@ import { toast } from "react-toastify";
 import { MoonLoader } from "react-spinners";
 import { sendOrderEmail } from "@/lib/sendOrderEmail";
 
-const PaymentOptions = ({
-    clearCart,
-    deliveryState,
-    isFormValid,
-    cartItems,
-    billingDetails,
-    deliveryOption,
-    deliveryPrice,
-    grandTotal
-}) => {
+export default function PaymentOptions({
+  clearCart,
+  deliveryState,
+  isFormValid,
+  cartItems,
+  billingDetails,
+  deliveryOption,
+  deliveryPrice,
+  grandTotal,
+  }) {
   const { setStep, resetSteps } = useCheckout();
   const { placeOrder } = useOrder();
   const [selected, setSelected] = useState("paystack");
@@ -66,7 +66,7 @@ const handlePlaceOrder = async () => {
               orderId: result.orderId,
             });
 
-            console.log("Order receipt:", orderDetails);
+            // console.log("Order receipt:", orderDetails);
             // await sendOrderEmail(orderDetails)
 
             toast.success("Payment successful! Order placed.");
@@ -88,24 +88,27 @@ const handlePlaceOrder = async () => {
         setLoading(false);
       },
     });
-  } else {
-    // Cash on delivery fallback
-    try {
-      const result = await placeOrder({
-        cartItems,
-        billingDetails,
-        deliveryState,
-        deliveryOption,
-        deliveryPrice,
-        paymentOption: "delivery",
-        grandTotal,
-      });
+ } else {
+  // Cash on delivery fallback
+  try {
+    const result = await placeOrder({
+      cartItems,
+      billingDetails,
+      deliveryState,
+      deliveryOption,
+      deliveryPrice,
+      paymentOption: "delivery",
+      grandTotal,
+    });
 
       if (result.success) {
-        toast.success("Order placed with Cash on Delivery.");
-        clearCart();
-        resetSteps();
-        setStep(STEP_INDEX.place);
+        toast.success("Order placed with Cash on Delivery.", {
+          onClose: () => {
+            clearCart();
+            resetSteps();
+            setStep(STEP_INDEX.place);
+          },
+        });
       } else {
         toast.error("Failed to place order.");
       }
@@ -116,7 +119,6 @@ const handlePlaceOrder = async () => {
       setLoading(false);
     }
   }
-};
 
 
   return (
@@ -201,5 +203,4 @@ const handlePlaceOrder = async () => {
     </div>
   );
 };
-
-export default PaymentOptions;
+}
