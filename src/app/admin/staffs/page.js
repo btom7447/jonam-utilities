@@ -42,15 +42,15 @@ export default function AdminStaffsPage() {
 
     setUpdating(true);
     try {
-      const token = await getAuth().currentUser.getIdToken();
-      const res = await fetch("/api/admin/users", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ id, access: !currentAccess }),
-      });
+        const token = await getAuth().currentUser.getIdToken(); 
+        const res = await fetch("/api/users", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ id, access: !currentAccess }),
+        });
 
       if (!res.ok) throw new Error("Failed to update access");
 
@@ -58,7 +58,7 @@ export default function AdminStaffsPage() {
         prev.map((u) => (u.id === id ? { ...u, access: !currentAccess } : u))
       );
       toast.success(
-        `Access ${!currentAccess ? "enabled" : "disabled"} successfully`
+        `Access ${!currentAccess ? "enabled" : "disabled"}`
       );
     } catch (err) {
       console.error(err);

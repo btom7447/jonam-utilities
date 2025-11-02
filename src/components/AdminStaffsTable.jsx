@@ -78,10 +78,8 @@ export default function AdminStaffsTable({
 
               <td className="p-5 border-b border-gray-200 text-right">
                 <Switch
-                  checked={user.access}
-                  onChange={() =>
-                    onToggleAccess(user.id, user.access, user.role)
-                  }
+                  checked={user.access || false}
+                  onChange={() => onToggleRole(user.id, user.access, user.role)}
                   disabled={user.role === "super-admin" || updating}
                   onColor="#2563EB"
                   uncheckedIcon={false}
