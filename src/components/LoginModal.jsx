@@ -53,7 +53,7 @@ const LoginModal = ({ setView, onClose }) => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      signInWithGoogleRedirect;
+      signInWithGoogleRedirect();
       toast.success("Signed in with Google!");
       setCurrentUser(auth.currentUser); 
       onClose();
