@@ -27,7 +27,7 @@ const ContactPoster = () => {
                     </li>
                     <li className='flex items-center gap-10 text-blue-500 text-2xl mb-5'>
                         <Mail size={20} />
-                        <a href="mailto:info@jonam.com">info@jonam.com</a>
+                        <a href="mailto:contact@jonam.ng">contact@jonam.ng</a>
                     </li>
                 </ul>
             </div>

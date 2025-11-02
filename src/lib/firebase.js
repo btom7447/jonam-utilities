@@ -65,8 +65,8 @@ export function loginWithEmail(email, password) {
   return signInWithEmailAndPassword(auth, email, password);
 }
 
-export function signInWithGoogle() {
-  return signInWithPopup(auth, googleProvider);
+export function signInWithGoogleRedirect() {
+  return auth.signInWithRedirect(googleProvider);
 }
 
 export function resetPassword(email) {

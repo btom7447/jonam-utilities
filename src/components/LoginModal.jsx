@@ -4,7 +4,7 @@ import { MailIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, signInWithGoogle } from "@/lib/firebase";
+import { auth, signInWithGoogle, signInWithGoogleRedirect } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 
 
@@ -53,7 +53,7 @@ const LoginModal = ({ setView, onClose }) => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      await signInWithGoogle();
+      signInWithGoogleRedirect;
       toast.success("Signed in with Google!");
       setCurrentUser(auth.currentUser); 
       onClose();
