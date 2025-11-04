@@ -17,34 +17,29 @@ import { toast } from "react-toastify";
 export default function Home() {
     const router = useRouter();
 
-    useEffect(() => {
-      getRedirectResult(auth)
-        .then((result) => {
-          if (result && result.user) {
-            const user = result.user;
+   useEffect(() => {
+     getRedirectResult(auth)
+       .then((result) => {
+         if (result && result.user) {
+           const user = result.user;
 
-            toast.success(`Welcome, ${user.displayName || user.email}!`);
+           toast.success(`Welcome, ${user.displayName || user.email}!`);
 
-            // Redirect based on admin or regular user
-            const ADMIN_EMAILS = [
-              "jonamengr@gmail.com",
-              "joshuaobasi236@gmail.com",
-              "tomekemini7447@gmail.com",
-              "tombenjamin7447@gmail.com",
-            ];
+           // Redirect based on email domain
+           const email = user.email?.toLowerCase() || "";
+           if (email.endsWith("@jonam.ng")) {
+             router.push("/admin"); // Jonam staff
+           } else {
+             router.push("/"); // Regular user
+           }
+         }
+       })
+       .catch((error) => {
+         console.error("Redirect login error:", error);
+         toast.error(error.message || "Google login failed");
+       });
+   }, [router]);
 
-            if (ADMIN_EMAILS.includes(user.email)) {
-              router.push("/admin");
-            } else {
-              router.push("/");
-            }
-          }
-        })
-        .catch((error) => {
-          console.error("Redirect login error:", error);
-          toast.error(error.message || "Google login failed");
-        });
-    }, [router]);
 
   return (
     <div className="">

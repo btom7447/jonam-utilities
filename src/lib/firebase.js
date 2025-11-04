@@ -9,7 +9,8 @@ import {
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
-  updateProfile
+  updateProfile,
+  signInWithRedirect
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -66,7 +67,7 @@ export function loginWithEmail(email, password) {
 }
 
 export function signInWithGoogleRedirect() {
-  return auth.signInWithRedirect(googleProvider);
+  return signInWithRedirect(auth, googleProvider);
 }
 
 export function resetPassword(email) {

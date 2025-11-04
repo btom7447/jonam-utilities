@@ -50,22 +50,9 @@ const LoginModal = ({ setView, onClose }) => {
   };
 
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     setLoading(true);
-    try {
-      signInWithGoogleRedirect();
-      toast.success("Signed in with Google!");
-      setCurrentUser(auth.currentUser); 
-      onClose();
-    } catch (error) {
-      toast.error(error.message || "Google sign-in failed");
-    }
-      setLoading(false);
-    };
-
-  const handleContinueAsUser = () => {
-    toast.success(`Welcome back, ${currentUser.displayName}!`);
-    // Optionally close modal or redirect here
+    signInWithGoogleRedirect();
   };
 
   return (
