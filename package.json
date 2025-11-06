@@ -41,7 +41,8 @@
     "react-spinner": "^0.2.7",
     "react-spinners": "^0.17.0",
     "react-switch": "^7.1.0",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "resend": "^6.4.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
