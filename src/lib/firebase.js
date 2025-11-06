@@ -10,7 +10,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   updateProfile,
-  signInWithRedirect
+  signInWithRedirect,
 } from "firebase/auth";
 
 const firebaseConfig = {
