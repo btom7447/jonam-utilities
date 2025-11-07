@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Handyman from "@/models/Handyman";
+import { sendNotification } from "@/lib/sendNotification"; // ✅ centralized helper
 
 // ✉️ Booking Notification Email Template
 const bookingEmailTemplate = ({
@@ -125,24 +126,13 @@ export async function POST(req) {
       additional_notes: body.additional_notes,
     });
 
-    // --- 🔔 Trigger Resend notification
-    try {
-      await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL || "https://jonam.ng"}/api/notify`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            subject: `New Booking: ${body.customer_name} for ${body.service_type}`,
-            message: formattedHTML,
-            formType: "book",
-            extraRecipients: ["management@jonam.ng"], // Always include management
-          }),
-        }
-      );
-    } catch (emailErr) {
-      console.error("Failed to send booking email:", emailErr);
-    }
+    // --- 🔔 Centralized notification trigger
+    await sendNotification({
+      subject: `New Booking: ${body.customer_name} for ${body.service_type}`,
+      message: formattedHTML,
+      formType: "book",
+      extraRecipients: ["management@jonam.ng"], // ✅ Optional additional recipients
+    });
 
     return NextResponse.json(handyman, { status: 201 });
   } catch (error) {
