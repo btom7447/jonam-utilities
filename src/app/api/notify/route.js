@@ -5,23 +5,24 @@ export async function POST(req) {
   try {
     const { subject, message, formType, extraRecipients } = await req.json();
 
-    // 🧠 Lazy import so Resend only loads server-side
+    // Lazy import so Resend only loads server-side
     const { Resend } = await import("resend");
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // 📍 Automatic recipient routing
+    // Automatic recipient routing
     const recipientMap = {
       contact: ["contact@jonam.ng", "management@jonam.ng"],
       management: ["management@jonam.ng"],
       order: ["orders@jonam.ng", "management@jonam.ng"],
       quote: ["info@jonam.ng", "management@jonam.ng"],
       book: ["bookings@jonam.ng", "management@jonam.ng"],
+      newsletter: ["info@jonam.ng", "management@jonam.ng"], 
     };
 
-    // 📧 Always CC core team
+    // Always CC core team
     const baseRecipients = ["director@jonam.ng", "developer@jonam.ng"];
 
-    // 🧩 Merge & deduplicate recipients
+    // Merge & deduplicate recipients
     const recipients = [
       ...new Set([
         ...baseRecipients,
@@ -38,7 +39,7 @@ export async function POST(req) {
     if (!subject || !message)
       throw new Error("Missing subject or message content");
 
-    // 📨 Send via Resend
+    // Send via Resend
     await resend.emails.send({
       from: "Jonam Utilities <noreply@jonam.ng>",
       to: recipients,
