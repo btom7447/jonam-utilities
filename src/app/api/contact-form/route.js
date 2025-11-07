@@ -9,10 +9,9 @@ const emailTemplate = ({ name, email, subject, formType, messagePreview }) => `
     background-color: #ffffff;
     color: #1e1e1e;
     padding: 32px 24px;
-    border-radius: 10px;
     max-width: 600px;
     margin: 0 auto;
-    border: 1px solid #f1f1f1;
+    border: 2px solid #f1f1f1;
   ">
     <h2 style="
       color: #1E40AF;
@@ -31,7 +30,6 @@ const emailTemplate = ({ name, email, subject, formType, messagePreview }) => `
     <div style="
       background-color: #f9fafb;
       padding: 16px;
-      border-radius: 8px;
       border: 1px solid #e5e7eb;
       margin-bottom: 20px;
     ">
@@ -43,8 +41,10 @@ const emailTemplate = ({ name, email, subject, formType, messagePreview }) => `
       }</p>
       <p style="margin: 10px 0;"><strong>Message Preview:</strong></p>
       <blockquote style="
-        border-left: 4px solid #1E40AF;
+        border-left: 2px solid #1E40AF;
         padding-left: 10px;
+        padding-top: 20px;
+        padding-bottom: 20px;
         color: #4b5563;
         margin: 0;
       ">
@@ -56,15 +56,15 @@ const emailTemplate = ({ name, email, subject, formType, messagePreview }) => `
       You can view the full message and manage your response in the admin dashboard:
     </p>
 
-    <a href="https://jonam.ng/admin/messages"
+    <a href="https://jonam.ng/admin/contacts"
       style="
         display: inline-block;
         background-color: #1E40AF;
         color: #ffffff;
+        font-size: 18px;
         text-decoration: none;
-        padding: 12px 20px;
-        border-radius: 8px;
-        font-weight: 500;
+        padding: 12px 30px;
+        font-weight: 300;
       "
     >
       View in Dashboard
@@ -73,7 +73,7 @@ const emailTemplate = ({ name, email, subject, formType, messagePreview }) => `
     <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
 
     <small style="color: #6b7280; display: block; line-height: 1.5;">
-      This is an automated notification from the <strong style="color:#8b4513;">Jonam Platform</strong>.<br>
+      This is an automated notification from <a href="https://jonam.ng/admin/contacts" style="color:#8b4513; display: inline-block">Jonam Utilities</a>.<br>
       Please do not reply directly to this email.
     </small>
   </div>
