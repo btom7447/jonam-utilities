@@ -9,7 +9,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const ProductCard = ({ data }) => {
-  console.log("Product Data", data)
+  // console.log("Product Data", data)
   const router = useRouter();
   const { addToCart } = useCart();
   const { saveProduct, removeSavedProduct, isSaved } = useWishlist();

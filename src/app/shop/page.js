@@ -110,7 +110,7 @@ useEffect(() => {
       setPriceRange([newMinPrice, newMaxPrice]);
       setDisplayedProducts(tempFiltered);
     }
-  }, [products, selectedCategory, selectedBrand, search]);
+  }, [products, selectedCategory, selectedBrand, search, userAdjustedPrice]);
 
   // Filter by price range
  useEffect(() => {

@@ -1,11 +1,10 @@
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req) {
   const { subject, message, formType } = await req.json();
 
-  // Routing logic
+  // ✅ Initialize inside handler to avoid build-time error
+  const { Resend } = await import("resend");
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
   const baseRecipients = ["director@jonam.ng"];
   let recipients = [...baseRecipients];
 
