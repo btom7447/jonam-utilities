@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import RequestQuote from "@/models/RequestQuote";
-import { sendNotificationEmail } from "@/lib/sendNotificationEmail";
+import { sendNotification } from "@/lib/sendNotification";
 
 // ✉️ Quote Request Email Template
 const quoteEmailTemplate = ({
@@ -140,7 +140,7 @@ export async function POST(request) {
     });
 
     // 🔔 Notify via helper (uses receiptMap internally)
-    await sendNotificationEmail({
+    await sendNotification({
       subject: `Quote Request: ${full_name} (${service_type})`,
       message: formattedHTML,
       formType: "quote",
