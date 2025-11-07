@@ -1,28 +1,48 @@
 export async function POST(req) {
-  const { subject, message, formType } = await req.json();
+  const { subject, message, formType, extraRecipients } = await req.json();
 
-  // ✅ Initialize inside handler to avoid build-time error
+  // ✅ Dynamic import (so Vercel doesn’t try to bundle `resend`)
   const { Resend } = await import("resend");
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  const baseRecipients = ["director@jonam.ng"];
-  let recipients = [...baseRecipients];
+  // 🧩 Define your recipient map
+  const recipientMap = {
+    contact: ["contact@jonam.ng"],
+    management: ["management@jonam.ng"],
+    order: ["orders@jonam.ng", "management@jonam.ng"], // Orders go to both
+    quote: ["info@jonam.ng"],
+  };
 
-  if (formType === "contact") recipients.push("contact@jonam.ng");
-  if (formType === "management") recipients.push("management@jonam.ng");
-  if (formType === "order") recipients.push("orders@jonam.ng");
+  // ✅ Always include director
+  const baseRecipients = ["director@jonam.ng", "developer@jonam.ng"];
+
+  // Merge logic
+  let recipients = [
+    ...new Set([
+      ...baseRecipients,
+      ...(recipientMap[formType] || []),
+      ...(Array.isArray(extraRecipients)
+        ? extraRecipients
+        : extraRecipients
+        ? [extraRecipients]
+        : []),
+    ]),
+  ];
 
   try {
     await resend.emails.send({
       from: "Jonam Platform <noreply@jonam.ng>",
       to: recipients,
       subject: subject || "New Notification",
-      html: `<p>${message}</p>`,
+      html: message || "<p>No message content</p>",
     });
 
     return Response.json({ success: true });
   } catch (error) {
     console.error("Email send error:", error);
-    return Response.json({ success: false, error }, { status: 500 });
+    return Response.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }
