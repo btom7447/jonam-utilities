@@ -11,6 +11,7 @@ export async function POST(req) {
     management: ["management@jonam.ng"],
     order: ["orders@jonam.ng", "management@jonam.ng"], // Orders go to both
     quote: ["info@jonam.ng"],
+    book: ["bookings@jonam.ng"],
   };
 
   // ✅ Always include director
