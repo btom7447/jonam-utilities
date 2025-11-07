@@ -73,7 +73,7 @@ const emailTemplate = ({ name, email, subject, formType, messagePreview }) => `
     <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
 
     <small style="color: #6b7280; display: block; line-height: 1.5;">
-      This is an automated notification from <a href="https://jonam.ng/admin/contacts" style="color:#8b4513; display: inline-block">Jonam Utilities</a>.<br>
+      This is an automated notification from <a href="https://jonam.ng/" style="color:#8b4513; display: inline-block">Jonam Utilities</a>.<br>
       Please do not reply directly to this email.
     </small>
   </div>
