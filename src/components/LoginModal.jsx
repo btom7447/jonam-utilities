@@ -3,17 +3,9 @@
 import { MailIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth, signInWithGoogle, signInWithGoogleRedirect } from "@/lib/firebase";
+import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
-
-
-const ADMIN_EMAILS = [
-  "jonamengr@gmail.com",
-  "joshuaobasi236@gmail.com",
-  "tomekemini7447@gmail.com",
-  "tombenjamin7447@gmail.com", // your email
-];
 
 const LoginModal = ({ setView, onClose }) => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -23,36 +15,34 @@ const LoginModal = ({ setView, onClose }) => {
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const googleProvider = user.providerData.find(
-          (provider) => provider.providerId === "google.com"
-        );
-        if (googleProvider) {
-          setCurrentUser(user);
-        } else {
-          setCurrentUser(null);
-        }
-        } else {
-          setCurrentUser(null);
-        }
-      });
-      return () => unsubscribe();
+      setCurrentUser(user || null);
+    });
+    return () => unsubscribe();
   }, []);
 
   const redirectUser = (user) => {
     if (!user) return;
-    if (ADMIN_EMAILS.includes(user.email)) {
-      router.push("/admin"); // admin redirect
-    } else {
-      router.push("/"); // regular user
-    }
+    router.push("/"); // redirect all users to home
     onClose();
   };
 
-
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     setLoading(true);
-    signInWithGoogleRedirect();
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      toast.success("Signed in with Google!");
+      redirectUser(user);
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+      toast.error("Failed to sign in with Google.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleContinueAsUser = () => {
+    redirectUser(currentUser);
   };
 
   return (
@@ -64,11 +54,9 @@ const LoginModal = ({ setView, onClose }) => {
             onClick={handleContinueAsUser}
             className="w-full max-w-100 px-10 py-3 flex justify-center items-center gap-3 border border-gray-300 bg-white text-lg text-gray-700 cursor-pointer hover:border-blue-500 hover:text-blue-500"
           >
-            {/* Google icon SVG (same as before) */}
+            {/* Google icon SVG */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              x="0px"
-              y="0px"
               width="20"
               height="20"
               viewBox="0 0 48 48"
@@ -87,7 +75,7 @@ const LoginModal = ({ setView, onClose }) => {
               ></path>
               <path
                 fill="#1976D2"
-                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
+                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
               ></path>
             </svg>
             Continue as {currentUser.displayName || currentUser.email}
@@ -104,8 +92,6 @@ const LoginModal = ({ setView, onClose }) => {
             {/* Google icon SVG */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              x="0px"
-              y="0px"
               width="20"
               height="20"
               viewBox="0 0 48 48"
@@ -124,7 +110,7 @@ const LoginModal = ({ setView, onClose }) => {
               ></path>
               <path
                 fill="#1976D2"
-                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
+                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
               ></path>
             </svg>
             Continue with Google
